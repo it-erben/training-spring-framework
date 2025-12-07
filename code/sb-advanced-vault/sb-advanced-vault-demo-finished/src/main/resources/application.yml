@@ -1,0 +1,33 @@
+spring:
+  application:
+    name: vault-demo
+  config:
+    import: optional:vault://
+  cloud:
+    vault:
+      uri: ${VAULT_ADDR:http://127.0.0.1:8200}
+      authentication: token
+      token: ${VAULT_TOKEN:root}
+      kv:
+        enabled: true
+        backend: secret
+        application-name: ${spring.application.name}
+      fail-fast: false
+
+datasource:
+  password: local-password
+
+api:
+  key: local-api-key
+
+app:
+  message: Fallback aus application.yml (Vault nicht verbunden)
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,refresh,env
+  endpoint:
+    env:
+      keys-to-sanitize: password,secret,key,token

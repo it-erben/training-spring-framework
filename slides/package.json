@@ -1,0 +1,8 @@
+{
+  "devDependencies": {
+    "@marp-team/marp-cli": "^4.2.3"
+  },
+  "scripts": {
+    "build": "node build_pdfs.js"
+  }
+}

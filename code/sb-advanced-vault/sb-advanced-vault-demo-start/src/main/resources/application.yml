@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: vault-demo
+
+datasource:
+  password: local-password
+
+api:
+  key: local-api-key
+
+app:
+  message: Demo ohne Vault, liest lokale Defaults aus application.yml
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
