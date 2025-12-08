@@ -31,6 +31,7 @@
         <module>sb-advanced-data-jpa</module>
         <module>sb-advanced-vault</module>
         <module>sb-advanced-messaging-amqp</module>
+        <module>sb-advanced-messaging-kafka</module>
         <module>sb-advanced-security-oauth2</module>
     </modules>
 

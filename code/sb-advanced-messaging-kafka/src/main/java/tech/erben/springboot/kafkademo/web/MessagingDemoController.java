@@ -1,0 +1,62 @@
+package tech.erben.springboot.kafkademo.web;
+
+import jakarta.validation.Valid;
+import java.util.List;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+import tech.erben.springboot.kafkademo.model.BroadcastMessage;
+import tech.erben.springboot.kafkademo.model.OrderMessage;
+import tech.erben.springboot.kafkademo.model.ProcessedMessage;
+import tech.erben.springboot.kafkademo.service.InMemoryDeliveryLog;
+import tech.erben.springboot.kafkademo.service.OrderMessagingService;
+
+@RestController
+@RequestMapping("/api")
+public class MessagingDemoController {
+
+    private final OrderMessagingService messagingService;
+    private final InMemoryDeliveryLog deliveryLog;
+
+    public MessagingDemoController(
+        OrderMessagingService messagingService,
+        InMemoryDeliveryLog deliveryLog
+    ) {
+        this.messagingService = messagingService;
+        this.deliveryLog = deliveryLog;
+    }
+
+    @PostMapping("/orders")
+    public OrderMessage publishOrder(@Valid @RequestBody OrderRequest request) {
+        return messagingService.sendOrder(request);
+    }
+
+    @PostMapping("/announcements")
+    public BroadcastMessage publishAnnouncement(
+        @Valid @RequestBody AnnouncementRequest request
+    ) {
+        return messagingService.broadcast(request);
+    }
+
+    @GetMapping("/logs")
+    public List<ProcessedMessage> logs(
+        @RequestParam(name = "topic", required = false) String topic
+    ) {
+        if (topic == null || topic.isBlank()) {
+            return deliveryLog.all();
+        }
+        return deliveryLog.forTopic(topic);
+    }
+
+    @DeleteMapping("/logs")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void clearLogs() {
+        deliveryLog.clear();
+    }
+}
