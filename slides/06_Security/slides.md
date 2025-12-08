@@ -16,8 +16,6 @@ paginate: true
 *   Method Security: @PreAuthorize & SpEL
 *   CORS-Konfiguration für APIs
 *   OAuth2/JWT: Resource Server, Claims → Authorities, Client-Login
-*   Hinweise zu Fehlkonfigurationen: Audience/Issuer, Header, CORS
-*   Demo und Übungsaufgaben
 
 ---
 ## Die Security Filter Chain
@@ -26,6 +24,11 @@ paginate: true
 *   Die `SecurityFilterChain` ist der zentrale Einstiegspunkt zur Konfiguration.
 
 ---
+<style scoped>
+section {
+    font-size: 25px;
+}
+</style>
 
 ## Kernkomponenten
 1.  **`SecurityContextHolder`**: Hält das `SecurityContext`, welches wiederum das `Authentication`-Objekt enthält.
@@ -41,8 +44,17 @@ paginate: true
 # Web Security Konfiguration
 
 ---
-## Die `SecurityFilterChain` DSL
+
+## Die SecurityFilterChain-DSL
 Die Hauptkonfiguration erfolgt über die `HttpSecurity`-Objekt im `SecurityFilterChain`-Bean.
+Auf der folgenden Seite schauen wir uns die Konfiguration im Code an.
+
+---
+<style scoped>
+section {
+    font-size: 20px;
+}
+</style>
 
 ```java
 @Configuration
@@ -53,7 +65,6 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(AbstractHttpConfigurer::disable) // CSRF oft bei REST APIs deaktiviert
             .authorizeHttpRequests(auth -> auth
                 // Öffentliche Endpoints
                 .requestMatchers("/public/**", "/error").permitAll()
@@ -87,11 +98,6 @@ public class WebSecurityConfig {
     }
 }
 ```
----
-## CSRF-Schutz
-*   **C**ross-**S**ite **R**equest **F**orgery.
-*   Schützt vor bösartigen Anfragen, die von anderen Domains gesendet werden.
-*   Bei zustandslosen REST-APIs (die keine Sessions nutzen und JWTs im Header speichern) kann CSRF oft deaktiviert werden, da das Risiko geringer ist. Bei Form-basierten Apps ist es essentiell.
 
 ---
 
@@ -99,7 +105,7 @@ public class WebSecurityConfig {
 
 ---
 
-## Method Security (`@EnableMethodSecurity`)
+## Method Security (@EnableMethodSecurity)
 Zusätzlich zur URL-basierten Autorisierung kann man Zugriffsregeln direkt an Methoden oder Klassen definieren.
 
 ### Aktivierung
@@ -107,12 +113,18 @@ Seit Spring Boot 3: `@EnableMethodSecurity` (ersetzt `@EnableGlobalMethodSecurit
 
 ---
 
-## Annotations
+## Annotations (I)
 
 *   **`@PreAuthorize("hasRole('ADMIN')")`**: Prüft die Berechtigung *vor* der Ausführung der Methode.
     *   Sehr flexibel dank **Spring Expression Language (SpEL)**.
     *   `principal`, `authentication`, `hasRole('ROLE_NAME')`, `hasAuthority('SCOPE_NAME')`, `hasPermission(...)`.
     *   `#paramName`: Zugriff auf Methodenparameter.
+
+
+    
+---
+
+## Annotations (II)
 *   **`@PostAuthorize("returnObject.owner == authentication.name")`**: Prüft die Berechtigung *nach* der Ausführung der Methode (z.B. auf das zurückgegebene Objekt).
     *   Vorsicht: Methode wird immer ausgeführt, auch wenn die Autorisierung fehlschlägt.
 *   **`@PreFilter("filterObject.owner == authentication.name")`**: Filtert Collections *vor* der Methoden-Ausführung.
@@ -148,13 +160,6 @@ public class DocumentService {
     }
 }
 ```
-
-### SpEL für Autorisierung
-Die SpEL bietet mächtige Möglichkeiten:
-*   `hasAnyRole('ADMIN', 'USER')`
-*   `hasIpAddress('192.168.1.0/24')`
-*   `authentication.principal.username`
-*   Methodenaufrufe auf Beans: `@myBean.canAccess(#param)`
 
 ---
 

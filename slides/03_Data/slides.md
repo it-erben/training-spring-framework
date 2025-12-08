@@ -14,8 +14,6 @@ paginate: true
 *   JPA/EntityManager, Repository-Pattern
 *   JPQL, Fetch Joins und EntityGraph
 *   Projections/DTOs, Auditing, Transaktionen (Propagation/Isolation)
-*   NoSQL & Caching: MongoDB (Optimistic Locking), Redis Cache, ShedLock
-*   Demo und Übungsaufgaben
 
 ---
 
@@ -272,6 +270,8 @@ public class AuditService {
 *   **REPEATABLE_READ:** Verhindert Non-Repeatable Reads.
 *   **SERIALIZABLE:** Sperrt Tabellen/Rows aggressiv. Sicher, aber langsam.
 
+---
+
 ```java
 @Service
 public class InventoryService {
@@ -316,7 +316,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
 ---
 
-# NoSQL & Advanced Data
+# Advanced-Themen zu NoSQL
 
 ---
 

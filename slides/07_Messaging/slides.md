@@ -122,17 +122,6 @@ public class OrderConsumer {
 ```
 ---
 
-### containerFactory = "jmsTopicFactory"
-
-Notwendig, wenn man ein Topic statt einer Queue verwendet und Spring nicht die Standardeinstellungen anwenden soll. Konfiguration in `application.yml`:
-
-```yaml
-spring:
-    jms:
-    pub-sub-domain: true # Aktiviert den Pub/Sub-Modus für den JmsTemplate
-```
----
-
 ### Message Converters
 *   Wandeln Java-Objekte in `javax.jms.Message` und umgekehrt.
 *   Spring Boot konfiguriert standardmäßig den `MappingJackson2MessageConverter` für JSON.
@@ -150,16 +139,6 @@ public class JmsConfig {
     }
 }
 ```
-
----
-
-### Transaktionen mit JMS
-*   **Lokale Transaktionen:** `JmsTransactionManager`. Nachrichten werden erst bei Commit gesendet, Rollback bei Fehlern.
-    *   Für Single-Resource-Transaktionen (z.B. nur JMS).
-*   **Verteilte Transaktionen (XA / JTA):** Wenn die JMS-Operation und eine Datenbank-Operation atomar sein müssen (entweder beides commit oder beides rollback).
-    *   Benötigt einen XA-kompatiblen JMS-Broker und einen JTA-Transaktionsmanager (z.B. Atomikos, Narayana).
-    *   Hohe Komplexität und Performance-Einbußen.
-    *   Alternative: Saga Pattern (Modul 3).
 
 ---
 
@@ -308,12 +287,6 @@ public class RabbitConfig {
 
 ---
 
-### Message Converters
-Analog zu JMS wandeln sie Java-Objekte in `Message` und umgekehrt.
-Standard ist auch hier `MappingJackson2MessageConverter`.
-
----
-
 # Reliable Messaging & Dead-Letter Queues
 
 ---
@@ -387,17 +360,6 @@ public Binding dlqBinding(Queue dlq, DirectExchange dlxExchange) {
 *   Kafka ist ein **verteiltes Streaming-Plattform**, kein klassischer Message Broker.
 *   Speichert Nachrichten in einem **Commit Log** (Topic).
 *   Nachrichten werden nicht "konsumiert" und gelöscht, sondern bleiben für eine konfigurierbare Zeit erhalten.
-
----
-
-## Hauptunterschiede
-| Feature             | JMS/AMQP (Queues)                   | Kafka (Topics)                         |
-| :------------------ | :---------------------------------- | :------------------------------------- |
-| Nachrichten-Modell  | Löschen nach Konsum                 | Persistenz (log-basiert)               |
-| Konsum-Muster       | Point-to-Point (Queue), Pub/Sub (Topic) | Pub/Sub (Topic), Consumer Groups       |
-| Skalierung Consumer | Horizontale Skalierung (mehr Listener) | Horizontale Skalierung über Partitionen |
-| Reihenfolge         | Garantiert in einer Queue           | Garantiert *innerhalb einer Partition* |
-| Anwendungsfälle     | Task Queues, Notifications          | Event Sourcing, Stream Processing      |
 
 ---
 
@@ -482,32 +444,3 @@ public class UserEventListener {
 *   **Retry-Mechanismen:** Bei Fehlern die Nachricht erneut versuchen.
 *   **Dead-Letter Topics (DLT):** Nachrichten, die dauerhaft nicht verarbeitet werden können, an ein spezielles Error-Topic senden.
     *   Spring Kafka bietet `DeadLetterPublishingRecoverer`.
-
----
-
-# Event-Driven Architectures (EDA)
-
----
-
-### Das Konzept
-*   Systeme kommunizieren primär durch das Publizieren und Konsumieren von Events.
-*   Starke Entkopplung: Services kennen sich nicht, reagieren nur auf relevante Events.
-*   Grundlage für Microservices, Reaktivität und Skalierbarkeit.
-
-### Domain Events
-*   Repräsentieren etwas, das in der Domäne passiert ist (z.B. `OrderPlacedEvent`, `PaymentFailedEvent`).
-*   Sind "Fakten" über vergangene Ereignisse.
-*   Werden von einem Service publiziert und von anderen Services (Consumer) verarbeitet.
-
----
-
-### Saga Pattern
-*   Ein Muster, um verteilte Transaktionen in EDAs zu handhaben (siehe Modul 3).
-*   Eine Abfolge von lokalen Transaktionen, orchestriert durch Events.
-*   Bei Fehlern werden Kompensations-Events ausgelöst.
-
-### Event Sourcing
-*   Statt nur den aktuellen Zustand zu speichern, werden *alle Events* gespeichert, die zu diesem Zustand geführt haben.
-*   Der aktuelle Zustand wird durch "Replay" aller Events rekonstruiert.
-*   Vorteile: Auditability, Time-Travel Debugging, einfaches Hinzufügen neuer View-Modelle.
-*   Kafka ist eine ausgezeichnete Plattform für Event Sourcing.

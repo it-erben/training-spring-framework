@@ -18,7 +18,6 @@ paginate: true
 *   Health & Probes: Custom HealthIndicator, Liveness/Readiness
 *   Custom Endpoints und Prometheus/Grafana Integration
 *   Observability: Micrometer Tracing (OTel Bridge), HTTP/Messaging Propagation
-*   Demo und Übungsaufgabe
 
 ---
 
@@ -59,16 +58,10 @@ management:
 ```
 
 ---
-<style scoped>
-section {
-    font-size: 25px;
-}
-</style>
 
 ## Security für Actuator
 
-1.  **Spring Security Integration:**
-    ```java
+```java
 @Configuration @EnableWebSecurity
 public class ActuatorSecurity {
 
@@ -82,13 +75,8 @@ public class ActuatorSecurity {
             .build();
     }
 }
-    ```
-2.  **Separater Port:** Actuator auf einem internen Port laufen lassen.
-    ```yaml
-    management:
-      server:
-        port: 9000
-    ```
+```
+
 ---
 
 ## Runtime Log-Level Anpassung
