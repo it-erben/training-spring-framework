@@ -5,7 +5,16 @@ Ziel dieser Aufgabe ist es, sich mit Spring Conditional vertraut zu machen. Ihr 
 
 2. Erstelle eine `@Configuration` annotierte Klasse namens `OperatingSystemConfiguration`. In dieser Klasse sollen drei mit `@Bean` annotierte Methoden erstellt werden, die jeweils eine der obigen Condition-Klassen verwenden. Jede Methode soll eine Instanz der entsprechenden `OperatingSystem`-Implementierung zurückgeben, die ihr in diesem Projekt vorfindet.
 
-3. Erstelle in der main-Methode einen `AnnotationConfigApplicationContext` mit der `OperatingSystemConfiguration`-Klasse, hole dir eine Bean des `OperatingSystem`-Interfaces aus dem Kontext und rufe die `writeOsInfo`-Methode auf. Prüfe, dass alles erwartungsgemäß funktioniert.
+3. Ersetze die Hauptklasse (`OsInfoApplication`) durch folgenden Inhalt:
+```
+@SpringBootApplication
+public class OsInfoApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(OsInfoApplication.class, args);
+    }
+}
+```
 
 # Aufgabe 2
 
