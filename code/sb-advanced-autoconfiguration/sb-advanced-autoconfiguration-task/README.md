@@ -14,7 +14,7 @@ Ziel dieser Aufgabe ist es, sich mit Spring Conditional vertraut zu machen. Ihr 
 <dependency>
    <groupId>org.springframework.boot</groupId>
    <artifactId>spring-boot-starter-web</artifactId>
-   <version>3.2.0</version>
+   <version>3.5.8</version>
 </dependency>
 ```
 
