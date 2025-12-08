@@ -25,7 +25,7 @@ info:
 - Starte die App und rufe `/manage/health`, `/manage/info`, `/manage/metrics` auf. Zeige den Unterschied zwischen `/health`, `/health/liveness`, `/health/readiness`.
 
 ## 2. Security für Actuator
-- Ergänze `SecurityConfig`: `PathRequest.toActuator().hasRole("ADMIN")`, rest `permitAll`.
+- Ergänze `SecurityConfig`: `.requestMatchers(EndpointRequest.toAnyEndpoint()).hasRole("ADMIN")`, rest `permitAll`.
 - Füge In-Memory-User `admin/admin` hinzu und zeige Basic Auth gegen `/manage/health`.
 - Optional: Setze `management.server.port=9000`, um Actuator auf eigenem Port zu trennen.
 
@@ -37,8 +37,8 @@ info:
 - Zeige `OrderService`: `Counter orders.processed` und `Timer orders.processing.duration`.
 - Erkläre @Timed am `POST /api/orders`. Führe Requests aus:
   - `curl -X POST http://localhost:8080/api/orders -d '{"product":"book"}' -H 'Content-Type: application/json'`
-  - `curl http://localhost:8080/manage/metrics/orders.processed`
-  - `curl http://localhost:8080/manage/metrics/http.server.requests`
+  - `curl http://localhost:8080/manage/metrics/orders.processed -u "admin:admin"`
+  - `curl http://localhost:8080/manage/metrics/http.server.requests -u "admin:admin"`
 
 ## 5. Custom HealthIndicator
 - Zeige `ExternalServiceHealthIndicator`: simuliert externen Service, liefert Details/Fehler.
