@@ -18,14 +18,18 @@ Ziel dieser Aufgabe ist es, sich mit Spring Conditional vertraut zu machen. Ihr 
 </dependency>
 ```
 
-2. Implementiere ein Servlet, das auf `/os` auf Port 8080 hört und das Ergebnis von `writeOsInfo` zurückgibt. Du kannst das `HttpServlet` von Java verwenden und es mit Spring Boot integrieren. Beachte dabei die folgenden Schritte:
+2. Implementiere einen `@RestController`, der auf den Pfad `/os` hört und das Ergebnis von `writeOsInfo` zurückgibt
 
-   a. Erstelle eine Klasse, die von `HttpServlet` erbt und überschreibe die `doGet`-Methode.
+> Hier ist eine Vorlage für einen Rest-Controller in Spring:
+> ```java
+> @RestController
+> @RequestMapping("/api")
+> public class MyController {
+>     @GetMapping
+>     public String foo() {
+>         return "bar";
+>     }
+> }
+> ```    
 
-   b. In der `doGet`-Methode, rufe die `writeOsInfo`-Methode des `OperatingSystem`-Interfaces auf und gib das Ergebnis als Antwort zurück.
-
-   c. Erstelle eine `@Configuration`-Klasse, in der du das Servlet mit Spring Boot registrierst. Verwende dazu die `ServletRegistrationBean`-Klasse und registriere das Servlet unter dem Pfad `/os`.
-
-   d. Stelle sicher, dass das Servlet beim Start der Anwendung geladen wird, indem du die `setLoadOnStartup`-Methode der `ServletRegistrationBean`-Klasse aufrufst.
-
-3. Starte die Anwendung und teste das Servlet, indem du auf `http://localhost:8080/os` zugreifst. Überprüfe, ob das Ergebnis von `writeOsInfo` korrekt angezeigt wird. 
+3. Starte die Anwendung und teste den Controller, indem du auf `http://localhost:8080/os` zugreifst. Überprüfe, ob 
