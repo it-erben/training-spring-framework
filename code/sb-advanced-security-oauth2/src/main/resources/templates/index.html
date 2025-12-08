@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>OAuth2 Login Demo (GitHub)</title>
+    <link rel="stylesheet" href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body class="bg-light">
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="h3 mb-0">Spring Security OAuth2 Login (GitHub)</h1>
+        <div>
+            <a class="btn btn-outline-primary" href="/oauth2/authorization/github" th:if="${username == null}">Login with GitHub</a>
+            <a class="btn btn-outline-secondary" href="/logout" th:if="${username != null}">Logout</a>
+        </div>
+    </div>
+
+    <div th:if="${username == null}" class="alert alert-info">
+        Noch nicht eingeloggt. Starte den OAuth2-Flow über den Login-Button oben.
+    </div>
+
+    <div th:if="${username != null}" class="card">
+        <div class="card-body">
+            <h5 class="card-title">Angemeldet als <span th:text="${username}">username</span></h5>
+            <p class="card-text text-muted mb-2">Profile-Attributes vom GitHub Userinfo-Endpoint:</p>
+            <pre class="bg-dark text-light p-3 rounded" style="max-height: 320px;"><code th:text="${attributes}"></code></pre>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <button id="callApi" class="btn btn-primary">/api/me aufrufen</button>
+        <pre id="apiResponse" class="bg-dark text-light p-3 rounded mt-2" style="display:none;"></pre>
+    </div>
+</div>
+
+<script src="/webjars/jquery/3.7.1/jquery.min.js"></script>
+<script>
+    document.getElementById('callApi').addEventListener('click', () => {
+        fetch('/api/me')
+            .then(resp => {
+                if (resp.status === 401) {
+                    alert('Noch nicht eingeloggt (401)');
+                    throw new Error('unauthorized');
+                }
+                return resp.json();
+            })
+            .then(data => {
+                const pre = document.getElementById('apiResponse');
+                pre.style.display = 'block';
+                pre.textContent = JSON.stringify(data, null, 2);
+            })
+            .catch(err => console.error(err));
+    });
+</script>
+</body>
+</html>
