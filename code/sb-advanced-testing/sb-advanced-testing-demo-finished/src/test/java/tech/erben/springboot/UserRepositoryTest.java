@@ -8,11 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.context.annotation.ComponentScan;
 
 @DataJpaTest
 @EntityScan("tech.erben.springboot")
-public class UserServiceTest {
+public class UserRepositoryTest {
 
     @Autowired
     private TestEntityManager testEntityManager;
@@ -31,7 +30,7 @@ public class UserServiceTest {
 
         List<UserEntity> users = userRepository.findAll();
         assertThat(users.size()).isEqualTo(1);
-        assertThat(users.get(0).getName()).isEqualTo(newUser.getName());
-        assertThat(users.get(0).getEmail()).isEqualTo(newUser.getEmail());
+        assertThat(users.getFirst().getName()).isEqualTo(newUser.getName());
+        assertThat(users.getFirst().getEmail()).isEqualTo(newUser.getEmail());
     }
 }

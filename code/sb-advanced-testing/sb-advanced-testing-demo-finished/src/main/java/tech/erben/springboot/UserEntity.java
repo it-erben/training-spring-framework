@@ -1,9 +1,13 @@
 package tech.erben.springboot;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 public class UserEntity {
@@ -14,6 +18,9 @@ public class UserEntity {
 
     private String name;
     private String email;
+
+    @JsonFormat(pattern="dd.MM.yyyy")
+    private LocalDate birthday;
 
     public Long getId() {
         return id;
@@ -37,5 +44,13 @@ public class UserEntity {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public LocalDate getBirthday() {
+        return birthday;
+    }
+
+    public void setBirthday(LocalDate birthday) {
+        this.birthday = birthday;
     }
 }
