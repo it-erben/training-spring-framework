@@ -4,7 +4,7 @@ include:
     file: "/ci/pdf-pages.yml"
 
 variables:
-  PDF_BUILD_IMAGE: "ghcr.io/marp-team/marp-cli:latest"
+  PDF_BUILD_IMAGE: "node:20"
   PDF_BUILD_DIR: "slides"
   PDF_BUILD_SCRIPT: "npm ci && npm run build"
   PDF_OUTPUT_DIR: "pdf_slides"
