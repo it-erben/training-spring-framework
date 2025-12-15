@@ -1,12 +1,8 @@
 include:
-  - project: "it-erben/utilities/slides-pdf-pages"
-    ref: main
-    file: "/ci/pdf-pages.yml"
+  - component: "$CI_SERVER_FQDN/it-erben/utilities/pdf-publisher/build-publish@1.3.0"
 
-variables:
-  PDF_BUILD_IMAGE: "node:20"
-  PDF_BUILD_DIR: "slides"
-  PDF_BUILD_SCRIPT: "npm ci && npm run build"
-  PDF_OUTPUT_DIR: "pdf_slides"
-  PDF_INDEX_TITLE: "Spring Boot Advanced Slides"
-  PDF_INDEX_DESCRIPTION: "Rendered PDF handouts for the course"
+stages:
+  - build
+  - verify
+  - release
+  - deploy
