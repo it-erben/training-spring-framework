@@ -7,30 +7,33 @@ paginate: true
 ---
 
 # Spring Boot Configuration & Internals
+
 ---
 
 ## In diesem Modul
-*   Spring Boot AutoConfiguration (+ Demo)
-*   Externalisierte Configuration (+ Demo)
-*   Eigene Starter/Autoconfiguration
-*   Demo: Starter und Übungsaufgabe
+
+* Spring Boot AutoConfiguration (+ Demo)
+* Externalisierte Configuration (+ Demo)
+* Eigene Starter/Autoconfiguration
+* Demo: Starter und Übungsaufgabe
 
 ---
 
 ## Einführung in AutoConfiguration
 
-*   **Convention over Configuration:** Entwickler sollen so wenig wie möglich konfigurieren müssen.
-*   **Opinionated Defaults:** Spring Boot trifft sinnvolle Annahmen basierend auf den vorhandenen Libraries (Classpath).
-*   **Startzeit-Optimierung:** Statt XML-Konfiguration werden Beans dynamisch nur dann erzeugt, wenn sie wirklich gebraucht werden.
+* **Convention over Configuration:** Entwickler sollen so wenig wie möglich konfigurieren müssen.
+* **Opinionated Defaults:** Spring Boot trifft sinnvolle Annahmen basierend auf den vorhandenen Libraries (Classpath).
+* **Startzeit-Optimierung:** Statt XML-Konfiguration werden Beans dynamisch nur dann erzeugt, wenn sie wirklich gebraucht werden.
 
 ---
 
 ## Wie funktioniert es? (High Level)
 
 Beim Start der Anwendung scannt Spring Boot:
-1.  **Classpath:** Ist z.B. `H2` in den Dependencies? -> Dann konfiguriere eine H2 DataSource.
-2.  **Existing Beans:** Hat der User schon eine eigene `DataSource` definiert? -> Dann mache nichts.
-3.  **Properties:** Steht in `application.properties` ein bestimmter Schalter?
+
+1. **Classpath:** Ist z.B. `H2` in den Dependencies? -> Dann konfiguriere eine H2 DataSource.
+2. **Existing Beans:** Hat der User schon eine eigene `DataSource` definiert? -> Dann mache nichts.
+3. **Properties:** Steht in `application.properties` ein bestimmter Schalter?
 
 ---
 
@@ -38,12 +41,12 @@ Beim Start der Anwendung scannt Spring Boot:
 
 Spring Boot liest Konfigurationen aus vielen Quellen. Die wichtigsten (überschreibend von oben nach unten):
 
-1.  **Devtools global settings** (`~/.spring-boot-devtools.properties`)
-2.  **@TestPropertySource** (in Tests)
-3.  **Command line arguments** (z.B. `--server.port=9000`)
-4.  **OS Environment Variables**
-5.  **Application Properties** (JAR extern)
-6.  **Application Properties** (JAR intern)
+1. **Devtools global settings** (`~/.spring-boot-devtools.properties`)
+2. **@TestPropertySource** (in Tests)
+3. **Command line arguments** (z.B. `--server.port=9000`)
+4. **OS Environment Variables**
+5. **Application Properties** (JAR extern)
+6. **Application Properties** (JAR intern)
 
 *(Insgesamt gibt es über 15 Quellen!)*
 
@@ -66,6 +69,7 @@ Entweder `@EnableConfigurationProperties(MailProperties.class)` auf einer Konfig
 ---
 
 ## Profiles
+
 <style scoped>
 section {
     font-size: 25px;
@@ -73,8 +77,9 @@ section {
 </style>
 
 Spring lädt automatisch Dateien basierend auf dem aktiven Profil:
-*   `application.yml` (Immer geladen)
-*   `application-dev.yml` (Überschreibt Werte, wenn Profil `dev` aktiv)
+
+* `application.yml` (Immer geladen)
+* `application-dev.yml` (Überschreibt Werte, wenn Profil `dev` aktiv)
 
 Man kann Profile bündeln. In `application.yml`:
 
@@ -87,6 +92,7 @@ spring:
       - cloudmetrics
       - k8s
 ```
+
 Aktiviert man nun `-Dspring.profiles.active=production`, werden automatisch `proddb`, `cloudmetrics` und `k8s` mitaktiviert.
 
 ---
@@ -103,6 +109,7 @@ section {
 * Mehrere Apps, gemeinsame Defaults: `application.yml`, `my-service.yml`, Profil-Dateien wie `my-service-dev.yml`.
 
 **Server (Spring Cloud Config Server):**
+
 ```yaml
 spring:
   application:
@@ -116,6 +123,7 @@ spring:
 server:
   port: 8888
 ```
+
 Starter: `spring-cloud-config-server` + `@EnableConfigServer`.
 
 ---
@@ -131,6 +139,7 @@ section {
 * Client greift beim Start auf `/{app-name}/{profile}` zu (z.B. `/my-service/dev`).
 
 `application.yml` (Client):
+
 ```yaml
 spring:
   application:
@@ -138,7 +147,9 @@ spring:
   config:
     import: "optional:configserver:http://localhost:8888"
 ```
+
 In Git-Repo: `my-service-dev.yml`:
+
 ```yaml
 server:
   port: 8085
@@ -154,10 +165,12 @@ custom:
 * Symmetrischer Key im Server (`encrypt.key`) oder besser KMS/HSM.
 
 `application.yml` (Server):
+
 ```yaml
 encrypt:
   key: my-strong-password
 ```
+
 Verschlüsselung per CLI/Post:  
 `curl -X POST localhost:8888/encrypt -d 'db-pass'` → `'{cipher}...`  
 Im Git-Repo: `password: "{cipher}..."`  
@@ -173,6 +186,7 @@ section {
 ## Speichern von Secrets in externen Systemen
 
 **Beispiel Spring Cloud Vault (`application.yml`):**
+
 ```yaml
 spring:
   cloud:
@@ -185,6 +199,7 @@ spring:
         backend: secret
         application-name: my-service
 ```
+
 * Secrets aus `secret/my-service` werden als Properties verfügbar, z.B. `secret.datasource.password`.
 * Empfohlen: Vault-Agent/K8s Auth statt statischem Token; Maskierung sensibler Werte in Logs/Actuator.
 
@@ -194,6 +209,7 @@ section {
     font-size: 25px;
 }
 </style>
+
 ## Vault lokal ausführen und testen
 
 1. Vault im Dev-Mode starten (lokal, *nicht* für Prod):  
@@ -213,7 +229,7 @@ section {
 
 ## Vault-Auth im Cluster
 
-In Kubernetes kann man Vault auch im Cluster betreiben. 
+In Kubernetes kann man Vault auch im Cluster betreiben.
 
 * **Vault Agent + K8s Auth**: Pod erhält ein ServiceAccount-Token, Vault tauscht es gegen ein kurzlebiges Vault-Token. Secrets landen als Datei/ENV oder werden per Template gerendert.
 * Vorteil: Kein statischer Token im Image oder `application.yml`; kurzlebige Tokens, Audit-Log, feingranulare Policies.
@@ -221,6 +237,7 @@ In Kubernetes kann man Vault auch im Cluster betreiben.
 ---
 
 ## Resilienz bei Config-Fehlern
+
 <style scoped>
 section {
     font-size: 24px;
@@ -242,28 +259,33 @@ section {
 Ein eigener Starter kapselt wiederkehrende Logik (z.B. Standard-Logging, Security-Wrapper).
 
 ## Struktur
+
 Best Practice ist ein Multi-Module Maven/Gradle Projekt:
-1.  `my-feature-autoconfigure`: Enthält den Code und die Config.
-2.  `my-feature-starter`: Leer, definiert nur `my-feature-autoconfigure` als Dependency.
+
+1. `my-feature-autoconfigure`: Enthält den Code und die Config.
+2. `my-feature-starter`: Leer, definiert nur `my-feature-autoconfigure` als Dependency.
 
 ---
 
 ## @Conditional Annotationen
+
 Bedingte Ausführung sind das Zentrum der Auto-Konfiguration.
 
-*   `@ConditionalOnClass(name = "com.example.Service")`: Nur wenn Klasse im Classpath.
-*   `@ConditionalOnMissingBean`: Nur wenn der User keine eigene Bean dieses Typs gebaut hat.
-*   `@ConditionalOnProperty(prefix = "app", name = "enabled", havingValue = "true")`: Nur wenn Property gesetzt.
-*   `@ConditionalOnWebApplication`: Nur wenn es eine Web-App ist.
+* `@ConditionalOnClass(name = "com.example.Service")`: Nur wenn Klasse im Classpath.
+* `@ConditionalOnMissingBean`: Nur wenn der User keine eigene Bean dieses Typs gebaut hat.
+* `@ConditionalOnProperty(prefix = "app", name = "enabled", havingValue = "true")`: Nur wenn Property gesetzt.
+* `@ConditionalOnWebApplication`: Nur wenn es eine Web-App ist.
 
 ---
 
 ## Beispiel: AutoConfiguration Klasse
+
 <style scoped>
 section {
     font-size: 25px;
 }
 </style>
+
 ```java
 @AutoConfiguration // Alias für @Configuration in Boot 2.7+
 @ConditionalOnClass(AuditService.class)
@@ -279,6 +301,7 @@ public class AuditAutoConfiguration {
 ```
 
 `META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports`
+
 ```text
 com.mycompany.audit.AuditAutoConfiguration
 ```
@@ -308,6 +331,7 @@ public class MyEnvPostProcessor implements EnvironmentPostProcessor {
     }
 }
 ```
+
 Registrierung in `META-INF/spring/org.springframework.boot.env.EnvironmentPostProcessor.imports`.
 
 ---
@@ -330,4 +354,5 @@ public class PortInUseFailureAnalyzer
     }
 }
 ```
+
 Dies verwandelt einen Stacktrace in eine besser lesbare Fehlermeldung in der Konsole.

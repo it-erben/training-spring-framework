@@ -12,29 +12,31 @@ paginate: true
 
 ## In diesem Modul
 
-*   Actuator-Grundlagen: wichtige Endpunkte, Exponierung & Absicherung
-*   Management-Konfiguration: Base-Path, Ports, Security
-*   Metriken mit Micrometer: Counter, Gauge, Timer, DistributionSummary
-*   Health & Probes: Custom HealthIndicator, Liveness/Readiness
-*   Custom Endpoints und Prometheus/Grafana Integration
-*   Observability: Micrometer Tracing (OTel Bridge), HTTP/Messaging Propagation
+* Actuator-Grundlagen: wichtige Endpunkte, Exponierung & Absicherung
+* Management-Konfiguration: Base-Path, Ports, Security
+* Metriken mit Micrometer: Counter, Gauge, Timer, DistributionSummary
+* Health & Probes: Custom HealthIndicator, Liveness/Readiness
+* Custom Endpoints und Prometheus/Grafana Integration
+* Observability: Micrometer Tracing (OTel Bridge), HTTP/Messaging Propagation
 
 ---
 
 ## Was ist Actuator?
-*   Bietet "production-ready" Features für Monitoring und Management.
-*   Erlaubt das Überwachen, Sammeln von Metriken, Verstehen des Application-Zustands.
-*   Exponiert Daten über HTTP-Endpoints oder JMX.
+
+* Bietet "production-ready" Features für Monitoring und Management.
+* Erlaubt das Überwachen, Sammeln von Metriken, Verstehen des Application-Zustands.
+* Exponiert Daten über HTTP-Endpoints oder JMX.
 
 **Dependency:** `spring-boot-starter-actuator`
 
 ---
 
 ## Wichtige Endpunkte
-*   `/actuator/health`: Zeigt den Gesundheitszustand der Anwendung und integrierter Komponenten (DB, Disk, etc.).
-*   `/actuator/info`: Allgemeine Informationen (Build-Version, Git-Commit).
-*   `/actuator/metrics`: Listet verfügbare Metriken.
-*   `/actuator/shutdown`: Beendet die Anwendung (standardmäßig deaktiviert).
+
+* `/actuator/health`: Zeigt den Gesundheitszustand der Anwendung und integrierter Komponenten (DB, Disk, etc.).
+* `/actuator/info`: Allgemeine Informationen (Build-Version, Git-Commit).
+* `/actuator/metrics`: Listet verfügbare Metriken.
+* `/actuator/shutdown`: Beendet die Anwendung (standardmäßig deaktiviert).
 
 ---
 
@@ -42,6 +44,7 @@ paginate: true
 
 Standardmäßig sind nur `/health` und `/info` exponiert.
 **`application.yml` Konfiguration:**
+
 ```yaml
 management:
   endpoints:
@@ -85,12 +88,12 @@ Man kann den Log-Level einzelner Pakete **zur Laufzeit** ändern, ohne Neustart.
 
 **Request:**
 `POST /actuator/loggers/com.example.service`
+
 ```json
 {
   "configuredLevel": "DEBUG"
 }
 ```
-
 
 ---
 
@@ -103,10 +106,11 @@ Man kann den Log-Level einzelner Pakete **zur Laufzeit** ändern, ohne Neustart.
 Micrometer ist die Metrik-Fassade von Spring Boot, die verschiedene Monitoring-Systeme unterstützt (Prometheus, Datadog, etc.).
 
 ### Meter-Typen
-*   **`Counter`**: Zählt Inkremente (z.B. Fehler, abgeschlossene Vorgänge).
-*   **`Gauge`**: Zeigt den aktuellen Wert an (z.B. Anzahl der Elemente in einer Queue, CPU-Auslastung).
-*   **`Timer`**: Misst die Dauer von Operationen.
-*   **`DistributionSummary`**: Misst die Verteilung von Werten (z.B. Dateigrößen).
+
+* **`Counter`**: Zählt Inkremente (z.B. Fehler, abgeschlossene Vorgänge).
+* **`Gauge`**: Zeigt den aktuellen Wert an (z.B. Anzahl der Elemente in einer Queue, CPU-Auslastung).
+* **`Timer`**: Misst die Dauer von Operationen.
+* **`DistributionSummary`**: Misst die Verteilung von Werten (z.B. Dateigrößen).
 
 ---
 
@@ -177,15 +181,15 @@ Standardmäßig prüft Spring Boot die Datenbank, Disk Space etc. Man kann aber 
 
 In Kubernetes reicht ein einfaches "Health: UP" oft nicht.
 
-*   **Liveness Probe:** "Lebt der Container noch?". Wenn nein -> Container Restart.
-    *   Pfad: `/actuator/health/liveness`
-*   **Readiness Probe:** "Kann der Container Traffic annehmen?". Wenn nein -> Kein Traffic vom Service.
-    *   Pfad: `/actuator/health/readiness`
+* **Liveness Probe:** "Lebt der Container noch?". Wenn nein -> Container Restart.
+    * Pfad: `/actuator/health/liveness`
+* **Readiness Probe:** "Kann der Container Traffic annehmen?". Wenn nein -> Kein Traffic vom Service.
+    * Pfad: `/actuator/health/readiness`
 
 **Aktivierung:**
 `management.endpoint.health.probes.enabled=true`
 
---- 
+---
 
 ## Custom HealthIndicator
 
@@ -208,6 +212,7 @@ public class CustomServiceHealthIndicator implements HealthIndicator {
     private boolean isServiceUp() { /** Implementierung **/}
 }
 ```
+
 Dieser Health Check erscheint dann unter `/actuator/health` als `customService: { "status": "UP", ... }`.
 
 ---
@@ -216,6 +221,7 @@ section {
     font-size: 22px;
 }
 </style>
+
 ## Custom Actuator Endpoints
 
 Für spezielle Management-Operationen, die nicht von den Standard-Endpoints abgedeckt werden.
@@ -247,35 +253,39 @@ public class FeatureToggleEndpoint {
 
 ## Custom Endpoint-Operationen
 
-*   `@Endpoint(id = "...")`: Definiert den Basis-Pfad des Endpoints.
-*   `@ReadOperation`: GET-Operation.
-*   `@WriteOperation`: POST-Operation.
-*   `@DeleteOperation`: DELETE-Operation.
-*   `@Selector`: Ermöglicht Pfad-Variablen (z.B. `/actuator/featureToggle/{featureName}`).
+* `@Endpoint(id = "...")`: Definiert den Basis-Pfad des Endpoints.
+* `@ReadOperation`: GET-Operation.
+* `@WriteOperation`: POST-Operation.
+* `@DeleteOperation`: DELETE-Operation.
+* `@Selector`: Ermöglicht Pfad-Variablen (z.B. `/actuator/featureToggle/{featureName}`).
 
 ---
 
 ## Prometheus & Grafana Integration
 
 ### Prometheus
+
 Ein Open-Source-Monitoring-System, das Metriken "abfragt" (scraped).
 
-1.  **Dependency:** `io.micrometer:micrometer-registry-prometheus`
-2.  **Endpoint:** Spring Boot exponiert einen `/actuator/prometheus` Endpoint im Prometheus-Format.
+1. **Dependency:** `io.micrometer:micrometer-registry-prometheus`
+2. **Endpoint:** Spring Boot exponiert einen `/actuator/prometheus` Endpoint im Prometheus-Format.
     Prometheus wird so konfiguriert, dass es diesen Endpoint regelmäßig abfragt.
 
 ---
 
 ### Grafana
+
 Eine Open-Source-Plattform für Analysen und interaktive Dashboards.
-*   Verbindet sich mit Prometheus als Datenquelle.
-*   Visualisiert die Metriken in Dashboards (z.B. JVM-Metriken, Custom Metrics).
+
+* Verbindet sich mit Prometheus als Datenquelle.
+* Visualisiert die Metriken in Dashboards (z.B. JVM-Metriken, Custom Metrics).
 
 **Ablauf:**
-1.  Spring Boot App generiert Metriken über Micrometer.
-2.  `/actuator/prometheus` liefert diese im Prometheus-Format.
-3.  Prometheus scraped (holt) die Daten regelmäßig von diesem Endpoint.
-4.  Grafana fragt Prometheus ab und visualisiert die Daten.
+
+1. Spring Boot App generiert Metriken über Micrometer.
+2. `/actuator/prometheus` liefert diese im Prometheus-Format.
+3. Prometheus scraped (holt) die Daten regelmäßig von diesem Endpoint.
+4. Grafana fragt Prometheus ab und visualisiert die Daten.
 
 ---
 
@@ -284,11 +294,12 @@ Eine Open-Source-Plattform für Analysen und interaktive Dashboards.
 ---
 
 ## Von Sleuth zu Micrometer Tracing
+
 In Spring Boot 3 wurde **Spring Cloud Sleuth** durch **Micrometer Tracing** abgelöst.
 
-*   **Ziel:** Einen Request über mehrere Microservices hinweg verfolgen.
-*   **Trace ID:** Eindeutige ID für den gesamten Request-Flow.
-*   **Span ID:** ID für einen einzelnen Arbeitsschritt (z.B. Service A ruft Service B).
+* **Ziel:** Einen Request über mehrere Microservices hinweg verfolgen.
+* **Trace ID:** Eindeutige ID für den gesamten Request-Flow.
+* **Span ID:** ID für einen einzelnen Arbeitsschritt (z.B. Service A ruft Service B).
 
 **Log Korrelation:**
 Die IDs werden automatisch in die Logs geschrieben (MDC), sodass man in Kibana/Splunk nach einer TraceID filtern kann.
@@ -320,10 +331,10 @@ Benötigte Dependencies (für OpenTelemetry Standard):
 
 Damit der Zusammenhang zwischen Requests über Services hinweg erkannt werden kann, müssen Trace-IDs übertragen werden.
 
-*   **W3C TraceContext:** Der neue Standard (Default in Boot 3 / OTel).
-    *   Header: `traceparent`
-*   **B3 Headers:** Der alte Zipkin/Sleuth Standard.
-    *   Header: `X-B3-TraceId`, `X-B3-SpanId`
+* **W3C TraceContext:** Der neue Standard (Default in Boot 3 / OTel).
+    * Header: `traceparent`
+* **B3 Headers:** Der alte Zipkin/Sleuth Standard.
+    * Header: `X-B3-TraceId`, `X-B3-SpanId`
 
 **Wichtig:** Wenn alte Services (Sleuth) mit neuen (Boot 3) zusammenarbeiten, muss man oft das Format anpassen:
 `management.tracing.propagation.type=b3`
@@ -333,9 +344,10 @@ Damit der Zusammenhang zwischen Requests über Services hinweg erkannt werden ka
 ## HTTP Propagation
 
 Spring Boot instrumentiert automatisch:
-*   `RestTemplate` / `TestRestTemplate`
-*   `WebClient`
-*   `RestClient` (neu)
+
+* `RestTemplate` / `TestRestTemplate`
+* `WebClient`
+* `RestClient` (neu)
 
 **Voraussetzung:** Man darf `new RestTemplate()` nicht selbst aufrufen, sondern muss den Builder nutzen!
 
@@ -356,6 +368,7 @@ Der Trace-Kontext kann ähnlich wie bei HTTP auch mit den Headern einer Nachrich
 ---
 
 ### Producer (JMS)
+
 ```java
 @Autowired JmsTemplate jmsTemplate; // Automatisch instrumentiert
 
@@ -366,6 +379,7 @@ public void send() {
 ```
 
 ### Consumer
+
 ```java
 @JmsListener(destination = "queue.orders")
 public void onMessage(OrderCmd cmd) {

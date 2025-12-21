@@ -11,17 +11,20 @@ paginate: true
 ---
 
 ## In diesem Modul
-*   Security-Architektur: Filter Chain, Kernkomponenten
-*   Web Security DSL: Pfadregeln, CSRF, Form/Login/Bearer Basics
-*   Method Security: @PreAuthorize & SpEL
-*   CORS-Konfiguration für APIs
-*   OAuth2/JWT: Resource Server, Claims → Authorities, Client-Login
+
+* Security-Architektur: Filter Chain, Kernkomponenten
+* Web Security DSL: Pfadregeln, CSRF, Form/Login/Bearer Basics
+* Method Security: @PreAuthorize & SpEL
+* CORS-Konfiguration für APIs
+* OAuth2/JWT: Resource Server, Claims → Authorities, Client-Login
 
 ---
+
 ## Die Security Filter Chain
-*   Spring Security ist ein **Filter-basierter** Ansatz, der sich in die Servlet Filter Chain einklinkt.
-*   Jede HTTP-Anfrage durchläuft eine Kette von Security Filtern (z.B. `UsernamePasswordAuthenticationFilter`, `BearerTokenAuthenticationFilter`).
-*   Die `SecurityFilterChain` ist der zentrale Einstiegspunkt zur Konfiguration.
+
+* Spring Security ist ein **Filter-basierter** Ansatz, der sich in die Servlet Filter Chain einklinkt.
+* Jede HTTP-Anfrage durchläuft eine Kette von Security Filtern (z.B. `UsernamePasswordAuthenticationFilter`, `BearerTokenAuthenticationFilter`).
+* Die `SecurityFilterChain` ist der zentrale Einstiegspunkt zur Konfiguration.
 
 ---
 <style scoped>
@@ -31,13 +34,14 @@ section {
 </style>
 
 ## Kernkomponenten
-1.  **`SecurityContextHolder`**: Hält das `SecurityContext`, welches wiederum das `Authentication`-Objekt enthält.
-    *   Thread-local, d.h., der Kontext ist für den aktuellen Request-Thread verfügbar.
-2.  **`Authentication`**: Repräsentiert den aktuell eingeloggten Benutzer.
-    *   Enthält `principal` (User-Details), `credentials` (Passwort), `authorities` (Rollen/Berechtigungen).
-3.  **`AuthenticationManager`**: Schnittstelle zur Authentifizierung eines `Authentication`-Objekts.
-4.  **`AuthenticationProvider`**: Implementierung des `AuthenticationManager`, der die eigentliche Logik zur Überprüfung der Anmeldedaten enthält (z.B. `DaoAuthenticationProvider` für Datenbank-User).
-5.  **`UserDetailsService`**: Lädt user-spezifische Daten (Username, Passwort, Rollen) zur Authentifizierung.
+
+1. **`SecurityContextHolder`**: Hält das `SecurityContext`, welches wiederum das `Authentication`-Objekt enthält.
+    * Thread-local, d.h., der Kontext ist für den aktuellen Request-Thread verfügbar.
+2. **`Authentication`**: Repräsentiert den aktuell eingeloggten Benutzer.
+    * Enthält `principal` (User-Details), `credentials` (Passwort), `authorities` (Rollen/Berechtigungen).
+3. **`AuthenticationManager`**: Schnittstelle zur Authentifizierung eines `Authentication`-Objekts.
+4. **`AuthenticationProvider`**: Implementierung des `AuthenticationManager`, der die eigentliche Logik zur Überprüfung der Anmeldedaten enthält (z.B. `DaoAuthenticationProvider` für Datenbank-User).
+5. **`UserDetailsService`**: Lädt user-spezifische Daten (Username, Passwort, Rollen) zur Authentifizierung.
 
 ---
 
@@ -46,6 +50,7 @@ section {
 ---
 
 ## Die SecurityFilterChain-DSL
+
 Die Hauptkonfiguration erfolgt über die `HttpSecurity`-Objekt im `SecurityFilterChain`-Bean.
 Auf der folgenden Seite schauen wir uns die Konfiguration im Code an.
 
@@ -106,29 +111,30 @@ public class WebSecurityConfig {
 ---
 
 ## Method Security (@EnableMethodSecurity)
+
 Zusätzlich zur URL-basierten Autorisierung kann man Zugriffsregeln direkt an Methoden oder Klassen definieren.
 
 ### Aktivierung
+
 Seit Spring Boot 3: `@EnableMethodSecurity` (ersetzt `@EnableGlobalMethodSecurity`).
 
 ---
 
 ## Annotations (I)
 
-*   **`@PreAuthorize("hasRole('ADMIN')")`**: Prüft die Berechtigung *vor* der Ausführung der Methode.
-    *   Sehr flexibel dank **Spring Expression Language (SpEL)**.
-    *   `principal`, `authentication`, `hasRole('ROLE_NAME')`, `hasAuthority('SCOPE_NAME')`, `hasPermission(...)`.
-    *   `#paramName`: Zugriff auf Methodenparameter.
+* **`@PreAuthorize("hasRole('ADMIN')")`**: Prüft die Berechtigung *vor* der Ausführung der Methode.
+    * Sehr flexibel dank **Spring Expression Language (SpEL)**.
+    * `principal`, `authentication`, `hasRole('ROLE_NAME')`, `hasAuthority('SCOPE_NAME')`, `hasPermission(...)`.
+    * `#paramName`: Zugriff auf Methodenparameter.
 
-
-    
 ---
 
 ## Annotations (II)
-*   **`@PostAuthorize("returnObject.owner == authentication.name")`**: Prüft die Berechtigung *nach* der Ausführung der Methode (z.B. auf das zurückgegebene Objekt).
-    *   Vorsicht: Methode wird immer ausgeführt, auch wenn die Autorisierung fehlschlägt.
-*   **`@PreFilter("filterObject.owner == authentication.name")`**: Filtert Collections *vor* der Methoden-Ausführung.
-*   **`@PostFilter("filterObject.active == true")`**: Filtert Collections *nach* der Methoden-Ausführung.
+
+* **`@PostAuthorize("returnObject.owner == authentication.name")`**: Prüft die Berechtigung *nach* der Ausführung der Methode (z.B. auf das zurückgegebene Objekt).
+    * Vorsicht: Methode wird immer ausgeführt, auch wenn die Autorisierung fehlschlägt.
+* **`@PreFilter("filterObject.owner == authentication.name")`**: Filtert Collections *vor* der Methoden-Ausführung.
+* **`@PostFilter("filterObject.active == true")`**: Filtert Collections *nach* der Methoden-Ausführung.
 
 ---
 
@@ -166,11 +172,14 @@ public class DocumentService {
 # CORS (Cross-Origin Resource Sharing)
 
 ---
+
 ## CORS
+
 Webbrowser verhindern standardmäßig, dass JavaScript-Code, der von `example.com` geladen wird, Anfragen an `api.anothersite.com` sendet (Same-Origin Policy).
 CORS ist ein Mechanismus, um diese Regel kontrolliert zu lockern.
 
 ---
+
 ## Konfiguration in Spring Boot
 
 **1. Globales CORS:**
@@ -195,6 +204,7 @@ public class CorsConfig {
     }
 }
 ```
+
 ---
 **2. Controller-basierte CORS:**
 Mit der `@CrossOrigin`-Annotation direkt am Controller oder an Methoden.
@@ -213,22 +223,24 @@ public class ProductController {
     public Product createProduct(@RequestBody Product product) { /* ... */ }
 }
 ```
+
 `@CrossOrigin` ist gut für feingranulare Kontrolle, die globale Konfiguration für breitere Regeln.
 
 ---
+
 # OAuth
+
 ---
 
 ## OAuth2 & JWT Überblick
 
 Eine OAuth-Architektur besteht stark vereinfacht aus folgenden Komponenten:
 
-*   **Authorization Server (IdP):** Verwaltet User & Logins (z.B. Keycloak, Auth0, Google) und stellt Tokens aus.
-*   **Resource Server (Spring Boot):** Unsere API, die Tokens validiert und Ressourcen schützt.
-*   **Client:** Frontend oder Mobile App, die das Token beim Resource Server nutzt.
+* **Authorization Server (IdP):** Verwaltet User & Logins (z.B. Keycloak, Auth0, Google) und stellt Tokens aus.
+* **Resource Server (Spring Boot):** Unsere API, die Tokens validiert und Ressourcen schützt.
+* **Client:** Frontend oder Mobile App, die das Token beim Resource Server nutzt.
 
 ---
-
 
 ![](./images/oauth-components.drawio.png)
 
@@ -243,10 +255,12 @@ Eine OAuth-Architektur besteht stark vereinfacht aus folgenden Komponenten:
 ---
 
 ## JWT Struktur
+
 Ein Token besteht aus 3 Base64Url-kodierten Teilen:
-1.  **Header:** Algorithmus (z.B. HS256, RS256).
-2.  **Payload (Claims):** Daten (User ID, Expiration, Roles).
-3.  **Signature:** Überprüfung der Integrität.
+
+1. **Header:** Algorithmus (z.B. HS256, RS256).
+2. **Payload (Claims):** Daten (User ID, Expiration, Roles).
+3. **Signature:** Überprüfung der Integrität.
 
 <br>
 
@@ -258,19 +272,21 @@ Ein Token besteht aus 3 Base64Url-kodierten Teilen:
 
 Es ist wichtig, die versendeten JWTs auf Gültigkeit zu prüfen, weil sie von Angreifern gefälscht werden könnten.
 
-1.  **Signaturprüfung:** Ist das Token unverfälscht? (öffentlicher Schlüssel des Authorization Servers)
-2.  **Ablaufzeit (`exp`):** Ist das Token noch gültig?
-3.  **Issuer (`iss`):** Stammt das Token vom erwarteten Authorization Server?
-4.  **Audience (`aud`):** Ist das Token für diesen Resource Server bestimmt?
+1. **Signaturprüfung:** Ist das Token unverfälscht? (öffentlicher Schlüssel des Authorization Servers)
+2. **Ablaufzeit (`exp`):** Ist das Token noch gültig?
+3. **Issuer (`iss`):** Stammt das Token vom erwarteten Authorization Server?
+4. **Audience (`aud`):** Ist das Token für diesen Resource Server bestimmt?
 
 ---
 
 ## Was ist ein Resource Server?
+
 Unsere Spring Boot Anwendung, die geschützte Ressourcen (APIs) anbietet, ist selbst ein Resource Server.
-*   Akzeptiert JWTs im Header `Authorization: Bearer <token>`.
-*   Validiert das JWT (Signatur, Ablaufzeit, Issuer).
-*   Extrahiert Benutzerinformationen und Berechtigungen (Scopes/Rollen).
-*   Nutzt diese Informationen für die Autorisierung.
+
+* Akzeptiert JWTs im Header `Authorization: Bearer <token>`.
+* Validiert das JWT (Signatur, Ablaufzeit, Issuer).
+* Extrahiert Benutzerinformationen und Berechtigungen (Scopes/Rollen).
+* Nutzt diese Informationen für die Autorisierung.
 
 ---
 
@@ -281,6 +297,7 @@ Damit Spring-Anwendungen als Resource Server fungieren, benötigen wir das entsp
 **Dependency:** `spring-boot-starter-oauth2-resource-server`
 
 **`application.yml`:**
+
 ```yaml
 spring:
   security:
@@ -296,6 +313,7 @@ spring:
 ---
 
 ## Resource Server: SecurityFilterChain
+
 ```java
 @Configuration
 @EnableWebSecurity
@@ -319,6 +337,7 @@ public class SecurityConfig {
 ---
 
 ## Zugriff auf JWT-Details
+
 Im Controller kann man das `Jwt`-Objekt oder das `Authentication`-Objekt direkt injizieren.
 
 ```java
@@ -341,6 +360,7 @@ public class UserResource {
 ---
 
 ## Custom JWT Converter (Claims zu Authorities)
+
 Standardmäßig mappt Spring die `scope`- oder `scp`-Claims zu Authorities. Wenn Rollen in anderen Claims (`realm_access.roles`) liegen, braucht man einen Custom Converter.
 
 ---
@@ -383,6 +403,7 @@ Wenn unsere Spring Boot App selbst ein Client ist, der sich bei einem OAuth2-Pro
 **Dependency:** `spring-boot-starter-oauth2-client`
 
 **`application.yml`:**
+
 ```yaml
 spring:
   security:
@@ -401,6 +422,7 @@ spring:
 ---
 
 ### OAuth2 Client: Nutzung
+
 ```java
 @RestController
 public class OAuth2ClientController {

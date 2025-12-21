@@ -8,48 +8,51 @@ paginate: true
 
 # Spring Boot Messaging
 
---- 
+---
 
 ## In diesem Modul
-*   Warum Messaging? Modelle (Queue vs. Topic) und typische Use Cases
-*   JMS mit Spring: Producer/Listener, Message Converter, Transaktionen & Idempotenz
-*   AMQP/RabbitMQ: Exchanges/Bindings, Producer/Consumer, DLX/DLQ
-*   Kafka: Topics/Partitionen, Producer/Consumer Groups, Serdes, Fehlerbehandlung
-*   Reliability: Acks, Confirms, Retry/Backoff, Dead Letter
-*   Event-Driven Architectures: Domain Events, Sagas
-*   Übungen
+
+* Warum Messaging? Modelle (Queue vs. Topic) und typische Use Cases
+* JMS mit Spring: Producer/Listener, Message Converter, Transaktionen & Idempotenz
+* AMQP/RabbitMQ: Exchanges/Bindings, Producer/Consumer, DLX/DLQ
+* Kafka: Topics/Partitionen, Producer/Consumer Groups, Serdes, Fehlerbehandlung
+* Reliability: Acks, Confirms, Retry/Backoff, Dead Letter
+* Event-Driven Architectures: Domain Events, Sagas
+* Übungen
 
 ---
 
 ## Wiederholung: Warum Messaging?
-*   **Asynchrone Kommunikation:** Sender und Empfänger müssen nicht gleichzeitig verfügbar sein.
-*   **Entkopplung:** Services kennen sich nicht direkt, kommunizieren über Nachrichtenkanäle.
-*   **Resilienz:** Bei Ausfall eines Empfängers gehen Nachrichten nicht verloren (werden gepuffert).
-*   **Skalierbarkeit:** Einfaches Hinzufügen weiterer Consumer für erhöhten Durchsatz.
-*   **Event-Driven Architectures (EDA):** Basis für moderne verteilte Systeme.
+
+* **Asynchrone Kommunikation:** Sender und Empfänger müssen nicht gleichzeitig verfügbar sein.
+* **Entkopplung:** Services kennen sich nicht direkt, kommunizieren über Nachrichtenkanäle.
+* **Resilienz:** Bei Ausfall eines Empfängers gehen Nachrichten nicht verloren (werden gepuffert).
+* **Skalierbarkeit:** Einfaches Hinzufügen weiterer Consumer für erhöhten Durchsatz.
+* **Event-Driven Architectures (EDA):** Basis für moderne verteilte Systeme.
 
 ---
 
 ## Wiederholung: Messaging-Modelle
 
-1.  **Point-to-Point (Queues)**
-    *   Nachricht wird an eine Queue gesendet.
-    *   **Nur ein Consumer** empfängt und verarbeitet die Nachricht.
-    *   Ideal für Work-Distribution und Lastverteilung.
+1. **Point-to-Point (Queues)**
+    * Nachricht wird an eine Queue gesendet.
+    * **Nur ein Consumer** empfängt und verarbeitet die Nachricht.
+    * Ideal für Work-Distribution und Lastverteilung.
 
-2.  **Publish/Subscribe (Topics / Exchanges)**
-    *   Nachricht wird an ein Topic (oder Exchange) gesendet.
-    *   **Alle Subscriber**, die das Topic abonniert haben, erhalten eine Kopie der Nachricht.
-    *   Ideal für Benachrichtigungen und Event-Broadcasting.
+2. **Publish/Subscribe (Topics / Exchanges)**
+    * Nachricht wird an ein Topic (oder Exchange) gesendet.
+    * **Alle Subscriber**, die das Topic abonniert haben, erhalten eine Kopie der Nachricht.
+    * Ideal für Benachrichtigungen und Event-Broadcasting.
 
 ---
 
 ## Wann nutzt man Messaging?
-*   **Bestellabwicklung:** Bestellung aufgeben (async zu Payment, Shipping, Notification).
-*   **Benachrichtigungen:** E-Mails, SMS, Push-Nachrichten versenden.
-*   **Daten-Integration:** Synchronisierung von Daten zwischen Systemen.
-*   **Batch-Verarbeitung:** Lange laufende Aufgaben auslagern.
-*   **Circuit Breaker / Bulkhead Pattern:** Erhöhung der Systemstabilität.
+
+* **Bestellabwicklung:** Bestellung aufgeben (async zu Payment, Shipping, Notification).
+* **Benachrichtigungen:** E-Mails, SMS, Push-Nachrichten versenden.
+* **Daten-Integration:** Synchronisierung von Daten zwischen Systemen.
+* **Batch-Verarbeitung:** Lange laufende Aufgaben auslagern.
+* **Circuit Breaker / Bulkhead Pattern:** Erhöhung der Systemstabilität.
 
 ---
 
@@ -58,9 +61,10 @@ paginate: true
 ---
 
 ## Die JMS Spezifikation
-*   JMS ist eine Standard-API für Messaging in Java.
-*   Definiert gemeinsame Konzepte: `ConnectionFactory`, `Connection`, `Session`, `MessageProducer`, `MessageConsumer`, `Queue`, `Topic`, `Message`.
-*   Unabhängig vom konkreten Messaging-Anbieter (ActiveMQ, IBM MQ, TIBCO EMS).
+
+* JMS ist eine Standard-API für Messaging in Java.
+* Definiert gemeinsame Konzepte: `ConnectionFactory`, `Connection`, `Session`, `MessageProducer`, `MessageConsumer`, `Queue`, `Topic`, `Message`.
+* Unabhängig vom konkreten Messaging-Anbieter (ActiveMQ, IBM MQ, TIBCO EMS).
 
 ---
 <style scoped>
@@ -68,6 +72,7 @@ section {
     font-size: 20px;
 }
 </style>
+
 ## Spring JMS mit ActiveMQ (Beispiel-Broker)
 
 **Dependency:** `spring-boot-starter-activemq`
@@ -96,12 +101,14 @@ public class OrderProducer {
     }
 }
 ```
+
 ---
 <style scoped>
 section {
     font-size: 25px;
 }
 </style>
+
 ## Nachrichten Empfangen (`@JmsListener`)
 
 ```java
@@ -120,11 +127,13 @@ public class OrderConsumer {
     }
 }
 ```
+
 ---
 
 ### Message Converters
-*   Wandeln Java-Objekte in `javax.jms.Message` und umgekehrt.
-*   Spring Boot konfiguriert standardmäßig den `MappingJackson2MessageConverter` für JSON.
+
+* Wandeln Java-Objekte in `javax.jms.Message` und umgekehrt.
+* Spring Boot konfiguriert standardmäßig den `MappingJackson2MessageConverter` für JSON.
 
 ```java
 @Configuration
@@ -143,12 +152,13 @@ public class JmsConfig {
 ---
 
 ### Idempotenz
-*   Wichtig, da Nachrichten in verteilten Systemen **mehrfach zugestellt** werden können ("at-least-once" Delivery).
-*   Eine Operation ist idempotent, wenn sie mehrmals ausgeführt werden kann, ohne zusätzliche Seiteneffekte zu erzeugen.
-*   **Strategien:**
-    *   Eindeutige Message-ID verfolgen.
-    *   Status-Management (nur bei Status "pending" verarbeiten).
-    *   Database Unique Constraints.
+
+* Wichtig, da Nachrichten in verteilten Systemen **mehrfach zugestellt** werden können ("at-least-once" Delivery).
+* Eine Operation ist idempotent, wenn sie mehrmals ausgeführt werden kann, ohne zusätzliche Seiteneffekte zu erzeugen.
+* **Strategien:**
+    * Eindeutige Message-ID verfolgen.
+    * Status-Management (nur bei Status "pending" verarbeiten).
+    * Database Unique Constraints.
 
 ---
 
@@ -157,46 +167,49 @@ public class JmsConfig {
 ---
 
 ## Das AMQP-Modell
-*   Ein offener Standard für Messaging.
-*   Flexibler und mächtiger als JMS, da das Routing-Modell entkoppelt ist.
-*   Wichtige Konzepte:
-    *   **Producer:** Sendet Nachrichten.
-    *   **Exchange:** Empfängt Nachrichten vom Producer und leitet sie an Queues weiter.
-    *   **Binding:** Eine Regel, die eine Queue an einen Exchange bindet.
-    *   **Queue:** Speichert Nachrichten, bis sie von einem Consumer abgeholt werden.
-    *   **Consumer:** Empfängt Nachrichten von einer Queue.
+
+* Ein offener Standard für Messaging.
+* Flexibler und mächtiger als JMS, da das Routing-Modell entkoppelt ist.
+* Wichtige Konzepte:
+    * **Producer:** Sendet Nachrichten.
+    * **Exchange:** Empfängt Nachrichten vom Producer und leitet sie an Queues weiter.
+    * **Binding:** Eine Regel, die eine Queue an einen Exchange bindet.
+    * **Queue:** Speichert Nachrichten, bis sie von einem Consumer abgeholt werden.
+    * **Consumer:** Empfängt Nachrichten von einer Queue.
 
 ---
 
 ## Exchange Types
 
-1.  **Direct Exchange:**
-    *   Nachricht geht an Queues, deren Binding Key *exakt* dem Routing Key der Nachricht entspricht.
-    *   Ideal für 1:1 oder 1:N Weiterleitung, wenn der Key bekannt ist.
+1. **Direct Exchange:**
+    * Nachricht geht an Queues, deren Binding Key *exakt* dem Routing Key der Nachricht entspricht.
+    * Ideal für 1:1 oder 1:N Weiterleitung, wenn der Key bekannt ist.
 
-2.  **Topic Exchange:**
-    *   Nachricht geht an Queues, deren Binding Key einem Wildcard-Muster des Routing Keys entspricht.
-    *   `*`: Ersetzt genau ein Wort.
-    *   `#`: Ersetzt null oder mehr Worte.
-    *   Ideal für Pub/Sub mit feingranularer Filterung.
+2. **Topic Exchange:**
+    * Nachricht geht an Queues, deren Binding Key einem Wildcard-Muster des Routing Keys entspricht.
+    * `*`: Ersetzt genau ein Wort.
+    * `#`: Ersetzt null oder mehr Worte.
+    * Ideal für Pub/Sub mit feingranularer Filterung.
 
 ---
 
-3.  **Fanout Exchange:**
-    *   Nachricht geht an *alle* Queues, die an diesen Exchange gebunden sind (Routing Key wird ignoriert).
-    *   Ideal für Broadcasting.
+1. **Fanout Exchange:**
+    * Nachricht geht an *alle* Queues, die an diesen Exchange gebunden sind (Routing Key wird ignoriert).
+    * Ideal für Broadcasting.
 
-4.  **Headers Exchange:**
-    *   Leitet basierend auf den Headern der Nachricht weiter (seltener verwendet).
+2. **Headers Exchange:**
+    * Leitet basierend auf den Headern der Nachricht weiter (seltener verwendet).
 
 ---
 
 ## Spring AMQP mit RabbitMQ
 
 ### Dependency
+
 `spring-boot-starter-amqp`
 
 ### Konfiguration (Minimal)
+
 ```yaml
 spring:
   rabbitmq:
@@ -257,6 +270,7 @@ public class MessageConsumer {
 ---
 
 ### Automatische Erstellung von Exchanges, Queues und Bindings
+
 Spring AMQP kann diese bei Anwendungsstart automatisch erstellen.
 
 ```java
@@ -292,9 +306,10 @@ public class RabbitConfig {
 ---
 
 ### Publisher Confirms & Returns
-*   **Confirms:** Der Broker bestätigt dem Publisher, dass er die Nachricht erhalten hat.
-*   **Returns:** Der Broker benachrichtigt den Publisher, wenn eine Nachricht an keinen Consumer zugestellt werden konnte.
-*   Wichtig für "at-least-once" oder "exactly-once" Semantik (mit Idempotenz).
+
+* **Confirms:** Der Broker bestätigt dem Publisher, dass er die Nachricht erhalten hat.
+* **Returns:** Der Broker benachrichtigt den Publisher, wenn eine Nachricht an keinen Consumer zugestellt werden konnte.
+* Wichtig für "at-least-once" oder "exactly-once" Semantik (mit Idempotenz).
 
 ```java
 // Konfiguration im RabbitTemplate
@@ -305,18 +320,20 @@ public class RabbitConfig {
 ---
 
 ## Consumer Acknowledgements
+
 Wie ein Consumer dem Broker mitteilt, dass die Nachricht erfolgreich verarbeitet wurde.
 
-1.  **`AUTO` (Default in Spring Boot):** Automatisch bei erfolgreicher Methodenausführung.
-2.  **`MANUAL`:** Consumer muss explizit `channel.basicAck()` oder `channel.basicNack()` aufrufen.
-    *   Wichtig bei komplexer Verarbeitung, die fehlschlagen könnte.
+1. **`AUTO` (Default in Spring Boot):** Automatisch bei erfolgreicher Methodenausführung.
+2. **`MANUAL`:** Consumer muss explizit `channel.basicAck()` oder `channel.basicNack()` aufrufen.
+    * Wichtig bei komplexer Verarbeitung, die fehlschlagen könnte.
 
 ---
 
 ## Dead-Letter Exchanges (DLX)
-*   Nachrichten, die nicht verarbeitet werden können (z.B. wegen Exceptions, NACKs, TTL-Ablauf), werden an einen speziellen Exchange (DLX) gesendet.
-*   Von dort können sie in eine **Dead-Letter Queue (DLQ)** geleitet werden.
-*   Wichtig für Fehlerbehandlung und Auditing.
+
+* Nachrichten, die nicht verarbeitet werden können (z.B. wegen Exceptions, NACKs, TTL-Ablauf), werden an einen speziellen Exchange (DLX) gesendet.
+* Von dort können sie in eine **Dead-Letter Queue (DLQ)** geleitet werden.
+* Wichtig für Fehlerbehandlung und Auditing.
 
 ---
 <style scoped>
@@ -324,7 +341,9 @@ section {
     font-size: 20px;
 }
 </style>
+
 ## Konfiguration einer Queue mit DLX
+
 ```java
 @Bean
 public Queue processingQueue() {
@@ -357,28 +376,32 @@ public Binding dlqBinding(Queue dlq, DirectExchange dlxExchange) {
 ---
 
 ## Die "Log-zentrierte" Architektur
-*   Kafka ist ein **verteiltes Streaming-Plattform**, kein klassischer Message Broker.
-*   Speichert Nachrichten in einem **Commit Log** (Topic).
-*   Nachrichten werden nicht "konsumiert" und gelöscht, sondern bleiben für eine konfigurierbare Zeit erhalten.
+
+* Kafka ist ein **verteiltes Streaming-Plattform**, kein klassischer Message Broker.
+* Speichert Nachrichten in einem **Commit Log** (Topic).
+* Nachrichten werden nicht "konsumiert" und gelöscht, sondern bleiben für eine konfigurierbare Zeit erhalten.
 
 ---
 
 ## Kafka Kernkonzepte
-*   **Broker:** Server, der Topics verwaltet.
-*   **Topic:** Logischer Kanal für Nachrichten.
-*   **Partition:** Ein Topic ist in Partitionen unterteilt (Skalierung, Parallelisierung).
-*   **Producer:** Schreibt Nachrichten in Topics/Partitionen.
-*   **Consumer:** Liest Nachrichten aus Topics/Partitionen.
-*   **Consumer Group:** Eine Gruppe von Consumern, die gemeinsam ein Topic verarbeitet. Jede Nachricht in einer Partition wird nur an *einen* Consumer *innerhalb der Gruppe* zugestellt.
+
+* **Broker:** Server, der Topics verwaltet.
+* **Topic:** Logischer Kanal für Nachrichten.
+* **Partition:** Ein Topic ist in Partitionen unterteilt (Skalierung, Parallelisierung).
+* **Producer:** Schreibt Nachrichten in Topics/Partitionen.
+* **Consumer:** Liest Nachrichten aus Topics/Partitionen.
+* **Consumer Group:** Eine Gruppe von Consumern, die gemeinsam ein Topic verarbeitet. Jede Nachricht in einer Partition wird nur an *einen* Consumer *innerhalb der Gruppe* zugestellt.
 
 ---
 
 ## Apache Kafka in Spring
 
 ### Dependency
+
 `spring-kafka`
 
 ### Konfiguration (Minimal)
+
 ```yaml
 spring:
   kafka:
@@ -435,12 +458,14 @@ public class UserEventListener {
 ---
 
 ### Serde (Serializer/Deserializer)
-*   Kafka Nachrichten sind Byte-Arrays.
-*   Producer muss Objekte serialisieren, Consumer deserialisieren.
-*   Spring Kafka bietet `JsonSerializer` / `JsonDeserializer` für JSON.
+
+* Kafka Nachrichten sind Byte-Arrays.
+* Producer muss Objekte serialisieren, Consumer deserialisieren.
+* Spring Kafka bietet `JsonSerializer` / `JsonDeserializer` für JSON.
 
 ### Fehlerbehandlung
-*   **Consumer Group Offsets:** Kafka merkt sich pro Consumer Group den letzten verarbeiteten Offset.
-*   **Retry-Mechanismen:** Bei Fehlern die Nachricht erneut versuchen.
-*   **Dead-Letter Topics (DLT):** Nachrichten, die dauerhaft nicht verarbeitet werden können, an ein spezielles Error-Topic senden.
-    *   Spring Kafka bietet `DeadLetterPublishingRecoverer`.
+
+* **Consumer Group Offsets:** Kafka merkt sich pro Consumer Group den letzten verarbeiteten Offset.
+* **Retry-Mechanismen:** Bei Fehlern die Nachricht erneut versuchen.
+* **Dead-Letter Topics (DLT):** Nachrichten, die dauerhaft nicht verarbeitet werden können, an ein spezielles Error-Topic senden.
+    * Spring Kafka bietet `DeadLetterPublishingRecoverer`.

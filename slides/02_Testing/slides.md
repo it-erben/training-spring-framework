@@ -17,25 +17,28 @@ img[alt~="center"] {
 ---
 
 ## In diesem Modul
-*   Testpyramide
-*   JUnit 5 Basics (Lifecycle, Assertions, Parametrisierung)
-*   Dynamische/Nested Tests & Extensions
-*   Spring Boot Test-Strategien: `@SpringBootTest` vs. Slices
-*   Infrastrukturtests mit Testcontainers
-*   Demo und Übungsaufgaben
+
+* Testpyramide
+* JUnit 5 Basics (Lifecycle, Assertions, Parametrisierung)
+* Dynamische/Nested Tests & Extensions
+* Spring Boot Test-Strategien: `@SpringBootTest` vs. Slices
+* Infrastrukturtests mit Testcontainers
+* Demo und Übungsaufgaben
 
 ---
 
 ## Testpyramide (Praxisleitplanken)
-*   **Unit**: schnell, deterministisch, keine Spring-Kontexte. Ziel: Logik absichern.
-*   **Slice**: fokussierte Spring-Teile (`@WebMvcTest`, `@DataJpaTest`, `@JsonTest`, `@RestClientTest`), schneller als Full Context.
-*   **Integration**: `@SpringBootTest`, häufig mit Testcontainers für echte Infrastruktur.
-*   **E2E**: sparsam, nur kritische Flows.
-*   Guideline: Erst Unit/Slice abdecken, dann gezielt wenige Integrations- oder Container-Tests hinzufügen.
+
+* **Unit**: schnell, deterministisch, keine Spring-Kontexte. Ziel: Logik absichern.
+* **Slice**: fokussierte Spring-Teile (`@WebMvcTest`, `@DataJpaTest`, `@JsonTest`, `@RestClientTest`), schneller als Full Context.
+* **Integration**: `@SpringBootTest`, häufig mit Testcontainers für echte Infrastruktur.
+* **E2E**: sparsam, nur kritische Flows.
+* Guideline: Erst Unit/Slice abdecken, dann gezielt wenige Integrations- oder Container-Tests hinzufügen.
 
 ---
 
 ## JUnit 5-Architektur
+
 Im Gegensatz zu JUnit 4 ist JUnit 5 modular aufgebaut. Es besteht aus drei Hauptkomponenten:
 
 ![center](./images/junit-parts.drawio.png)
@@ -43,20 +46,23 @@ Im Gegensatz zu JUnit 4 ist JUnit 5 modular aufgebaut. Es besteht aus drei Haupt
 ---
 
 ## JUnit Platform
-*   Das Fundament.
-*   Bietet die **Launcher API**, um Tests zu starten (genutzt von IDEs, Build-Tools wie Maven/Gradle).
-*   **TestEngine API:** Schnittstelle, damit Dritte eigene Test-Frameworks (z.B. Spock, Cucumber) auf der Plattform laufen lassen können.
+
+* Das Fundament.
+* Bietet die **Launcher API**, um Tests zu starten (genutzt von IDEs, Build-Tools wie Maven/Gradle).
+* **TestEngine API:** Schnittstelle, damit Dritte eigene Test-Frameworks (z.B. Spock, Cucumber) auf der Plattform laufen lassen können.
 
 ---
 
 ## JUnit Jupiter
-*   Das eigentliche "neue" JUnit.
-*   Enthält das neue **Programming Model** (Annotationen, Assertions).
-*   Enthält das **Extension Model** (Erweiterungen).
+
+* Das eigentliche "neue" JUnit.
+* Enthält das neue **Programming Model** (Annotationen, Assertions).
+* Enthält das **Extension Model** (Erweiterungen).
 
 ## JUnit Vintage
-*   Sorgt für Rückwärtskompatibilität.
-*   Eine `TestEngine`, die alte JUnit 3 und 4 Tests auf der JUnit 5 Plattform ausführt.
+
+* Sorgt für Rückwärtskompatibilität.
+* Eine `TestEngine`, die alte JUnit 3 und 4 Tests auf der JUnit 5 Plattform ausführt.
 
 ---
 
@@ -65,14 +71,16 @@ Im Gegensatz zu JUnit 4 ist JUnit 5 modular aufgebaut. Es besteht aus drei Haupt
 ---
 
 ## Wichtige Annotationen
-*   `@Test`: Die Standard-Testmethode (nicht mehr `public` nötig!).
-*   `@DisplayName("...")`: Benutzerdefinierter Name für Reports/IDEs.
-*   `@BeforeEach` / `@AfterEach`: Setup/Teardown vor/nach **jeder** Methode.
-*   `@BeforeAll` / `@AfterAll`: Setup/Teardown einmalig pro Klasse (muss `static` sein, außer bei `@TestInstance(PER_CLASS)`).
+
+* `@Test`: Die Standard-Testmethode (nicht mehr `public` nötig!).
+* `@DisplayName("...")`: Benutzerdefinierter Name für Reports/IDEs.
+* `@BeforeEach` / `@AfterEach`: Setup/Teardown vor/nach **jeder** Methode.
+* `@BeforeAll` / `@AfterAll`: Setup/Teardown einmalig pro Klasse (muss `static` sein, außer bei `@TestInstance(PER_CLASS)`).
 
 ---
 
 ## Assertions
+
 Klassisch via `org.junit.jupiter.api.Assertions`:
 
 ```java
@@ -92,13 +100,12 @@ assertThrows(IllegalArgumentException.class, () -> {
 
 ## Parametrisierte Tests (@ParameterizedTest)
 
-* Tests lassen sich in JUnit 5 einfach mit verschiedenen Eingabewerten wiederholen. 
+* Tests lassen sich in JUnit 5 einfach mit verschiedenen Eingabewerten wiederholen.
 * Dies ersetzt oft komplexe Loops in Tests.
 * Die wichtigsten Optionen sind:
   * Einfache Werte mit `@ValueSource`
   * CSV-Format mit `@CsvSource`
   * Komplexe Objekte mit `@MethodSource`
-
 
 ---
 
@@ -138,7 +145,6 @@ void testStringLength(String input, int expectedLength) {
 
 In der Praxis ist dies langfristig erweiterbarer als die `@CsvSource` mit festen Werten.
 
-
 ```java
 @ParameterizedTest
 @CsvFileSource(resources = "/data.csv", numLinesToSkip = 1)
@@ -152,6 +158,7 @@ void toUpperCase_ShouldGenerateTheExpectedUppercaseValueCSVFile(
 ---
 
 ## Datenquelle: Komplexe Objekte (@MethodSource)
+
 Lädt Testdaten aus einer Methode.
 
 ```java
@@ -176,6 +183,7 @@ static Stream<Arguments> provideUsers() {
 ---
 
 ## Test Factories
+
 Erzeugt Tests zur Laufzeit. Nützlich, wenn Testfälle nicht zur Compile-Zeit feststehen (z.B. aus externen Dateien generiert).
 
 ```java
@@ -197,7 +205,7 @@ section {
 
 ## Nested Tests
 
-Verschachtelte Tests sind beispielsweise für Behaviour Driven Design-Testing sinnvoll. 
+Verschachtelte Tests sind beispielsweise für Behaviour Driven Design-Testing sinnvoll.
 
 ```java
 @DisplayName("Ein Stack")
@@ -230,25 +238,31 @@ class StackTest {
 ---
 
 ## Bedingungen
+
 Mit _Conditions_ lassen sich Tests nur unter bestimmten Umständen ausführen.
-*   `@EnabledOnOs(OS.MAC)`: Wird nur ausgeführt, wenn der Test auf macOS ausgeführt wird.
-*   `@EnabledIfEnvironmentVariable(named = "CI", matches = "true")`: Wird nur ausgeführt, wenn die Umgebungsvariable `CI` existiert und den Wert `true` hat.
-*   `@EnabledIf("myCustomConditionMethod")`: Wird ausgeführt, wenn die Methode `myCustomConditionMethod` existiert und den Wert `true` zurückgibt.
+
+* `@EnabledOnOs(OS.MAC)`: Wird nur ausgeführt, wenn der Test auf macOS ausgeführt wird.
+* `@EnabledIfEnvironmentVariable(named = "CI", matches = "true")`: Wird nur ausgeführt, wenn die Umgebungsvariable `CI` existiert und den Wert `true` hat.
+* `@EnabledIf("myCustomConditionMethod")`: Wird ausgeführt, wenn die Methode `myCustomConditionMethod` existiert und den Wert `true` zurückgibt.
 
 ---
 
 ## Das Extension Model
+
 Ersetzt `Runner` (JUnit 4) und `Rule`. In JUnit sind viele Kernkonzepte als Extension realisiert.
 Beispiele:
-*   `ParameterResolver`: Dependency Injection in Test-Methoden.
-*   `TestExecutionExceptionHandler`: Exceptions behandeln.
-*   `BeforeEachCallback`: Code vor Tests ausführen.
+
+* `ParameterResolver`: Dependency Injection in Test-Methoden.
+* `TestExecutionExceptionHandler`: Exceptions behandeln.
+* `BeforeEachCallback`: Code vor Tests ausführen.
 
 **Registrierung:**
+
 ```java
 @ExtendWith(MyCustomExtension.class)
 class MyTest { ... }
 ```
+
 *(Spring Boot nutzt dies intern: `@ExtendWith(SpringExtension.class)`)*
 
 ---
@@ -257,7 +271,9 @@ section {
     font-size: 20px;
 }
 </style>
+
 ## Beispiel: Eigene Extension
+
 Ein Extension für Zeitmessung:
 
 ```java
@@ -290,19 +306,21 @@ public class TimingExtension implements
 ---
 
 ## Welche Spring-Tests wann?
-*   **@SpringBootTest**: volle App, langsam; einsetzen, wenn mehrere Schichten zusammenspielen müssen.
-*   **@WebMvcTest**: Controller-Schicht ohne Services/DB; ideal für REST-Kontrakte & Validation.
-*   **@JsonTest**: (De-)Serialisierung prüfen, ohne Web/DB.
-*   **@DataJpaTest**: JPA-Mapping & Queries; mit Testcontainers produktionsnah machen.
-*   **@RestClientTest**: HTTP-Clients isoliert gegen Stub-Server prüfen.
-*   Faustregel: Wähle den kleinsten Slice, der die Frage beantwortet.
+
+* **@SpringBootTest**: volle App, langsam; einsetzen, wenn mehrere Schichten zusammenspielen müssen.
+* **@WebMvcTest**: Controller-Schicht ohne Services/DB; ideal für REST-Kontrakte & Validation.
+* **@JsonTest**: (De-)Serialisierung prüfen, ohne Web/DB.
+* **@DataJpaTest**: JPA-Mapping & Queries; mit Testcontainers produktionsnah machen.
+* **@RestClientTest**: HTTP-Clients isoliert gegen Stub-Server prüfen.
+* Faustregel: Wähle den kleinsten Slice, der die Frage beantwortet.
 
 ---
 
 ## @SpringBootTest
-*   Solche Tests starten den **vollen** ApplicationContext.
-*   Das ist sehr mächtig, aber auch "teuer" (also langsam).
-*   **Context Caching:** Spring versucht, den Context zwischen Tests wiederzuverwenden. Wenn ein Test den Context verändert (z.B. `@MockBean`, `@TestPropertySource`), muss er neu gestartet werden -> Performance-Killer.
+
+* Solche Tests starten den **vollen** ApplicationContext.
+* Das ist sehr mächtig, aber auch "teuer" (also langsam).
+* **Context Caching:** Spring versucht, den Context zwischen Tests wiederzuverwenden. Wenn ein Test den Context verändert (z.B. `@MockBean`, `@TestPropertySource`), muss er neu gestartet werden -> Performance-Killer.
 
 ---
 <style scoped>
@@ -310,11 +328,14 @@ section {
     font-size: 25px;
 }
 </style>
+
 ## Configuration Overrides
+
 Wenn man Beans für Tests austauschen muss:
 
 **1. @TestConfiguration**
 Definiert zusätzliche Beans oder überschreibt existierende *nur* für Tests.
+
 ```java
 @TestConfiguration
 public class TestConfig {
@@ -347,10 +368,12 @@ section {
     font-size: 25px;
 }
 </style>
+
 ### @WebMvcTest (Controller Layer)
-*   Lädt nur Controller, ControllerAdvice, Json-Mapper, Filter.
-*   Lädt **KEINE** Services, Repositories oder Entities.
-*   Abhängigkeiten müssen gemockt werden (`@MockBean`).
+
+* Lädt nur Controller, ControllerAdvice, Json-Mapper, Filter.
+* Lädt **KEINE** Services, Repositories oder Entities.
+* Abhängigkeiten müssen gemockt werden (`@MockBean`).
 
 ```java
 @WebMvcTest(UserController.class)
@@ -372,10 +395,11 @@ class UserControllerTest {
 ---
 
 ## @DataJpaTest (Persistence Layer)
-*   Lädt Hibernate, Spring Data, DataSource.
-*   Konfiguriert automatisch eine In-Memory DB (H2), außer man deaktiviert es:
+
+* Lädt Hibernate, Spring Data, DataSource.
+* Konfiguriert automatisch eine In-Memory DB (H2), außer man deaktiviert es:
     `@AutoConfigureTestDatabase(replace = Replace.NONE)`
-*   Tests sind standardmäßig `@Transactional` (Rollback am Ende).
+* Tests sind standardmäßig `@Transactional` (Rollback am Ende).
 
 ---
 <style scoped>
@@ -383,9 +407,11 @@ section {
     font-size: 25px;
 }
 </style>
+
 ## @JsonTest (Serialization Layer)
-*   Testet nur JSON Serialisierung/Deserialisierung.
-*   Konfiguriert Jackson/Gson Tester.
+
+* Testet nur JSON Serialisierung/Deserialisierung.
+* Konfiguriert Jackson/Gson Tester.
 
 ```java
 @JsonTest
@@ -409,7 +435,9 @@ section {
     font-size: 25px;
 }
 </style>
+
 ## @RestClientTest (Client Layer)
+
 Testet Klassen, die `RestTemplate` oder `WebClient` nutzen, indem der externe Server gemockt wird.
 
 ```java
@@ -436,13 +464,15 @@ class GithubClientTest {
 ---
 
 ## @MockBean
-*   Entfernt die echte Bean aus dem Context und ersetzt sie durch einen Mockito-Mock.
-*   Resetet den Mock automatisch nach jedem Test.
-*   **Achtung:** Verändert den ApplicationContext -> kann Context-Reload auslösen.
+
+* Entfernt die echte Bean aus dem Context und ersetzt sie durch einen Mockito-Mock.
+* Resetet den Mock automatisch nach jedem Test.
+* **Achtung:** Verändert den ApplicationContext -> kann Context-Reload auslösen.
 
 ## @SpyBean
-*   Behält die **echte** Bean im Context, wickelt aber einen Mockito-Spy drumherum.
-*   Nützlich, wenn man die echte Logik nutzen will, aber *verifizieren* möchte, ob Methoden aufgerufen wurden, oder *einzelne* Methoden stubben will.
+
+* Behält die **echte** Bean im Context, wickelt aber einen Mockito-Spy drumherum.
+* Nützlich, wenn man die echte Logik nutzen will, aber *verifizieren* möchte, ob Methoden aufgerufen wurden, oder *einzelne* Methoden stubben will.
 
 ---
 
@@ -471,16 +501,19 @@ class AuditTest {
 ---
 
 ## Das Problem mit In-Memory DBs (H2)
-*   H2 verhält sich anders als PostgreSQL/MySQL (Syntax, Features, Datentypen).
-*   Tests werden "grün", Produktion crasht ("It works on my machine").
-*   Lösung: Tests gegen **echte** Infrastruktur laufen lassen.
+
+* H2 verhält sich anders als PostgreSQL/MySQL (Syntax, Features, Datentypen).
+* Tests werden "grün", Produktion crasht ("It works on my machine").
+* Lösung: Tests gegen **echte** Infrastruktur laufen lassen.
 
 ## Testcontainers
+
 Eine Java-Library, die Docker-Container für JUnit-Tests startet und stoppt.
 
 ---
 
 ## Setup (Dependencies)
+
 ```xml
 <dependency>
     <groupId>org.springframework.boot</groupId>
@@ -500,7 +533,9 @@ section {
     font-size: 25px;
 }
 </style>
+
 ## Der "Manuelle" Weg (Classic)
+
 Definition eines Containers und manuelles Überschreiben der Properties (`DynamicPropertySource`).
 
 ```java
@@ -526,6 +561,7 @@ class ClassicIntegrationTest {
 ## Der "Moderne" Weg (Spring Boot 3.1+)
 
 ### `@ServiceConnection`
+
 Spring Boot erkennt automatisch Container-Typen und injiziert die Verbindungsinformationen. Kein `DynamicPropertySource` mehr nötig!
 
 ---
@@ -555,12 +591,15 @@ class ModernIntegrationTest {
     }
 }
 ```
+
 ---
 
 ## Local Development mit Testcontainers
+
 Man kann Testcontainers auch nutzen, um die Umgebung für `main` (lokales Starten) bereitzustellen, ohne Docker Compose manuell pflegen zu müssen.
 
 **TestApplication.java:**
+
 ```java
 public class TestApplication {
     public static void main(String[] args) {
@@ -570,6 +609,7 @@ public class TestApplication {
     }
 }
 ```
+
 Damit startet `mvn spring-boot:test-run` die App inklusive Datenbank im Docker-Container.
 
 ---
@@ -578,12 +618,14 @@ section {
     font-size: 25px;
 }
 </style>
+
 ## Testing Tipps & Strategien
 
-1.  **Pyramide beachten:** Viele Unit-Tests, weniger Integrationstests, wenige E2E-Tests.
-2.  **Dirty Context vermeiden:** `@DirtiesContext` ist extrem langsam. Vermeide es, wenn möglich.
-3.  **Parallelisierung:** JUnit 5 kann parallel testen (`junit.jupiter.execution.parallel.enabled=true`). Vorsicht bei Datenbank-Tests (Daten-Kollisionen)!
-4.  **Output Capture:** Testen von `System.out` oder Logging.
+1. **Pyramide beachten:** Viele Unit-Tests, weniger Integrationstests, wenige E2E-Tests.
+2. **Dirty Context vermeiden:** `@DirtiesContext` ist extrem langsam. Vermeide es, wenn möglich.
+3. **Parallelisierung:** JUnit 5 kann parallel testen (`junit.jupiter.execution.parallel.enabled=true`). Vorsicht bei Datenbank-Tests (Daten-Kollisionen)!
+4. **Output Capture:** Testen von `System.out` oder Logging.
+
     ```java
     @Test
     void testLog(CapturedOutput output) {

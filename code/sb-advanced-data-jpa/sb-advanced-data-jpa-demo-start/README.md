@@ -7,6 +7,7 @@ Setup: Start im Projekt `sb-advanced-data-jpa-demo-start`.
 ## 1. Dependencies & Setup
 
 Zeige die `pom.xml`.
+
 - `spring-boot-starter-data-jpa`: Enthält Hibernate, Spring ORM, Spring Data JPA.
 - `h2`: In-Memory Datenbank.
 
@@ -27,6 +28,7 @@ public class DataJpaDemoApplication {
 Wir wollen eine Adresse als wiederverwendbaren Typen (`@Embeddable`) und automatische Zeitstempel (`@CreatedDate`, `@LastModifiedDate`).
 
 Erstelle `Address.java`:
+
 ```java
 @Embeddable
 @Data
@@ -39,6 +41,7 @@ public class Address {
 ```
 
 Erstelle `Order.java` (für spätere EntityGraph Demo):
+
 ```java
 @Entity
 @Table(name = "customer_orders") // Order ist ein reserviertes SQL Keyword
@@ -57,6 +60,7 @@ public class Order {
 ```
 
 Update `Customer.java`:
+
 ```java
 @Entity
 @Data
@@ -95,6 +99,7 @@ public class Customer {
 Oft wollen wir nicht die ganze Entity laden.
 
 **Interface Projection:** `CustomerNameOnly.java`
+
 ```java
 public interface CustomerNameOnly {
     String getFirstName();
@@ -104,6 +109,7 @@ public interface CustomerNameOnly {
 ```
 
 **Class DTO:** `CustomerDTO.java`
+
 ```java
 @Data
 @AllArgsConstructor
@@ -180,9 +186,11 @@ public CommandLineRunner demo(CustomerRepository repository) {
     };
 }
 ```
+
 Um `@Modifying` im Runner auszuführen, müsste man eigentlich eine Transaktion öffnen. Für die Demo reicht der Hinweis oder das Hinzufügen von `@Transactional` an der Runner-Methode (funktioniert in Tests, im Runner teils tricky, besser in Service auslagern).
 
 **Zusammenfassung:**
+
 - **EntityGraph**: Performance-Optimierung.
 - **Projections/DTOs**: Daten-Reduktion.
 - **Embedded**: Strukturierung.

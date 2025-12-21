@@ -37,52 +37,65 @@ Die Anwendung läuft danach auf `http://localhost:8080`.
 ## API – Schritt für Schritt testen
 
 1) **Standard-Bestellung (Batch-Ack über Container)**  
+
    ```bash
    curl -X POST http://localhost:8080/api/orders \
      -H "Content-Type: application/json" \
      -d '{"customer":"Alice","item":"Book","quantity":2,"priority":false,"simulateError":false}'
    ```
+
    Erwartung: landet auf `orders.standard` und zusätzlich im Audit-Topic.
 
 2) **Priority-Bestellung mit manuellem Ack**  
+
    ```bash
    curl -X POST http://localhost:8080/api/orders \
      -H "Content-Type: application/json" \
      -d '{"customer":"Bob","item":"Laptop","quantity":1,"priority":true,"simulateError":false}'
    ```
+
    Erwartung: Listener acked manuell, Audit bekommt eine Kopie.
 
 3) **Priority-Bestellung absichtlich fehlschlagen lassen** (`simulateError=true`)  
+
    ```bash
    curl -X POST http://localhost:8080/api/orders \
      -H "Content-Type: application/json" \
      -d '{"customer":"Eve","item":"Phone","quantity":1,"priority":true,"simulateError":true}'
    ```
+
    Erwartung: Listener wirft eine Exception, der `DefaultErrorHandler` published nach einem Retry nach `orders.dlt` (Partition bleibt gleich).
 
 4) **Broadcast an mehrere Consumer-Gruppen**  
+
    ```bash
    curl -X POST http://localhost:8080/api/announcements \
      -H "Content-Type: application/json" \
      -d '{"message":"System maintenance at 22:00"}'
    ```
+
    Erwartung: Nachricht wird von `notifications-email` und `notifications-sms` konsumiert.
 
 5) **Logs ansehen**  
+
    ```bash
    curl http://localhost:8080/api/logs
    ```
+
    Optional gefiltert nach Topic:  
+
    ```bash
    curl "http://localhost:8080/api/logs?topic=orders.dlt"
    ```
 
 6) **Logs löschen**  
+
    ```bash
    curl -X DELETE http://localhost:8080/api/logs
    ```
 
 Damit sieht man:
+
 - Wie Producer/Consumer mit JSON-Records funktionieren
 - Unterschied zwischen containerseitigem und manuellem Ack
 - Fanout über Consumer-Gruppen
