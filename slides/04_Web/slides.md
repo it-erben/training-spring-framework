@@ -11,17 +11,19 @@ paginate: true
 ---
 
 ## In diesem Modul
-*   REST-Controller Basics: ResponseEntity, Content Negotiation
-*   Validation & Error Handling
-*   Moderne HTTP Clients: RestClient, Declarative HTTP Interfaces
-*   Async/Streaming: CompletableFuture, Server-Sent Events
+
+* REST-Controller Basics: ResponseEntity, Content Negotiation
+* Validation & Error Handling
+* Moderne HTTP Clients: RestClient, Declarative HTTP Interfaces
+* Async/Streaming: CompletableFuture, Server-Sent Events
 
 ---
 
 ## Wiederholung: Der @RestController
-*   Spezielle `Controller`-Annotation, die `Controller` und `@ResponseBody` kombiniert.
-*   Jede Methode gibt direkt Daten zurück (keine View-Auflösung).
-*   Behandelt JSON/XML-Serialisierung automatisch.
+
+* Spezielle `Controller`-Annotation, die `Controller` und `@ResponseBody` kombiniert.
+* Jede Methode gibt direkt Daten zurück (keine View-Auflösung).
+* Behandelt JSON/XML-Serialisierung automatisch.
 
 ---
 
@@ -48,6 +50,7 @@ public class UserController {
 ---
 
 ## Wiederholung: ResponseEntity
+
 Volle Kontrolle über HTTP Response (Status, Header, Body).
 
 ```java
@@ -66,8 +69,8 @@ public ResponseEntity<User> findUser(@PathVariable Long id) {
 Das Bean Validation-Framework wird auch vom Spring Framework unterstützt, um Daten mit verschiedenen Annotationen zu prüfen.
 Die wichtigsten Annotationen:
 
-*   `@Valid`: Standard-JSR 380 (Bean Validation) Annotation.
-*   `@Validated`: Spring-spezifisch, unterstützt Validation Groups.
+* `@Valid`: Standard-JSR 380 (Bean Validation) Annotation.
+* `@Validated`: Spring-spezifisch, unterstützt Validation Groups.
 
 ---
 
@@ -92,9 +95,11 @@ public ResponseEntity<User> createUser(@Valid @RequestBody UserCreateDto userDto
     // ...
 }
 ```
+
 ---
 
 ## Validation Groups
+
 Unterschiedliche Regeln für verschiedene Szenarien (z.B. Erstellen vs. Aktualisieren).
 
 ```java
@@ -120,6 +125,7 @@ public ResponseEntity<User> update(@Validated(OnUpdate.class) @RequestBody UserD
 ---
 
 ## Custom Validators
+
 Eigene Validierungslogik implementieren.
 
 ```java
@@ -145,6 +151,7 @@ public class UniqueEmailValidator implements ConstraintValidator<UniqueEmail, St
 ---
 
 ## Globales Error Handling
+
 Zentrales Fehlerhandling für die gesamte REST-API.
 
 ```java
@@ -167,8 +174,11 @@ public class GlobalExceptionHandler {
     }
 }
 ```
+
 ---
+
 ## ProblemDetails (RFC 7807)
+
 Standardisiertes Format für HTTP API Fehlerantworten (seit Spring Boot 3).
 
 ```json
@@ -184,6 +194,7 @@ Standardisiertes Format für HTTP API Fehlerantworten (seit Spring Boot 3).
   }
 }
 ```
+
 Spring Boot konvertiert `ProblemDetail` automatisch in JSON oder XML, wenn der `Accept`-Header dies verlangt.
 
 ---
@@ -214,18 +225,21 @@ public ProblemDetail handleBusinessException(MyBusinessException ex) {
 ---
 
 ## Status Quo: RestTemplate
-*   Lange Zeit der Standard für synchrone Calls.
-*   Jetzt im **Maintenance Mode**. Es wird keine neuen Features mehr geben.
-*   Nachteil: Viele überladene Methoden, kein Fluent API.
+
+* Lange Zeit der Standard für synchrone Calls.
+* Jetzt im **Maintenance Mode**. Es wird keine neuen Features mehr geben.
+* Nachteil: Viele überladene Methoden, kein Fluent API.
 
 **Die Nachfolger:**
-1.  **RestClient (Spring Boot 3.2):** Synchron, Fluent API. Basiert auf Servlet-Stack.
-2.  **WebClient (Spring 5):** Reaktiv, non-blocking. Erfordert `spring-boot-starter-webflux`.
-3.  **Declarative HTTP Interfaces (Spring 6):** Interface-basiert (via Proxy).
+
+1. **RestClient (Spring Boot 3.2):** Synchron, Fluent API. Basiert auf Servlet-Stack.
+2. **WebClient (Spring 5):** Reaktiv, non-blocking. Erfordert `spring-boot-starter-webflux`.
+3. **Declarative HTTP Interfaces (Spring 6):** Interface-basiert (via Proxy).
 
 ---
 
 ## Der RestClient (Synchron)
+
 Bietet eine moderne Fluent API ohne Reactive Stack (Mono/Flux).
 
 ```java
@@ -249,6 +263,7 @@ public class ProductClient {
 ---
 
 ## Declarative HTTP Interfaces
+
 Definiere die API als Java Interface (ähnlich Feign/Retrofit).
 
 ```java
@@ -260,11 +275,13 @@ public interface UserApi {
     void createUser(@RequestBody User user);
 }
 ```
+
 Dies benötigt einen **Unterbau**, der die Requests ausführt (WebClient oder RestClient).
 
 ---
 
 ## Declarative Client Factory (mit RestClient)
+
 Verbindung von Interface und Engine.
 
 ```java
@@ -293,9 +310,9 @@ public class ClientConfig {
 ---
 
 ## `CompletableFuture` als Rückgabetyp
-*   Der Controller Thread wird freigegeben, während die Logik im Hintergrund arbeitet.
-*   Verbessert die Skalierbarkeit bei blockierenden Operationen.
 
+* Der Controller Thread wird freigegeben, während die Logik im Hintergrund arbeitet.
+* Verbessert die Skalierbarkeit bei blockierenden Operationen.
 
 ```java
 @RestController
@@ -312,6 +329,7 @@ public class AsyncController {
 ---
 
 ## Streaming Responses (Server-Sent Events)
+
 Für Realtime-Updates, z.B. wenn der Client ständig neue Daten erhalten soll.
 
 ```java
@@ -339,15 +357,20 @@ public class SseController {
 # OpenAPI (früher Swagger)
 
 ---
+
 ## Ziel
+
 Standardisierte, maschinenlesbare Beschreibung von REST-APIs.
-*   **Dokumentation:** Interaktive UI (Swagger UI).
-*   **Code-Generierung:** Clients in jeder Sprache.
+
+* **Dokumentation:** Interaktive UI (Swagger UI).
+* **Code-Generierung:** Clients in jeder Sprache.
 
 Man unterscheidet zwei Ansätze: Code First und Contract First.
 
 ---
+
 ### Ansatz 1: Code-First (SpringDoc OpenAPI)
+
 Man schreibt den Code, die Doku wird daraus generiert.
 
 ```java
@@ -375,13 +398,14 @@ public class ProductController {
 
 ---
 
-
 ### Ansatz 2: Contract-First
+
 Man schreibt zuerst die OpenAPI-Spezifikation (YAML/JSON) und generiert daraus den Code (Interfaces, DTOs).
 
 **Vorteile:**
-*   **API-Design als erste Klasse:** Fokus auf das API-Design, bevor implementiert wird.
-*   **Parallele Entwicklung:** Backend- und Frontend-Teams können gleichzeitig arbeiten.
-*   **Konsistenz:** API ist über alle Services hinweg konsistent.
+
+* **API-Design als erste Klasse:** Fokus auf das API-Design, bevor implementiert wird.
+* **Parallele Entwicklung:** Backend- und Frontend-Teams können gleichzeitig arbeiten.
+* **Konsistenz:** API ist über alle Services hinweg konsistent.
 
 **Tool:** `openapi-generator-maven-plugin` (oder Gradle Plugin).

@@ -36,44 +36,55 @@ Die Anwendung läuft danach auf `http://localhost:8080`.
 ## API – Schritt für Schritt testen
 
 1) **Standard-Bestellung (auto-ack)**  
+
    ```bash
    curl -X POST http://localhost:8080/api/orders \
      -H "Content-Type: application/json" \
      -d '{"customer":"Alice","item":"Book","quantity":2,"priority":false,"simulateError":false}'
    ```
+
    Erwartung: landet in `orders.standard`, wird auto-acknowledged und zusätzlich im Audit-Tap `orders.audit` verarbeitet.
 
 2) **Priority-Bestellung mit manuellem Ack**  
+
    ```bash
    curl -X POST http://localhost:8080/api/orders \
      -H "Content-Type: application/json" \
      -d '{"customer":"Bob","item":"Laptop","quantity":1,"priority":true,"simulateError":false}'
    ```
+
    Erwartung: Listener ackt manuell; bleibt beim Erfolg in `orders.priority` verarbeitet und ebenfalls im Audit-Tap.
 
 3) **Priority-Bestellung absichtlich fehlschlagen lassen** (`simulateError=true`)  
+
    ```bash
    curl -X POST http://localhost:8080/api/orders \
      -H "Content-Type: application/json" \
      -d '{"customer":"Eve","item":"Phone","quantity":1,"priority":true,"simulateError":true}'
    ```
+
    Erwartung: Listener schickt `basicNack(..., requeue=false)`, Nachricht wird über die DLX in `orders.dlq` umgeleitet.
 
 4) **Broadcast an alle (Fanout)**  
+
    ```bash
    curl -X POST http://localhost:8080/api/announcements \
      -H "Content-Type: application/json" \
      -d '{"message":"System maintenance at 22:00"}'
    ```
+
    Erwartung: Nachricht landet gleichzeitig in `notifications.email` und `notifications.sms`.
 
 5) **Logs ansehen** (zeigen, was wirklich zugestellt wurde)  
+
    ```bash
    curl http://localhost:8080/api/logs
    ```
+
    Optional gefiltert nach Queue: `curl "http://localhost:8080/api/logs?queue=orders.dlq"`.
 
 6) **Logs löschen** (damit der nächste Test sauber ist)  
+
    ```bash
    curl -X DELETE http://localhost:8080/api/logs
    ```
@@ -81,12 +92,14 @@ Die Anwendung läuft danach auf `http://localhost:8080`.
 ## Was sieht man im Log?
 
 Das Log enthält Zeilen wie:
+
 - Queue-Name (z. B. `orders.priority`, `orders.dlq`, `notifications.email`)
 - Eine kurze Notiz, was passiert ist (z. B. „priority order (manual-ack)“ oder „simulateError=true -> basicNack to DLQ“)
 - Den Payload (OrderMessage oder BroadcastMessage)
 - Zeitstempel der Verarbeitung
 
 Damit kann man gut nachvollziehen:
+
 - Automatisches vs. manuelles Acknowledge
 - Dead-Letter-Routing bei Fehlern
 - Topic-Routing (Standard vs. Priority vs. Audit-Tap)
@@ -95,6 +108,7 @@ Damit kann man gut nachvollziehen:
 ## Warum ist das nützlich?
 
 Die Demo ist ein kompaktes Nachschlagewerk für typische RabbitMQ-Patterns in Spring Boot:
+
 - Wie man Exchanges, Queues und Bindings per Java Config aufsetzt
 - Wie man das `RabbitTemplate` für Publisher Confirms/Returns konfiguriert
 - Wie man `@RabbitListener` mit manuellem Ack nutzt

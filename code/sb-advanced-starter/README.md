@@ -1,6 +1,8 @@
 Erstellung eines Spring Boot Custom Starter
 ---
-## Schritt 1: Erstellen eines Maven-Projekts
+
+Schritt 1: Erstellen eines Maven-Projekts
+---
 
 Erstelle ein neues Maven-Projekt mit folgender `pom.xml`:
 
@@ -50,7 +52,8 @@ Erstelle ein neues Maven-Projekt mit folgender `pom.xml`:
 </project>
 ```
 
-## Schritt 2: Implementierung einer Custom AutoConfiguration
+Schritt 2: Implementierung einer Custom AutoConfiguration
+---
 
 Erstelle eine neue Java-Klasse `CustomServiceAutoConfiguration.java` im Verzeichnis `src/main/java/com/example`:
 
@@ -74,7 +77,8 @@ public class CustomServiceAutoConfiguration {
 }
 ```
 
-## Schritt 3: Implementierung der CustomServiceProperties
+Schritt 3: Implementierung der CustomServiceProperties
+---
 
 Erstelle eine neue Java-Klasse `CustomServiceProperties.java` im Verzeichnis `src/main/java/com/example`:
 
@@ -100,7 +104,8 @@ public class CustomServiceProperties {
 }
 ```
 
-## Schritt 4: Implementierung der CustomService-Klasse
+Schritt 4: Implementierung der CustomService-Klasse
+---
 
 Erstelle eine neue Java-Klasse `CustomService.java` im Verzeichnis `src/main/java/com/example`:
 
@@ -122,7 +127,8 @@ public class CustomService {
 }
 ```
 
-## Schritt 5: spring.factories-Datei und imports-Datei erstellen
+Schritt 5: spring.factories-Datei und imports-Datei erstellen
+---
 
 Erstelle eine Datei namens `spring.factories` im Verzeichnis `src/main/resources/META-INF` und füge folgende Zeile hinzu:
 
@@ -131,11 +137,13 @@ org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.example.Custo
 ```
 
 Außerdem benötigst du seit Spring Boot 3 noch folgende Datei: `src/main/resources/META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports` mit dem Inhalt
+
 ```
 com.example.CustomServiceAutoConfiguration
 ```
 
-## Schritt 6: Maven-Paket erstellen
+Schritt 6: Maven-Paket erstellen
+---
 
 Baue das Projekt im Projekt-Verzeichnis mit Maven:
 
@@ -147,7 +155,8 @@ Nun sollte das Projekt erfolgreich gebaut und ein JAR in deinem lokalen Maven-Re
 
 Als Nächstes wollen wir eine neue Spring Boot-Anwendung erstellen, die den neuen Starter benutzt.
 
-## Schritt 7: Spring Boot Anwendung erstellen
+Schritt 7: Spring Boot Anwendung erstellen
+---
 
 Erstelle ein neues Maven-Projekt mit folgender `pom.xml`:
 
@@ -197,7 +206,8 @@ Erstelle ein neues Maven-Projekt mit folgender `pom.xml`:
 </project>
 ```
 
-## Schritt 8: `application.properties` erstellen
+Schritt 8: `application.properties` erstellen
+---
 
 Erstelle eine Datei namens `application.properties` im Verzeichnis `src/main/resources` und füge folgende Zeile hinzu:
 
@@ -205,7 +215,8 @@ Erstelle eine Datei namens `application.properties` im Verzeichnis `src/main/res
 custom.service.message=Hallo, hier ist der Custom Starter!
 ```
 
-## Schritt 9: tech.erben.various.Main-Klasse erstellen
+Schritt 9: tech.erben.various.Main-Klasse erstellen
+---
 
 Erstelle eine neue Java-Klasse `CustomStarterDemoApplication.java` im Verzeichnis `src/main/java/com/example/demo`:
 
@@ -235,7 +246,8 @@ public class CustomStarterDemoApplication implements CommandLineRunner {
 }
 ```
 
-## Schritt 10: Anwendung ausführen
+Schritt 10: Anwendung ausführen
+---
 
 Führe die Anwendung aus, indem du das folgende Maven-Kommando im Projekt-Verzeichnis ausführst:
 

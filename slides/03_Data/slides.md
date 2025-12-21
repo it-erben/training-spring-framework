@@ -11,21 +11,25 @@ paginate: true
 ---
 
 ## In diesem Modul
-*   JPA/EntityManager, Repository-Pattern
-*   JPQL, Fetch Joins und EntityGraph
-*   Projections/DTOs, Auditing, Transaktionen (Propagation/Isolation)
+
+* JPA/EntityManager, Repository-Pattern
+* JPQL, Fetch Joins und EntityGraph
+* Projections/DTOs, Auditing, Transaktionen (Propagation/Isolation)
 
 ---
 
 ## JPA-Architektur
+
 Spring Data legt eine Abstraktionsschicht über den JPA Provider (meist Hibernate).
-1.  **JPA (Java Persistence API):** Standard-Interfaces wie `EntityManager`.
-2.  **Hibernate:** Die wichtigste Implementierung.
-3.  **Spring Data JPA:** Abstraktionsschicht über Hibernate mit Repositories, die Boilerplate-Code reduziert.
+
+1. **JPA (Java Persistence API):** Standard-Interfaces wie `EntityManager`.
+2. **Hibernate:** Die wichtigste Implementierung.
+3. **Spring Data JPA:** Abstraktionsschicht über Hibernate mit Repositories, die Boilerplate-Code reduziert.
 
 ---
 
 ## Der Entity Manager
+
 Auch wenn wir meistens Repositories nutzen, arbeitet im Hintergrund immer der `EntityManager`.
 
 ```java
@@ -37,11 +41,13 @@ public User save(User user) {
     return user;
 }
 ```
+
 Der Persistence Context ist ein **First-Level Cache**. Änderungen an Managed Entities werden beim Transaktionsende automatisch in die DB geschrieben ("Dirty Checking").
 
 ---
 
 ## Repository Pattern
+
 Statt DAOs manuell zu schreiben, definieren wir Interfaces.
 
 ```java
@@ -64,7 +70,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 * JPQL (*Java Persistence Query Language*) ist eine objektorientierte Abfragesprache, ähnlich zu SQL, aber operiert auf **Entities** und **ihren Attributen** statt auf Tabellen und Spalten.  
 * Der JPA Provider (z. B. Hibernate) übersetzt JPQL zur Laufzeit in vendor-spezifisches SQL.  
 * Vorteil: Queries bleiben portabel und eng an das Domain-Modell gekoppelt.
-
 
 ---
 <style scoped>
@@ -95,10 +100,12 @@ List<Order> findOrdersOfPremiumCustomers();
 ```
 
 ### Fetch Join
+
 ```java
 @Query("SELECT u FROM User u JOIN FETCH u.roles")
 List<User> findAllWithRoles();
 ```
+
 ---
 
 # Eager Loading
@@ -109,6 +116,7 @@ List<User> findAllWithRoles();
 
 Das N+1-Problem beschreibt, was häufig beim Iterieren über Entities passiert, wenn sie selbst eine 1:N-Relation haben.
 Man lädt zum Beispiel 100 User in einer Query. Dann greift man auf `user.getAddresses()` zu, welches standardmäßig lazy geschieht.
+
 * Für jeden der 100 User wird ein neues SELECT gefeuert.
 * 1 + 100 = 101 Queries.
 * Das ist ein Performance-Killer.
@@ -116,6 +124,7 @@ Man lädt zum Beispiel 100 User in einer Query. Dann greift man auf `user.getAdd
 ---
 
 ### Lösung 1: @EntityGraph
+
 Deklaratives Eager-Loading im Repository.
 
 ```java
@@ -123,9 +132,10 @@ Deklaratives Eager-Loading im Repository.
 List<User> findAll();
 ```
 
-
 ### Lösung 2: JPQL Fetch Join
+
 Lädt ebenfalls den ganzen Graph.
+
 ```java
 @Query("SELECT u FROM User u JOIN FETCH u.addresses")
 List<User> findAllWithAddresses();
@@ -139,17 +149,19 @@ List<User> findAllWithAddresses();
 
 ## Projections mit DTOs
 
-* Projektionen laden nur Teile der Entities. 
+* Projektionen laden nur Teile der Entities.
 * Dafür schreibt man neue Klassen, idealerweise als Record, welche die Projektion aufnehmen.
 * Dafür gibt es drei Optionen:
     * Interface Projection
     * Class Projection
     * JPQL Projection
 
---- 
+---
 
 ### Interface Projection
+
 Spring generiert zur Laufzeit einen Proxy.
+
 ```java
 public interface UserView {
     String getUsername();
@@ -162,7 +174,9 @@ public interface UserView {
 ---
 
 ### Class Projection (Records)
+
 Type-safe und performant (selektiert nur benötigte Spalten im SQL).
+
 ```java
 public record UserDto(String username, String email) {}
 // Im Repo:
@@ -185,10 +199,12 @@ List<UserSummary> findActiveUserSummaries();
 ---
 
 # Auditing
+
 Automatisches Tracking von Änderungen.
 
-1.  `@EnableJpaAuditing` in der Config.
-2.  Entity anpassen:
+1. `@EnableJpaAuditing` in der Config.
+2. Entity anpassen:
+
 ```java
 @EntityListeners(AuditingEntityListener.class)
 public class User {
@@ -207,20 +223,23 @@ public class User {
 ---
 
 ## Basics
+
 In Spring markiert `@Transactional` Methoden, die atomar ausgeführt werden sollen.
-*   Default: Rollback nur bei `RuntimeException` (unchecked).
-*   Checked Exceptions (z.B. `IOException`) lösen standardmäßig **keinen** Rollback aus!
+
+* Default: Rollback nur bei `RuntimeException` (unchecked).
+* Checked Exceptions (z.B. `IOException`) lösen standardmäßig **keinen** Rollback aus!
     -> `@Transactional(rollbackFor = Exception.class)`
 
 ---
 
 ## Propagation
+
 Wie verhalten sich Transaktionen bei verschachtelten Service-Aufrufen?
 
-*   **REQUIRED (Default):** Nutze vorhandene TX, sonst neue starten.
-*   **REQUIRES_NEW:** Starte *immer* eine neue TX (pausiere die alte). Wichtig für Logs, die trotz Rollback geschrieben werden sollen.
-*   **SUPPORTS:** Laufe in TX wenn da, sonst ohne.
-*   **MANDATORY:** Wirf Exception, wenn keine TX da ist.
+* **REQUIRED (Default):** Nutze vorhandene TX, sonst neue starten.
+* **REQUIRES_NEW:** Starte *immer* eine neue TX (pausiere die alte). Wichtig für Logs, die trotz Rollback geschrieben werden sollen.
+* **SUPPORTS:** Laufe in TX wenn da, sonst ohne.
+* **MANDATORY:** Wirf Exception, wenn keine TX da ist.
 
 ```java
 @Service
@@ -266,9 +285,10 @@ public class AuditService {
 ---
 
 ## Isolation Levels
-*   **READ_COMMITTED:** Standard. Verhindert Dirty Reads.
-*   **REPEATABLE_READ:** Verhindert Non-Repeatable Reads.
-*   **SERIALIZABLE:** Sperrt Tabellen/Rows aggressiv. Sicher, aber langsam.
+
+* **READ_COMMITTED:** Standard. Verhindert Dirty Reads.
+* **REPEATABLE_READ:** Verhindert Non-Repeatable Reads.
+* **SERIALIZABLE:** Sperrt Tabellen/Rows aggressiv. Sicher, aber langsam.
 
 ---
 
@@ -321,6 +341,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 ---
 
 ## MongoDB: Optimistic Locking
+
 Verhindert "Lost Updates" in verteilten Systemen ohne harte DB-Locks.
 
 ```java
@@ -330,11 +351,13 @@ public class Product {
     @Version Long version; // Spring Data prüft und inkrementiert dies
 }
 ```
+
 Wenn zwei User gleichzeitig speichern, gewinnt der erste. Der zweite bekommt eine `OptimisticLockingFailureException`.
 
 ---
 
 ## Redis als Cache
+
 Caching beschleunigt Lesezugriffe dramatisch.
 
 ```java
@@ -357,6 +380,7 @@ public class PricingService {
 ---
 
 ## Distributed Locks (ShedLock)
+
 Szenario: Eine `@Scheduled` Methode soll in einem Cluster (3 Instanzen) nur **einmal** ausgeführt werden.
 
 **Lösung:** ShedLock (nutzt DB oder Redis als Lock-Provider).

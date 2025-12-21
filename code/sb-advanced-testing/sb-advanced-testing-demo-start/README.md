@@ -1,7 +1,9 @@
 # Testing mit Spring Boot
 
 ## Basics
+
 Als Erstes benötigen wir die Test-Dependency:
+
 ```xml
 <dependency>
     <groupId>org.springframework.boot</groupId>
@@ -9,6 +11,7 @@ Als Erstes benötigen wir die Test-Dependency:
     <scope>test</scope>
 </dependency>
 ```
+
 Zeige im Dependency Tree, dass jetzt schon JUnit Jupiter enthalten ist.
 
 Erstelle eine Testklasse mit `@SpringBootTest`. Demonstriere, dass sich Services autowiren und Properties injecten lassen.
@@ -31,6 +34,7 @@ public class ApplicationContextTest {
     }
 }
 ```
+
 Auch der ApplicationContext lässt sich injecten.
 
 ```java
@@ -52,11 +56,14 @@ Erkläre, dass `SpringBootTest` automatisch einen Component Scan auf dem aktuell
 ```
 
 ## Mocks
+
 Gebe noch mal eine kurze Einführung zu Mocks. Danach füge folgende Dependency ein:
+
 ```java
 @Autowired
 MockMeBean mockMeBean;
 ```
+
 Führe den Test aus und zeige in der Kommandzeile, dass wie erwartet der Konstruktur aufgerufen wird. Ersetze danach `@Autowired` durch `@MockBean` und mocke die Methode im Test:
 
 ```java
@@ -95,11 +102,13 @@ public void mockingDependencyTest() {
     System.out.println(injectMockExampleService.callMockMeBean());
 }
 ```
+
 Zeige, dass er fehlschlägt. Ersetze `@Mock` wieder durch `@MockBean` und zeige, dass der Test grün wird.
 
 ## Expectations und Verifications
 
 Bei der Gelegenheit geben wir noch mal einen Überblick über Matcher und Expectations.
+
 ```java
 
     @Test
@@ -135,7 +144,9 @@ Bei der Gelegenheit geben wir noch mal einen Überblick über Matcher und Expect
 ```
 
 ## Exceptions
+
 Hier ist ein Snippet, um Exception Mocking und Assertions zu demonstrieren.
+
 ```java
 @Test
 void mockAndTestExceptions() {
@@ -149,6 +160,7 @@ void mockAndTestExceptions() {
 
 Gehe Schritt für Schritt den folgenden Testfall durch.
 Erläutere dabei:
+
 - WebMvcTest: Es ist kein "richtiger" Kontext. Zeige im Log `o.s.t.web.servlet.TestDispatcherServlet`. Kann aber ansonsten das Gleiche wie `@SpringBootTest`
 - MockMvc Expectations
 - MockMvc Multipart
@@ -227,6 +239,7 @@ Hier müssen wir `MockMeBean` mocken, weil ansonsten der Context nicht hochfähr
 ## Datenbank-Testing
 
 Füge diese Deps hinzu:
+
 ```xml
 <dependency>
     <groupId>org.springframework.boot</groupId>
@@ -241,6 +254,7 @@ Füge diese Deps hinzu:
 ```
 
 Implementiere und erläutere diesen Test:
+
 ```java
 @DataJpaTest
 @EntityScan("tech.erben.springboot.testing")

@@ -5,8 +5,9 @@ einen Tomcat embedded und eine H2-DB enthält.
 Wir wollen auf dem Weg erklären, wie Spring Boot
 anhand von Conditions erkennt, was zu starten ist.
 
-Setup: 
+Setup:
 Starte im Projekt "sb-advanced-autoconfiguration-demo-start"
+
 ## 1 Tomcat embedded
 
 Wir steigen damit ein, dass wir uns einen Tomcat "as code" zusammenschrauben.
@@ -19,6 +20,7 @@ Erzeuge eine leere tech.erben.various.Main-Klasse mit tech.erben.various.Main-Me
     <version>10.1.11</version>
 </dependency>
 ```
+
 Baue die rohe Application mit Embedded Tomcat:
 
 ```java
@@ -33,6 +35,7 @@ public class SampleApplication {
     }
 }
 ```
+
 Dieses Beispiel ist noch nicht startfähig!!!
 Binde nun einen Context und ein Servlet ein. Erwähne das DispatcherServlet von Spring.
 
@@ -58,9 +61,11 @@ public class SampleApplication {
     }
 }
 ```
+
 Der Server kann jetzt starten und gibt immer ein Date zurück
 
 ## 2 Spring Context
+
 Als nächstes "springifizieren" wir das Projekt. Erwähne, dass in Legacy-Projekten nicht mehr zu sehen ist, was man für Barebones-Spring eigentlich braucht. Es reicht spring-context
 
 ```xml
@@ -164,6 +169,7 @@ public class DefaultConfig {
 }
 
 ```
+
 Füge eine `Conditional`-Annotation zur `Bean`-Methode hinzu. Implementiere sie mit einem Class-Lookup.
 
 ```java
@@ -196,13 +202,16 @@ public class DefaultConfig {
     }
 }
 ```
+
 Stelle die Tomcat-Dependency auf den Provided-Scope, importiere neu und starte die Anwendung. Zeige, dass Tomcat nicht mehr startet. Erläutere, dass dies genau die Logik hinter Spring Boot ist. Wir gehen nun erst mal auf Properties ein.
 Denke daran, dass die Main-Klasse keinen Tomcat-Import mehr haben darf.
+
 ## Properties
 
 Erläutere, dass Properties an verschiedenen Stellen definiert werden können. Klassiker: `application.properties`. Ein Überblick findet sich in der [Referenz-Dokumentation](https://docs.spring.io/spring-boot/docs/current/reference/html/features.html#features.external-config)
 
 Lösche die `application.properties`. Füge `PropertySources` zur `DefaultConfig` hinzu:
+
 ```java
 @PropertySources(
     {
@@ -212,6 +221,7 @@ Lösche die `application.properties`. Füge `PropertySources` zur `DefaultConfig
 )
 public class DefaultConfig{}
 ```
+
 Starte die Anwendung und zeige die `FileNotFoundException`s. Füge `ignoreResourceNotFound` ein und erläutere, dass Spring Boot genau das macht. Starte neu und zeige, dass nur noch Logs kommen.
 
 ## H2
@@ -263,6 +273,7 @@ public static void main(String[] args)  {
     }
 }
 ```
+
 Entferne das await in der Tomcat-Config und denke daran, die DataSource-Config zu importieren.
 
 Starte und zeige, dass es funktioniert hat.
@@ -286,6 +297,7 @@ public class DataSourcePropertySetCondition implements Condition {
     }
 }
 ```
+
 Eigentlich würde man hier die URL noch auf wohlgeformtheit und den Driver auf Existenz prüfen.
 Starte die Anwendung und sie sollte noch funktionieren. Entferne eine Zeile aus der `application.properties` und sie sollte nicht mehr funktionieren. Die Bean fehlt (`NoSuchBeanDefinitionException`).
 
@@ -295,7 +307,7 @@ Importiere den Spring Boot-Sourcecode in ein neues IntelliJ-Projekt.
 
 Zeige die spring-boot-starter. Es ist nichts in den Modulen drin außer Gradle-Dateien. Das ist also nur Dependency Management. spring-boot-starter-web hat z.B. eine Dependency auf spring-boot-starter-tomcat. Dort sind dann einige "echte" Dependencies drin, und dort ist auch die Tomcat-Core-Dependency dabei.
 
-Zeige die Klasse `SpringBootApplication`. Erwähne, dass sie so etwas wie eine Default-Config ist. Zeige, dass sie selbst viele Annotations hat, insbesondere `ComponentScan`, wodurch alle Klassen mit einigen Filtern gescannt werden. Da im `org.springframework.autoconfiguration` sehr, sehr viel Code ist, wird entsprechend alles über den `ComponentScan` gescannt. Zeige einige Beispiele wie z.B. Flyway und Couchbase und zeige, dass es immer eine Klasse gibt, die auf `AutoConfiguration` im Namen endet. 
+Zeige die Klasse `SpringBootApplication`. Erwähne, dass sie so etwas wie eine Default-Config ist. Zeige, dass sie selbst viele Annotations hat, insbesondere `ComponentScan`, wodurch alle Klassen mit einigen Filtern gescannt werden. Da im `org.springframework.autoconfiguration` sehr, sehr viel Code ist, wird entsprechend alles über den `ComponentScan` gescannt. Zeige einige Beispiele wie z.B. Flyway und Couchbase und zeige, dass es immer eine Klasse gibt, die auf `AutoConfiguration` im Namen endet.
 
 Zeige die AutoConfiguration für `DataSource`und dass auch sie viele Annotations hat. Wir schauen erstmal auf die Classes, insbesondere die Nested Classes.
 Es sind im Prinzip alles nur Spring-Konfigurationen. Schauen wir uns die `PooledDataSourceConfiguration` an. Sie hat eine Condition. Sie prüft letztendlich nur auf ein Property. `ConditionalOnProperty` ist eine Spring Boot-Erweiterung. Zeige andere, wie z.B. `ConditionalOnBean`. Besonders interessant ist `ConditionalOnMissingBean`.
