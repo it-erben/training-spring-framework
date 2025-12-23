@@ -1,5 +1,7 @@
 package tech.erben;
 
-import org.springframework.data.annotation.Id;
-
-public record PhoneNumber(@Id String id, Integer countryCode, Integer number) {}
+/**
+ * Simple value object embedded into {@link Person} documents.
+ */
+public record PhoneNumber(Integer countryCode, Integer number) {
+}
