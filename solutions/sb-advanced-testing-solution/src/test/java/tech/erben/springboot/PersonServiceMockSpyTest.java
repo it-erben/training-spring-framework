@@ -1,15 +1,15 @@
 package tech.erben.springboot;
 
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
 
 @SpringBootTest
 class PersonServiceMockSpyTest {
@@ -17,10 +17,10 @@ class PersonServiceMockSpyTest {
     @Autowired
     PersonService personService;
 
-    @MockBean
+    @MockitoBean
     PersonRepository personRepository;
 
-    @SpyBean
+    @MockitoSpyBean
     PersonLoggingService personAuditService;
 
     @Test
