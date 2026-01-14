@@ -6,15 +6,16 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
@@ -31,6 +32,9 @@ public class CachingTest {
     @Autowired
     PersonService personService;
 
+    @Autowired
+    CacheManager cacheManager;
+
     @AfterEach
     void tearDown() {
         personRepository.deleteAll();
@@ -38,6 +42,7 @@ public class CachingTest {
 
     @Test
     void testCaching() {
+        assertInstanceOf(RedisCacheManager.class, cacheManager, "Expected RedisCacheManager but got " + cacheManager.getClass().getName());
         Person person = randomPersonWithId(UUID.randomUUID().toString());
         when(personRepository.save(Mockito.any())).thenReturn(person);
         when(personRepository.findById(eq(person.id()))).thenReturn(Optional.of(person));
@@ -55,7 +60,7 @@ public class CachingTest {
         personService.save(updated);
         when(personRepository.save(Mockito.any())).thenReturn(person);
         when(personRepository.findById(eq(updated.id())))
-            .thenReturn(Optional.of(updated));
+                .thenReturn(Optional.of(updated));
         cacheMiss = personService.findById(updated.id());
         cacheHit = personService.findById(updated.id());
         assertTrue(cacheMiss.isPresent());

@@ -14,7 +14,6 @@
     </parent>
 
     <modules>
-        <module>sb-advanced-autoconfiguration-assignment</module>
         <module>sb-advanced-actuator-assignment</module>
         <module>sb-advanced-testing-assignment</module>
         <module>sb-advanced-reactive-assignment</module>

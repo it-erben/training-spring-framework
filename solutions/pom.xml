@@ -15,7 +15,6 @@
     </parent>
 
     <modules>
-        <module>sb-advanced-autoconfiguration-solution</module>
         <module>sb-advanced-actuator-solution</module>
         <module>sb-advanced-testing-solution</module>
         <module>sb-advanced-starter-solution</module>
