@@ -6,6 +6,13 @@ footer: Alexander Erben
 paginate: true
 ---
 
+<style>
+img[alt~="center"] {
+  display: block;
+  margin: 0 auto;
+}
+</style>
+
 # RESTful Web Services in Spring Boot
 
 ---
@@ -16,6 +23,10 @@ paginate: true
 * Validation & Error Handling
 * Moderne HTTP Clients: RestClient, Declarative HTTP Interfaces
 * Async/Streaming: CompletableFuture, Server-Sent Events
+* Response Wrapping mit @ControllerAdvice
+* File Upload (Multipart)
+* API Versioning Strategien
+* Virtual Threads (Project Loom)
 
 ---
 
@@ -409,3 +420,419 @@ Man schreibt zuerst die OpenAPI-Spezifikation (YAML/JSON) und generiert daraus d
 * **Konsistenz:** API ist über alle Services hinweg konsistent.
 
 **Tool:** `openapi-generator-maven-plugin` (oder Gradle Plugin).
+
+---
+
+# Response Wrapping mit @ControllerAdvice
+
+---
+
+## ResponseBodyAdvice
+
+Ermöglicht das **globale Wrapping** aller Response Bodies – z.B. für ein einheitliches API-Format.
+
+```java
+{
+  "success": true,
+  "data": { ... },      // Der eigentliche Response
+  "timestamp": "...",
+  "traceId": "..."
+}
+```
+
+---
+
+## ResponseBodyAdvice Implementierung
+
+```java
+@ControllerAdvice
+public class ApiResponseWrapper implements ResponseBodyAdvice<Object> {
+
+    @Override
+    public boolean supports(MethodParameter returnType, Class converterType) {
+        // Nur für eigene Controller, nicht für Actuator etc.
+        return returnType.getContainingClass().getPackageName()
+                         .startsWith("com.example.api");
+    }
+
+    @Override
+    public Object beforeBodyWrite(Object body, MethodParameter returnType,
+                                  MediaType contentType, Class converterType,
+                                  ServerHttpRequest request, ServerHttpResponse response) {
+        // ProblemDetail nicht wrappen
+        if (body instanceof ProblemDetail) return body;
+
+        return new ApiResponse<>(true, body, Instant.now());
+    }
+}
+```
+
+---
+
+## ApiResponse Record
+
+```java
+public record ApiResponse<T>(
+    boolean success,
+    T data,
+    Instant timestamp
+) {
+    public ApiResponse(boolean success, T data, Instant timestamp) {
+        this.success = success;
+        this.data = data;
+        this.timestamp = timestamp;
+    }
+}
+```
+
+---
+
+# File Upload
+
+---
+
+## Multipart File Upload
+
+Spring Boot unterstützt Datei-Uploads über `MultipartFile`.
+
+```java
+@RestController
+@RequestMapping("/api/files")
+public class FileUploadController {
+
+    @PostMapping("/upload")
+    public ResponseEntity<FileInfo> uploadFile(@RequestParam("file") MultipartFile file) {
+        if (file.isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        String filename = StringUtils.cleanPath(file.getOriginalFilename());
+        Path targetPath = Paths.get("uploads").resolve(filename);
+        Files.copy(file.getInputStream(), targetPath, StandardCopyOption.REPLACE_EXISTING);
+
+        return ResponseEntity.ok(new FileInfo(filename, file.getSize()));
+    }
+}
+```
+
+---
+
+## Konfiguration für große Dateien
+
+```yaml
+spring:
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB       # Max. Größe pro Datei
+      max-request-size: 50MB    # Max. Größe des gesamten Requests
+      file-size-threshold: 2KB  # Ab dieser Größe auf Disk schreiben
+```
+
+---
+
+## Mehrere Dateien hochladen
+
+```java
+@PostMapping("/upload-multiple")
+public ResponseEntity<List<FileInfo>> uploadMultiple(
+        @RequestParam("files") List<MultipartFile> files) {
+
+    List<FileInfo> results = files.stream()
+        .filter(f -> !f.isEmpty())
+        .map(this::saveFile)
+        .toList();
+
+    return ResponseEntity.ok(results);
+}
+
+@PostMapping("/upload-with-metadata")
+public ResponseEntity<FileInfo> uploadWithMetadata(
+        @RequestPart("file") MultipartFile file,
+        @RequestPart("metadata") FileMetadata metadata) {  // JSON Part
+
+    // file + metadata verarbeiten
+    return ResponseEntity.ok(new FileInfo(file.getOriginalFilename(), file.getSize()));
+}
+```
+
+---
+
+# API Versioning
+
+---
+
+## Warum API Versioning?
+
+* **Breaking Changes:** Alte Clients sollen weiter funktionieren.
+* **Parallele Versionen:** v1 und v2 gleichzeitig betreiben.
+* **Deprecation:** Sanfte Migration ermöglichen.
+
+---
+
+## Strategie 1: URL Path Versioning
+
+Die Version ist Teil der URL.
+
+```java
+@RestController
+@RequestMapping("/api/v1/users")
+public class UserControllerV1 {
+    @GetMapping("/{id}")
+    public UserV1 getUser(@PathVariable Long id) { ... }
+}
+
+@RestController
+@RequestMapping("/api/v2/users")
+public class UserControllerV2 {
+    @GetMapping("/{id}")
+    public UserV2 getUser(@PathVariable Long id) { ... }
+}
+```
+
+**Pro:** Einfach, klar sichtbar, gut cachebar.
+**Con:** URL-Proliferation, nicht RESTful (Resource ändert sich nicht).
+
+---
+
+## Strategie 2: Header Versioning
+
+Version wird im Header übergeben.
+
+```java
+@RestController
+@RequestMapping("/api/users")
+public class UserController {
+
+    @GetMapping(value = "/{id}", headers = "X-API-Version=1")
+    public UserV1 getUserV1(@PathVariable Long id) { ... }
+
+    @GetMapping(value = "/{id}", headers = "X-API-Version=2")
+    public UserV2 getUserV2(@PathVariable Long id) { ... }
+}
+```
+
+**Pro:** Saubere URLs.
+**Con:** Nicht im Browser testbar, Header kann vergessen werden.
+
+---
+
+## Strategie 3: Media Type Versioning
+
+Version im `Accept`-Header (Content Negotiation).
+
+```java
+@RestController
+@RequestMapping("/api/users")
+public class UserController {
+
+    @GetMapping(value = "/{id}", produces = "application/vnd.myapi.v1+json")
+    public UserV1 getUserV1(@PathVariable Long id) { ... }
+
+    @GetMapping(value = "/{id}", produces = "application/vnd.myapi.v2+json")
+    public UserV2 getUserV2(@PathVariable Long id) { ... }
+}
+```
+
+**Pro:** RESTful, Resource-URL bleibt stabil.
+**Con:** Komplex, schwer zu testen.
+
+---
+
+## Strategie 4: Query Parameter
+
+```java
+@GetMapping("/{id}")
+public ResponseEntity<?> getUser(
+        @PathVariable Long id,
+        @RequestParam(defaultValue = "1") int version) {
+
+    return switch (version) {
+        case 1 -> ResponseEntity.ok(userService.getUserV1(id));
+        case 2 -> ResponseEntity.ok(userService.getUserV2(id));
+        default -> ResponseEntity.badRequest().body("Unknown version");
+    };
+}
+```
+
+**Pro:** Einfach zu testen.
+**Con:** Nicht standardisiert, Query-Params eigentlich für Filter.
+
+---
+
+## Empfehlung
+
+| Szenario              | Empfohlene Strategie              |
+|-----------------------|-----------------------------------|
+| Öffentliche API       | **URL Path** (am klarsten)        |
+| Interne Microservices | **Header** oder **Media Type**    |
+| Schnelle Iteration    | **Query Parameter** (pragmatisch) |
+
+**Tipp:** Egal welche Strategie – dokumentieren Sie Ihre Deprecation-Policy!
+
+---
+
+# Virtual Threads (Project Loom)
+
+---
+
+## Das Problem: Thread-per-Request
+
+Klassische Servlet-Container nutzen einen **Thread pro Request**.
+
+* **Tomcat Default:** ~200 Threads
+* **Blockierender Request:** Thread wartet auf DB/API → verschwendet
+* **Mehr Throughput?** Mehr Threads → mehr RAM, Context-Switching
+
+**Lösung bisher:** Reactive Programming (WebFlux) – aber komplexer Code.
+
+---
+
+## Virtual Threads: Die Lösung
+
+Java 21 (LTS) bringt **Virtual Threads** – leichtgewichtige Threads, die vom JVM verwaltet werden.
+
+* **Millionen** von Virtual Threads möglich
+* **Blockieren ist OK** – JVM parkt den Virtual Thread
+* **Carrier Thread** wird für andere Arbeit freigegeben
+* **Kein reaktiver Code nötig** – synchroner Stil funktioniert
+
+---
+
+## Virtual Threads aktivieren
+
+**Spring Boot 3.2+:**
+
+```yaml
+spring:
+  threads:
+    virtual:
+      enabled: true
+```
+
+Das war's! Alle Request-Handler laufen jetzt auf Virtual Threads.
+
+---
+
+## Vorher vs. Nachher
+
+**Ohne Virtual Threads:**
+
+```
+Request 1 → Platform Thread 1 (wartet auf DB...)  ← blockiert
+Request 2 → Platform Thread 2 (wartet auf DB...)  ← blockiert
+Request 3 → Platform Thread 3 ...
+...
+Request 201 → REJECTED (Thread Pool voll!)
+```
+
+**Mit Virtual Threads:**
+
+```
+Request 1 → Virtual Thread 1 (wartet auf DB...)  ← JVM parkt
+Request 2 → Virtual Thread 2 (wartet auf DB...)  ← JVM parkt
+...
+Request 10000 → Virtual Thread 10000  ← Kein Problem!
+```
+
+---
+
+## Wann Virtual Threads nutzen?
+
+| Szenario                         | Empfehlung                           |
+|----------------------------------|--------------------------------------|
+| I/O-lastige Anwendung (DB, HTTP) | Virtual Threads                      |
+| CPU-lastige Berechnung           | Platform Threads                     |
+| Bestehendes WebFlux              | Kein Vorteil (bereits non-blocking)  |
+| Legacy-Code mit `synchronized`   | Testen! (Pinning-Problem)            |
+
+---
+
+## Das Pinning-Problem
+
+Virtual Threads können **gepinnt** werden, wenn sie einen `synchronized`-Block betreten.
+
+```java
+// Problematisch: Virtual Thread wird an Carrier gepinnt
+synchronized (lock) {
+    blockingDatabaseCall();  // Carrier Thread blockiert!
+}
+
+// Besser: ReentrantLock verwenden
+lock.lock();
+try {
+    blockingDatabaseCall();  // Virtual Thread kann yielden
+} finally {
+    lock.unlock();
+}
+```
+
+**Diagnose:** `-Djdk.tracePinnedThreads=short`
+
+---
+
+## Virtual Threads mit @Async
+
+Auch `@Async`-Methoden können Virtual Threads nutzen:
+
+```java
+@Configuration
+@EnableAsync
+public class AsyncConfig {
+
+    @Bean
+    public Executor taskExecutor() {
+        return Executors.newVirtualThreadPerTaskExecutor();
+    }
+}
+```
+
+```java
+@Service
+public class EmailService {
+
+    @Async
+    public CompletableFuture<Void> sendEmailAsync(String to, String content) {
+        // Läuft auf Virtual Thread
+        emailClient.send(to, content);
+        return CompletableFuture.completedFuture(null);
+    }
+}
+```
+
+---
+
+## Virtual Threads: Caveats
+
+1. **ThreadLocal:** Vorsicht bei großem ThreadLocal-Speicher (Millionen Threads!)
+2. **Native Code:** JNI-Calls können Virtual Threads pinnen
+3. **Monitoring:** Thread-Dumps zeigen sehr viele Threads
+4. **Connection Pools:** Können zum Bottleneck werden (Pool < Virtual Threads)
+
+```yaml
+# Connection Pool anpassen
+spring:
+  datasource:
+    hikari:
+      maximum-pool-size: 50  # Erhöhen, aber DB-Limits beachten!
+```
+
+---
+
+## Structured Concurrency (Preview)
+
+Java 21+ bietet auch **Structured Concurrency** für parallele Tasks:
+
+```java
+try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
+    Supplier<User> userTask = scope.fork(() -> userService.getUser(id));
+    Supplier<List<Order>> ordersTask = scope.fork(() -> orderService.getOrders(id));
+
+    scope.join();           // Warte auf alle
+    scope.throwIfFailed();  // Exception bei Fehler
+
+    return new UserProfile(userTask.get(), ordersTask.get());
+}
+```
+
+**Vorteil:** Alle Subtasks werden bei Fehler automatisch abgebrochen.

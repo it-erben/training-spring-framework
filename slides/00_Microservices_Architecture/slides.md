@@ -19,8 +19,8 @@ img[alt~="center"] {
 ## In diesem Modul
 
 * Monolith vs. Microservices & DDD-Grundlagen
-* Datenhaltung in Microservices
-* Resilience Patterns: Circuit Breaker, Bulkhead
+* Datenhaltung in Microservices (Database per Service, CAP, Eventual Consistency)
+* Resilience Patterns: Circuit Breaker, Bulkhead (+ Demo)
 * Infrastruktur: API Gateway, Service Discovery, Externalized Configuration
 
 ---
@@ -38,7 +38,7 @@ Es geht nicht nur um die Größe der Services (_Micro_), sondern um **Unabhängi
 
 ---
 
-![center](./images/00_monolith_vs_microservices.drawio.png)
+![center](./images/00_monolith_vs_microservices.drawio.svg)
 
 ---
 
@@ -62,7 +62,7 @@ section {
 </style>
 Der Begriff **"Produkt"** bedeutet je nach Abteilung etwas völlig anderes:
 
-![center h:400](./images/00_ddd_bounded_contexts.drawio.png)
+![center h:400](./images/00_ddd_bounded_contexts.drawio.svg)
 
 ---
 
@@ -132,78 +132,25 @@ Microservices wählen meist **AP** (Availability) und akzeptieren **Eventual Con
 3. **Fehlende Protokoll-Unterstützung:** Es gibt kein standardisiertes, weit verbreitetes Protokoll, um XA-Transaktionen über HTTP/REST-Servicegrenzen hinweg zu propagieren.
 
 ---
-
-## Fazit: Saga statt XA
-
-* JTA/XA ist eine Lösung für verteilte Transaktionen **innerhalb einer JVM oder eines eng gekoppelten Systems**.
-* Für eine lose gekoppelte, über HTTP kommunizierende Microservice-Architektur ist es jedoch die falsche Wahl.
-* Hier kommen sogenannte **Sagas** zum Einsatz.
-
-> _Saga ist tatsächlich kein Akronym. Es steht einfach nur für eine lange Geschichte._
-
----
-
-## Saga-Ansatz 1: Choreography (Event-Driven)
-
-Jeder Service entscheidet selbst, was zu tun ist. Es gibt keinen zentralen Koordinator.
-
-* **Ablauf:** `OrderService` -> `Event: OrderCreated` -> `InventoryService` -> `Event: GoodsReserved` -> `PaymentService`.
-* *Pro:* Lose Kopplung, keine zentrale Logik.
-* *Con:* Unübersichtlich ("Wer hört auf wen?"). Zyklische Abhängigkeiten schwer zu erkennen.
-
----
-
-## Saga-Ansatz 2: Orchestration (Command-Driven)
-
-Ein zentraler "Conductor" (Klasse oder Service) kennt den gesamten Ablauf und sagt den Teilnehmern, was sie tun sollen.
-
-![bg right:35% fit](./images/00_saga_orchestration.drawio.png)
-
-* **Ablauf:** Orchestrator ruft `Inventory.reserve()` auf. Bei Erfolg ruft er `Payment.charge()` auf.
-* *Pro:* Klarer Ablauf, einfache Fehlerbehandlung, zentraler Zustand.
-* *Con:* Orchestrator kann zum "Gott-Service" werden (zuviel Logik).
-
----
-
-## Saga Orchestration (Naive Implementierung)
-
-* Ein einfacher Orchestrator nutzt oft `try-catch` (siehe folgende Seite).
-* **Achtung:** Das ist fragil! Wenn der Server im `catch`-Block in einen Fehler läuft, haben wir einen inkonsistenten Zustand.
-
- > In Produktion kann man **State Machines** einsetzen, die den Status in DB persistieren. Es gibt auch spezialisierte Frameworks wie Camunda.
-
----
-
-```java
-@Service
-public class OrderSagaOrchestrator {
-    @Autowired private OrderRepository orderRepo;
-    @Autowired private RestClient inventoryClient;
-    @Autowired private RestClient paymentClient;
-
-    public void placeOrder(Order order) {
-        orderRepo.save(order); // 1. Local TX
-
-        try {
-            // 2. Remote Steps (Commands)
-            inventoryClient.post().uri("/reserve").body(order).retrieve();
-            paymentClient.post().uri("/charge").body(order).retrieve();
-            
-            order.setStatus(OrderStatus.CONFIRMED); // Success
-            orderRepo.save(order);
-
-        } catch (Exception e) {
-            // --- KOMPENSATION (Rollback) ---
-            // Da Payment fehlschlug, müssen wir Inventory stornieren!
-            // Problem: Was wenn dieser Call fehlschlägt? -> Retry / Dead Letter Queue
-            inventoryClient.post().uri("/release").body(order).retrieve();
-            
-            order.setStatus(OrderStatus.FAILED);
-            orderRepo.save(order);
-        }
-    }
+<style scoped>
+section {
+    font-size: 1.4rem;
 }
-```
+</style>
+
+## Alternative zu XA: Das Saga Pattern
+
+* JTA/XA ist für **eng gekoppelte Systeme** gedacht, nicht für Microservices.
+* Die Alternative: **Sagas** – eine Folge von lokalen Transaktionen mit Kompensationslogik.
+
+### Zwei Ansätze
+
+| Ansatz            | Beschreibung                   | Pro/Con                                     |
+|-------------------|--------------------------------|---------------------------------------------|
+| **Choreography**  | Services reagieren auf Events  | Lose Kopplung, aber unübersichtlich         |
+| **Orchestration** | Zentraler Koordinator steuert  | Klarer Ablauf, aber "Gott-Service"-Gefahr   |
+
+> ℹ️ **Detaillierte Behandlung** von Saga, Outbox Pattern und Idempotenz → siehe Modul **Messaging**
 
 ---
 
@@ -225,7 +172,7 @@ public class OrderSagaOrchestrator {
 * **Open:** Fehlerschwelle überschritten → neue Requests sofort ablehnen.  
 * **Half-Open:** Testphase: Einige Requests werden durchgelassen, um zu prüfen, ob der Service wieder gesund ist.
 
-![center h:200](./images/00_circuit_breaker.drawio.png)
+![bg right fit](./images/00_circuit_breaker.drawio.svg)
 
 ---
 
@@ -283,7 +230,7 @@ try {
 * Statt alle Anfragen über einen gemeinsamen Thread-Pool laufen zu lassen, isolieren wir kritische Pfade in eigene Ressourcenpools.  
 * So verhindert man, dass etwa ein überlasteter Report-Service das gesamte System blockiert.
 
-![center h:250](./images/00_bulkheads.drawio.png)
+![bg right fit](./images/00_bulkheads.drawio.svg)
 
 ---
 
@@ -392,7 +339,7 @@ section {
 
 ---
 
-![center](./images/00_api_gateway.drawio.png)
+![center](./images/00_api_gateway.drawio.svg)
 
 ---
 

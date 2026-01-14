@@ -18,6 +18,8 @@ paginate: true
 * Health & Probes: Custom HealthIndicator, Liveness/Readiness
 * Custom Endpoints und Prometheus/Grafana Integration
 * Observability: Micrometer Tracing (OTel Bridge), HTTP/Messaging Propagation
+* @Observed Annotation
+* Exemplars (Metrics ↔ Traces Korrelation)
 
 ---
 
@@ -71,7 +73,7 @@ public class ActuatorSecurity {
     // Import: org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(auth -> auth
+        return http.authorizeHttpRequests(auth -> auth
                 .requestMatchers(EndpointRequest.toAnyEndpoint()).hasRole("ADMIN") // Nur Admins
                 .anyRequest().permitAll()
             )
@@ -402,9 +404,135 @@ public void doWork() {
     Observation.createNotStarted("my.custom.operation", registry)
         .lowCardinalityKeyValue("type", "batch")
         .observe(() -> {
-            // Code hier wird gemessen (Timer) 
+            // Code hier wird gemessen (Timer)
             // UND getraced (Span)
             heavyCalculation();
         });
 }
 ```
+
+---
+
+## @Observed Annotation
+
+Die deklarative Alternative zur programmatischen Observation API.
+
+```java
+@Service
+public class OrderService {
+
+    @Observed(
+        name = "order.processing",
+        contextualName = "process-order",
+        lowCardinalityKeyValues = {"orderType", "standard"}
+    )
+    public Order processOrder(Order order) {
+        // Automatisch: Timer-Metrik + Trace-Span
+        return doProcessing(order);
+    }
+}
+```
+
+**Voraussetzung:** `@EnableAspectJAutoProxy` und `ObservedAspect` Bean.
+
+---
+
+## ObservedAspect konfigurieren
+
+```java
+@Configuration
+public class ObservabilityConfig {
+
+    @Bean
+    public ObservedAspect observedAspect(ObservationRegistry registry) {
+        return new ObservedAspect(registry);
+    }
+}
+```
+
+Alternativ: `spring-boot-starter-aop` + Auto-Configuration in Boot 3.2+.
+
+---
+
+## @Observed vs. Programmatisch
+
+| Aspekt          | @Observed      | Observation API |
+|-----------------|----------------|-----------------|
+| Boilerplate     | Minimal        | Mehr Code       |
+| Flexibilität    | Standard-Werte | Volle Kontrolle |
+| Dynamische Tags | Nein           | Ja              |
+| Error Handling  | Automatisch    | Manuell möglich |
+
+**Empfehlung:** `@Observed` für Standard-Fälle, API für komplexe Szenarien.
+
+---
+
+# Exemplars
+
+---
+
+## Was sind Exemplars?
+
+Exemplars verbinden **Metriken mit Traces**.
+
+* **Problem:** Hohe Latenz in Metrik sichtbar, aber welcher Request war es?
+* **Lösung:** Exemplar speichert `traceId` als Referenz zur Metrik.
+
+```
+http_request_duration_seconds{...} 0.5 # {traceId="abc123"}
+```
+
+---
+
+## Exemplars aktivieren
+
+```yaml
+management:
+  metrics:
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+  tracing:
+    sampling:
+      probability: 1.0  # 100% Sampling für Demo
+```
+
+**Dependency:** `io.micrometer:micrometer-tracing-bridge-otel`
+
+---
+
+## Exemplars in Prometheus/Grafana
+
+In **Grafana** können Exemplars als Punkte auf Histogrammen angezeigt werden.
+
+1. Prometheus scrapet Metriken mit Exemplars
+2. Grafana zeigt Histogramm + Exemplar-Punkte
+3. Klick auf Exemplar → Link zu Trace in Jaeger/Zipkin/Tempo
+
+**Ablauf:**
+
+```
+Metrik (hohe Latenz) → Exemplar (traceId) → Trace → Root Cause
+```
+
+---
+
+## Exemplar-Konfiguration (Detail)
+
+```java
+@Configuration
+public class ExemplarConfig {
+
+    @Bean
+    public DefaultExemplarSampler exemplarSampler(SpanContextSupplier supplier) {
+        // Nur bei aktiven Traces Exemplars erzeugen
+        return new DefaultExemplarSampler(supplier);
+    }
+}
+```
+
+Spring Boot 3.2+ konfiguriert dies automatisch, wenn Tracing aktiv ist.

@@ -17,6 +17,9 @@ paginate: true
 * Method Security: @PreAuthorize & SpEL
 * CORS-Konfiguration für APIs
 * OAuth2/JWT: Resource Server, Claims → Authorities, Client-Login
+* CSRF bei Single Page Applications
+* Security Testing (@WithMockUser, @WithUserDetails)
+* Mutual TLS (mTLS)
 
 ---
 
@@ -242,7 +245,7 @@ Eine OAuth-Architektur besteht stark vereinfacht aus folgenden Komponenten:
 
 ---
 
-![](./images/oauth-components.drawio.png)
+![](./images/oauth-components.drawio.svg)
 
 ---
 
@@ -264,7 +267,7 @@ Ein Token besteht aus 3 Base64Url-kodierten Teilen:
 
 <br>
 
-![](./images/jwt.drawio.png)
+![](./images/jwt.drawio.svg)
 
 ---
 
@@ -327,7 +330,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/admin/**").hasAuthority("SCOPE_admin")
                 .anyRequest().authenticated()
             )
-            .oauth2ResourceServer(oauth2 -> oauth2.jwt());
+            .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()));
 
         return http.build();
     }
@@ -432,4 +435,299 @@ public class OAuth2ClientController {
         return "Logged in as: " + oauth2User.getName();
     }
 }
+```
+
+---
+
+# CSRF bei Single Page Applications
+
+---
+
+## CSRF Grundlagen
+
+**Cross-Site Request Forgery:** Ein Angreifer bringt einen eingeloggten User dazu, ungewollt Aktionen auszuführen.
+
+* Browser sendet Cookies automatisch mit
+* Angreifer-Seite kann POST-Request an legitime API senden
+* Server kann nicht unterscheiden: User oder Angreifer?
+
+---
+
+## CSRF-Schutz: Klassisch vs. SPA
+
+| Szenario                          | CSRF-Schutz             |
+|-----------------------------------|-------------------------|
+| Server-Side Rendering (Thymeleaf) | CSRF-Token im Form      |
+| SPA + Session Cookie              | CSRF-Token erforderlich |
+| SPA + JWT im Header               | CSRF nicht nötig        |
+| SPA + JWT im Cookie               | CSRF erforderlich!      |
+
+**Regel:** Wenn Auth-Daten automatisch gesendet werden (Cookies), braucht man CSRF-Schutz.
+
+---
+
+## CSRF deaktivieren (nur bei stateless Auth!)
+
+```java
+@Bean
+public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    return http
+        .csrf(csrf -> csrf.disable())  // Nur wenn JWT im Authorization Header!
+        .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
+        .build();
+}
+```
+
+**Achtung:** Nur deaktivieren, wenn:
+
+* Authentifizierung über `Authorization: Bearer` Header
+* Keine Session-Cookies verwendet werden
+
+---
+
+## CSRF für SPAs mit Cookie-Auth
+
+Wenn Session-Cookies verwendet werden, muss das CSRF-Token zur SPA übertragen werden.
+
+```java
+@Bean
+public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    return http
+        .csrf(csrf -> csrf
+            .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+            .csrfTokenRequestHandler(new SpaCsrfTokenRequestHandler())
+        )
+        .build();
+}
+```
+
+Das Token wird als Cookie `XSRF-TOKEN` gesendet. Die SPA liest es und sendet es als Header `X-XSRF-TOKEN` zurück.
+
+---
+
+## SpaCsrfTokenRequestHandler (Spring Security 6)
+
+```java
+public class SpaCsrfTokenRequestHandler extends CsrfTokenRequestAttributeHandler {
+
+    private final CsrfTokenRequestHandler delegate = new XorCsrfTokenRequestAttributeHandler();
+
+    @Override
+    public void handle(HttpServletRequest request, HttpServletResponse response,
+                       Supplier<CsrfToken> csrfToken) {
+        this.delegate.handle(request, response, csrfToken);
+    }
+
+    @Override
+    public String resolveCsrfTokenValue(HttpServletRequest request, CsrfToken csrfToken) {
+        // Header hat Priorität (SPA), dann Form-Parameter (klassisch)
+        String header = request.getHeader(csrfToken.getHeaderName());
+        return (header != null) ? super.resolveCsrfTokenValue(request, csrfToken)
+                                : this.delegate.resolveCsrfTokenValue(request, csrfToken);
+    }
+}
+```
+
+---
+
+# Security Testing
+
+---
+
+## @WithMockUser
+
+Simuliert einen authentifizierten User in Tests – ohne echte Authentifizierung.
+
+```java
+@WebMvcTest(UserController.class)
+class UserControllerSecurityTest {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @Test
+    @WithMockUser(username = "alice", roles = {"USER"})
+    void shouldAllowAccessForAuthenticatedUser() throws Exception {
+        mockMvc.perform(get("/api/profile"))
+               .andExpect(status().isOk());
+    }
+
+    @Test
+    void shouldDenyAccessForAnonymous() throws Exception {
+        mockMvc.perform(get("/api/profile"))
+               .andExpect(status().isUnauthorized());
+    }
+}
+```
+
+---
+
+## @WithMockUser mit Custom Authorities
+
+```java
+@Test
+@WithMockUser(
+    username = "admin",
+    authorities = {"SCOPE_read", "SCOPE_write", "ROLE_ADMIN"}
+)
+void shouldAllowAdminOperations() throws Exception {
+    mockMvc.perform(delete("/api/users/1"))
+           .andExpect(status().isNoContent());
+}
+```
+
+**Hinweis:** `roles = {"ADMIN"}` fügt automatisch `ROLE_` Prefix hinzu.
+`authorities` erlaubt beliebige Authority-Strings.
+
+---
+
+## @WithUserDetails
+
+Lädt einen echten User aus dem `UserDetailsService` – für realistischere Tests.
+
+```java
+@SpringBootTest
+@AutoConfigureMockMvc
+class UserControllerIntegrationTest {
+
+    @Test
+    @WithUserDetails(value = "alice@example.com", userDetailsServiceBeanName = "myUserDetailsService")
+    void shouldLoadRealUserFromDatabase() throws Exception {
+        mockMvc.perform(get("/api/profile"))
+               .andExpect(status().isOk())
+               .andExpect(jsonPath("$.email").value("alice@example.com"));
+    }
+}
+```
+
+---
+
+## Custom Security Context für JWT
+
+Für OAuth2/JWT Tests kann man einen eigenen `SecurityContext` erstellen.
+
+```java
+@Test
+void shouldAcceptValidJwt() throws Exception {
+    mockMvc.perform(get("/api/data")
+            .with(jwt()
+                .jwt(builder -> builder
+                    .subject("user-123")
+                    .claim("scope", "read write")
+                    .claim("realm_access", Map.of("roles", List.of("user")))
+                )
+                .authorities(new SimpleGrantedAuthority("SCOPE_read"))
+            ))
+           .andExpect(status().isOk());
+}
+```
+
+**Dependency:** `spring-security-test`
+
+---
+
+# Mutual TLS (mTLS)
+
+---
+
+## Was ist mTLS?
+
+Bei normalem TLS authentifiziert sich nur der **Server** gegenüber dem Client.
+Bei **mTLS** authentifizieren sich **beide Seiten** mit Zertifikaten.
+
+* **Use Case:** Service-to-Service Kommunikation in Zero-Trust-Umgebungen
+* **Vorteil:** Kein Passwort/Token nötig, Zertifikat = Identität
+
+---
+
+## mTLS Konfiguration (Server)
+
+```yaml
+server:
+  port: 8443
+  ssl:
+    enabled: true
+    key-store: classpath:server-keystore.p12
+    key-store-password: changeit
+    key-store-type: PKCS12
+
+    # Client-Zertifikat erforderlich
+    client-auth: need  # oder "want" für optional
+
+    trust-store: classpath:truststore.p12
+    trust-store-password: changeit
+```
+
+---
+
+## Client-Zertifikat im Controller auslesen
+
+```java
+@RestController
+public class SecureController {
+
+    @GetMapping("/whoami")
+    public Map<String, String> whoAmI(HttpServletRequest request) {
+        X509Certificate[] certs = (X509Certificate[])
+            request.getAttribute("jakarta.servlet.request.X509Certificate");
+
+        if (certs != null && certs.length > 0) {
+            X500Principal principal = certs[0].getSubjectX500Principal();
+            return Map.of(
+                "cn", extractCN(principal.getName()),
+                "issuer", certs[0].getIssuerX500Principal().getName()
+            );
+        }
+        return Map.of("error", "No client certificate");
+    }
+}
+```
+
+---
+
+## mTLS mit RestClient (Client-Seite)
+
+```java
+@Bean
+public RestClient mtlsRestClient() throws Exception {
+    KeyStore keyStore = KeyStore.getInstance("PKCS12");
+    keyStore.load(new FileInputStream("client-keystore.p12"), "changeit".toCharArray());
+
+    KeyStore trustStore = KeyStore.getInstance("PKCS12");
+    trustStore.load(new FileInputStream("truststore.p12"), "changeit".toCharArray());
+
+    SSLContext sslContext = SSLContextBuilder.create()
+        .loadKeyMaterial(keyStore, "changeit".toCharArray())
+        .loadTrustMaterial(trustStore, null)
+        .build();
+
+    HttpClient httpClient = HttpClient.create()
+        .secure(spec -> spec.sslContext(sslContext));
+
+    return RestClient.builder()
+        .requestFactory(new ReactorClientHttpRequestFactory(httpClient))
+        .baseUrl("https://secure-service:8443")
+        .build();
+}
+```
+
+---
+
+## mTLS in Kubernetes
+
+In der Praxis wird mTLS oft vom **Service Mesh** (Istio, Linkerd) übernommen:
+
+* **Automatic mTLS:** Mesh injiziert Sidecar-Proxies
+* **Zertifikats-Rotation:** Automatisch durch Mesh
+* **Application-Code:** Bleibt unverändert (plain HTTP intern)
+
+```yaml
+# Istio PeerAuthentication
+apiVersion: security.istio.io/v1beta1
+kind: PeerAuthentication
+metadata:
+  name: default
+spec:
+  mtls:
+    mode: STRICT  # Alle Services müssen mTLS verwenden
 ```
