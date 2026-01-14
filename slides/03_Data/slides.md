@@ -22,6 +22,9 @@ img[alt~="center"] {
 * JPA/EntityManager, Repository-Pattern
 * JPQL, Fetch Joins und EntityGraph
 * Projections/DTOs, Auditing, Transaktionen (Propagation/Isolation)
+* Database Migrations (Flyway, Liquibase)
+* Native Queries & Specification API
+* NoSQL: MongoDB, Redis, Distributed Locks
 
 ---
 
@@ -343,6 +346,310 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
 ---
 
+# Database Migrations
+
+---
+
+## Warum Database Migrations?
+
+* **Versionierung:** Schema-Änderungen sind nachvollziehbar (Git).
+* **Reproduzierbarkeit:** Gleiche Migration auf Dev, Test, Prod.
+* **Team-Arbeit:** Konflikte bei Schema-Änderungen werden sichtbar.
+* **Rollback:** (Eingeschränkt) Zurückrollen von Änderungen möglich.
+
+**Tools:** Flyway, Liquibase
+
+---
+
+## Flyway vs. Liquibase
+
+| Feature       | Flyway                     | Liquibase                |
+|---------------|----------------------------|--------------------------|
+| Format        | SQL, Java                  | XML, YAML, JSON, SQL     |
+| Lernkurve     | Einfach                    | Komplexer                |
+| Rollback      | Manuell (Pro: automatisch) | Automatisch generierbar  |
+| DB-Agnostisch | Nein (SQL-basiert)         | Ja (abstraktes Format)   |
+| Spring Boot   | ✅ Auto-Config             | ✅ Auto-Config           |
+
+---
+
+## Flyway Setup
+
+**Dependency:** `org.flywaydb:flyway-core`
+
+**Struktur:**
+
+```
+src/main/resources/
+└── db/migration/
+    ├── V1__create_users_table.sql
+    ├── V2__add_email_column.sql
+    └── V3__create_orders_table.sql
+```
+
+**Namenskonvention:** `V{version}__{description}.sql`
+
+---
+
+## Flyway Migration Beispiel
+
+**V1__create_users_table.sql:**
+
+```sql
+CREATE TABLE users (
+    id BIGSERIAL PRIMARY KEY,
+    username VARCHAR(100) NOT NULL UNIQUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_users_username ON users(username);
+```
+
+**V2__add_email_column.sql:**
+
+```sql
+ALTER TABLE users ADD COLUMN email VARCHAR(255);
+UPDATE users SET email = username || '@example.com' WHERE email IS NULL;
+ALTER TABLE users ALTER COLUMN email SET NOT NULL;
+```
+
+---
+
+## Flyway Konfiguration
+
+```yaml
+spring:
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true  # Für bestehende DBs
+    validate-on-migrate: true  # Prüft Checksummen
+
+    # Für verschiedene Umgebungen
+    # placeholders:
+    #   schema: ${DB_SCHEMA:public}
+```
+
+---
+
+## Liquibase Setup
+
+**Dependency:** `org.liquibase:liquibase-core`
+
+**Struktur:**
+
+```
+src/main/resources/
+└── db/changelog/
+    ├── db.changelog-master.yaml
+    ├── changes/
+    │   ├── 001-create-users.yaml
+    │   └── 002-add-orders.yaml
+```
+
+---
+
+## Liquibase Changelog Beispiel
+
+**db.changelog-master.yaml:**
+
+```yaml
+databaseChangeLog:
+  - include:
+      file: db/changelog/changes/001-create-users.yaml
+  - include:
+      file: db/changelog/changes/002-add-orders.yaml
+```
+
+---
+<style scoped>
+section {
+    font-size: 1.2rem;
+}
+</style>
+
+## Liquibase Change Set
+
+**001-create-users.yaml:**
+
+```yaml
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: aerben
+      changes:
+        - createTable:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: username
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+                    unique: true
+      rollback:
+        - dropTable:
+            tableName: users
+```
+
+---
+
+# Native Queries
+
+---
+
+## @Query mit nativeQuery = true
+
+Manchmal reicht JPQL nicht aus – dann braucht man echtes SQL.
+
+```java
+public interface ProductRepository extends JpaRepository<Product, Long> {
+
+    @Query(value = """
+        SELECT * FROM products p
+        WHERE p.price < :maxPrice
+        AND p.category_id IN (
+            SELECT c.id FROM categories c WHERE c.active = true
+        )
+        ORDER BY p.created_at DESC
+        LIMIT :limit
+        """, nativeQuery = true)
+    List<Product> findCheapProductsInActiveCategories(
+        @Param("maxPrice") BigDecimal maxPrice,
+        @Param("limit") int limit
+    );
+}
+```
+
+---
+
+## Native Query: Wann verwenden?
+
+| Szenario                                          | Empfehlung              |
+|---------------------------------------------------|-------------------------|
+| DB-spezifische Funktionen (z.B. `JSONB`, `ARRAY`) | Native Query            |
+| Window Functions (`ROW_NUMBER`, `RANK`)           | Native Query            |
+| Komplexe Subqueries                               | Native Query            |
+| Einfache CRUD                                     | JPQL oder Derived Query |
+| Portabilität wichtig                              | JPQL                    |
+
+**Achtung:** Native Queries umgehen den Entity-Cache!
+
+---
+
+## Native Query mit Projektion
+
+```java
+public interface OrderStatistics {
+    String getStatus();
+    Long getCount();
+    BigDecimal getTotalAmount();
+}
+
+public interface OrderRepository extends JpaRepository<Order, Long> {
+
+    @Query(value = """
+        SELECT status, COUNT(*) as count, SUM(amount) as totalAmount
+        FROM orders
+        WHERE created_at >= :since
+        GROUP BY status
+        """, nativeQuery = true)
+    List<OrderStatistics> getOrderStatistics(@Param("since") LocalDate since);
+}
+```
+
+---
+
+# Specification API
+
+---
+
+## Dynamische Queries mit Specifications
+
+Die Specification API ermöglicht **dynamische, typsichere Queries** zur Laufzeit.
+
+**Problem:**
+
+```java
+// So nicht! Kombinatorische Explosion von Methoden
+findByStatusAndCategoryAndPriceGreaterThan(...)
+findByStatusAndCategory(...)
+findByStatus(...)
+findByCategoryAndPriceGreaterThan(...)
+```
+
+**Lösung:** Specifications kombinieren!
+
+---
+
+## Repository erweitern
+
+```java
+public interface ProductRepository extends
+    JpaRepository<Product, Long>,
+    JpaSpecificationExecutor<Product> {  // <-- Hinzufügen
+
+    // Keine zusätzlichen Methoden nötig
+}
+```
+
+---
+
+## Specifications definieren
+
+```java
+public class ProductSpecifications {
+
+    public static Specification<Product> hasStatus(ProductStatus status) {
+        return (root, query, cb) ->
+            status == null ? null : cb.equal(root.get("status"), status);
+    }
+
+    public static Specification<Product> inCategory(Long categoryId) {
+        return (root, query, cb) ->
+            categoryId == null ? null : cb.equal(root.get("category").get("id"), categoryId);
+    }
+
+    public static Specification<Product> priceBetween(BigDecimal min, BigDecimal max) {
+        return (root, query, cb) -> {
+            if (min == null && max == null) return null;
+            if (min == null) return cb.lessThanOrEqualTo(root.get("price"), max);
+            if (max == null) return cb.greaterThanOrEqualTo(root.get("price"), min);
+            return cb.between(root.get("price"), min, max);
+        };
+    }
+}
+```
+
+---
+
+## Specifications kombinieren
+
+```java
+@Service
+public class ProductService {
+
+    public List<Product> search(ProductSearchCriteria criteria) {
+        Specification<Product> spec = Specification
+            .where(ProductSpecifications.hasStatus(criteria.getStatus()))
+            .and(ProductSpecifications.inCategory(criteria.getCategoryId()))
+            .and(ProductSpecifications.priceBetween(criteria.getMinPrice(), criteria.getMaxPrice()));
+
+        return productRepository.findAll(spec, Sort.by("name"));
+    }
+}
+```
+
+Die Specifications werden nur angewendet, wenn der Parameter **nicht null** ist!
+
+---
+
 # Advanced-Themen zu NoSQL
 
 ---
@@ -399,3 +706,5 @@ public void generateDailyReport() {
     // Läuft garantiert nur auf einer Instanz gleichzeitig
 }
 ```
+
+---

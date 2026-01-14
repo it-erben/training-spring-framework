@@ -20,11 +20,15 @@ img[alt~="center"] {
 ## In diesem Modul
 
 * Warum Messaging? Modelle (Queue vs. Topic) und typische Use Cases
-* JMS mit Spring: Producer/Listener, Message Converter, Transaktionen & Idempotenz
+* JMS mit Spring: Producer/Listener, Message Converter
 * AMQP/RabbitMQ: Exchanges/Bindings, Producer/Consumer, DLX/DLQ
 * Kafka: Topics/Partitionen, Producer/Consumer Groups, Serdes, Fehlerbehandlung
 * Reliability: Acks, Confirms, Retry/Backoff, Dead Letter
-* Event-Driven Architectures: Domain Events, Sagas
+* Spring Cloud Stream
+* Schema Registry (Avro, Protobuf)
+* Saga Pattern & Distributed Transactions
+* Transactional Outbox (Polling & CDC/Debezium)
+* Idempotenz**
 * Übungen
 
 ---
@@ -476,3 +480,524 @@ public class UserEventListener {
 * **Retry-Mechanismen:** Bei Fehlern die Nachricht erneut versuchen.
 * **Dead-Letter Topics (DLT):** Nachrichten, die dauerhaft nicht verarbeitet werden können, an ein spezielles Error-Topic senden.
     * Spring Kafka bietet `DeadLetterPublishingRecoverer`.
+
+---
+
+# Spring Cloud Stream
+
+---
+
+## Was ist Spring Cloud Stream?
+
+Eine **Abstraktionsschicht** über Messaging-Systeme (Kafka, RabbitMQ, etc.).
+
+* **Binder:** Adapter für verschiedene Broker (Kafka Binder, Rabbit Binder, etc.)
+* **Functional Programming Model:** Producer/Consumer als `Supplier`/`Consumer`/`Function`
+* **Broker-Unabhängigkeit:** Code bleibt gleich, nur Konfiguration ändert sich
+
+---
+
+## Warum Spring Cloud Stream?
+
+| Aspekt         | Direkt (Spring Kafka/AMQP) | Spring Cloud Stream     |
+|----------------|----------------------------|-------------------------|
+| Boilerplate    | Mehr                       | Weniger                 |
+| Broker-Wechsel | Code-Änderung              | Nur Config              |
+| Testing        | Aufwändiger                | Test Binder verfügbar   |
+| Lernkurve      | Niedriger                  | Höher (Abstraktion)     |
+
+**Empfehlung:** Cloud Stream für Multi-Broker oder wenn Portabilität wichtig ist.
+
+---
+
+## Dependency
+
+```xml
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-stream</artifactId>
+</dependency>
+<!-- Binder für Kafka -->
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-stream-binder-kafka</artifactId>
+</dependency>
+```
+
+---
+
+## Functional Model: Consumer
+
+```java
+@Configuration
+public class StreamConfig {
+
+    @Bean
+    public Consumer<OrderCreatedEvent> orderProcessor() {
+        return event -> {
+            System.out.println("Processing order: " + event.getOrderId());
+            // Business-Logik hier
+        };
+    }
+}
+```
+
+**Konfiguration:**
+
+```yaml
+spring.cloud.stream.bindings.orderProcessor-in-0.destination: order-events
+```
+
+---
+
+## Functional Model: Supplier (Producer)
+
+```java
+@Bean
+public Supplier<Flux<OrderStatusEvent>> orderStatusProducer() {
+    return () -> Flux.interval(Duration.ofSeconds(5))
+        .map(i -> new OrderStatusEvent("order-" + i, "SHIPPED"));
+}
+```
+
+```yaml
+spring.cloud.stream.bindings.orderStatusProducer-out-0.destination: order-status
+```
+
+**Oder imperativ mit `StreamBridge`:**
+
+```java
+@Autowired StreamBridge streamBridge;
+
+public void sendEvent(OrderCreatedEvent event) {
+    streamBridge.send("order-events", event);
+}
+```
+
+---
+
+## Functional Model: Function (Processor)
+
+Empfängt Input, transformiert, sendet Output.
+
+```java
+@Bean
+public Function<OrderCreatedEvent, OrderEnrichedEvent> enrichOrder() {
+    return event -> {
+        // Anreicherung mit zusätzlichen Daten
+        return new OrderEnrichedEvent(
+            event.getOrderId(),
+            event.getAmount(),
+            calculateTax(event.getAmount())
+        );
+    };
+}
+```
+
+```yaml
+spring.cloud.stream:
+  bindings:
+    enrichOrder-in-0.destination: raw-orders
+    enrichOrder-out-0.destination: enriched-orders
+```
+
+---
+
+# Schema Registry
+
+---
+
+## Das Problem: Schema Evolution
+
+Nachrichten-Schemas ändern sich über Zeit:
+
+* Neue Felder hinzugefügt
+* Felder entfernt oder umbenannt
+* Typen geändert
+
+**Ohne Schema Registry:** Deserialisierung schlägt fehl → Downtime.
+
+---
+
+## Schema Registry Konzept
+
+Ein zentraler Server speichert und versioniert Schemas.
+
+1. **Producer** registriert Schema vor dem Senden
+2. **Nachricht** enthält Schema-ID (nicht das ganze Schema)
+3. **Consumer** lädt Schema von Registry und deserialisiert
+
+**Tools:** Confluent Schema Registry, AWS Glue, Apicurio
+
+---
+
+## Unterstützte Formate
+
+| Format          | Beschreibung           | Vorteil                   |
+|-----------------|------------------------|---------------------------|
+| **Avro**        | Binär, Schema-basiert  | Kompakt, Schema Evolution |
+| **Protobuf**    | Binär, Google-Standard | Performance, Typed        |
+| **JSON Schema** | Text-basiert           | Lesbar, weit verbreitet   |
+
+**Empfehlung:** Avro für High-Throughput, JSON Schema für Debugging.
+
+---
+
+## Avro Schema Beispiel
+
+**order.avsc:**
+
+```json
+{
+  "type": "record",
+  "name": "Order",
+  "namespace": "com.example.events",
+  "fields": [
+    {"name": "orderId", "type": "string"},
+    {"name": "amount", "type": "double"},
+    {"name": "currency", "type": "string", "default": "EUR"},
+    {"name": "metadata", "type": ["null", "string"], "default": null}
+  ]
+}
+```
+
+`default` ermöglicht Backward Compatibility!
+
+---
+
+## Spring Kafka mit Schema Registry
+
+```yaml
+spring:
+  kafka:
+    properties:
+      schema.registry.url: http://localhost:8081
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+    consumer:
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+      properties:
+        specific.avro.reader: true
+```
+
+---
+
+## Compatibility Modes
+
+Schema Registry prüft Kompatibilität beim Registrieren:
+
+| Mode         | Beschreibung                                |
+|--------------|---------------------------------------------|
+| **BACKWARD** | Neue Consumer können alte Nachrichten lesen |
+| **FORWARD**  | Alte Consumer können neue Nachrichten lesen |
+| **FULL**     | Beides (Empfohlen!)                         |
+| **NONE**     | Keine Prüfung (gefährlich)                  |
+
+```bash
+# Compatibility setzen
+curl -X PUT http://localhost:8081/config/order-events-value \
+  -H "Content-Type: application/json" \
+  -d '{"compatibility": "FULL"}'
+```
+
+---
+
+# Saga Pattern & Distributed Transactions
+
+---
+
+## Das Problem: Verteilte Transaktionen
+
+In Microservices können wir keine klassischen ACID-Transaktionen über Service-Grenzen nutzen.
+
+* **JTA/XA:** Funktioniert nicht gut mit REST (zustandslos, Blocking, keine Protokoll-Unterstützung)
+* **Alternative:** Das **Saga Pattern** – eine Folge von lokalen Transaktionen mit Kompensationslogik
+
+> _Saga ist tatsächlich kein Akronym. Es steht einfach nur für eine lange Geschichte._
+
+---
+
+## Saga-Ansatz 1: Choreography (Event-Driven)
+
+Jeder Service entscheidet selbst, was zu tun ist. Es gibt keinen zentralen Koordinator.
+
+* **Ablauf:** `OrderService` → Event: `OrderCreated` → `InventoryService` → Event: `GoodsReserved` → `PaymentService`
+* *Pro:* Lose Kopplung, keine zentrale Logik
+* *Con:* Unübersichtlich ("Wer hört auf wen?"), zyklische Abhängigkeiten schwer zu erkennen
+
+**Passt gut zu:** Kafka, RabbitMQ mit Topics/Fanout
+
+---
+
+## Saga-Ansatz 2: Orchestration (Command-Driven)
+
+Ein zentraler "Conductor" (Klasse oder Service) kennt den gesamten Ablauf und sagt den Teilnehmern, was sie tun sollen.
+
+* **Ablauf:** Orchestrator ruft `Inventory.reserve()` auf. Bei Erfolg ruft er `Payment.charge()` auf.
+* *Pro:* Klarer Ablauf, einfache Fehlerbehandlung, zentraler Zustand
+* *Con:* Orchestrator kann zum "Gott-Service" werden (zu viel Logik)
+
+**Tools:** Camunda, Temporal, eigene State Machine
+
+---
+
+## Saga Orchestration: Naive Implementierung
+
+<style scoped>
+section {
+    font-size: 20px;
+}
+</style>
+
+```java
+@Service
+public class OrderSagaOrchestrator {
+    @Autowired private OrderRepository orderRepo;
+    @Autowired private RestClient inventoryClient;
+    @Autowired private RestClient paymentClient;
+
+    public void placeOrder(Order order) {
+        orderRepo.save(order); // 1. Local TX
+
+        try {
+            // 2. Remote Steps (Commands)
+            inventoryClient.post().uri("/reserve").body(order).retrieve();
+            paymentClient.post().uri("/charge").body(order).retrieve();
+            order.setStatus(OrderStatus.CONFIRMED);
+            orderRepo.save(order);
+        } catch (Exception e) {
+            // KOMPENSATION - Problem: Was wenn dieser Call fehlschlägt?
+            inventoryClient.post().uri("/release").body(order).retrieve();
+            order.setStatus(OrderStatus.FAILED);
+            orderRepo.save(order);
+        }
+    }
+}
+```
+
+**⚠️ Achtung:** Fragil! Bei Crash im `catch`-Block → inkonsistenter Zustand.
+
+---
+
+## Das Dual-Write Problem
+
+Die naive Saga-Implementierung hat ein fundamentales Problem: **Dual Write**.
+
+* Wir schreiben in die **Datenbank** (Order speichern)
+* UND senden **Events/HTTP-Calls** (Inventory, Payment)
+* Was passiert, wenn das System zwischen diesen Schritten abstürzt?
+
+→ Das **Outbox Pattern** löst dieses Problem elegant.
+
+---
+
+# Transactional Outbox Pattern
+
+---
+
+## Das Outbox Pattern
+
+**Problem:** Wie garantiere ich, dass sowohl die DB-Änderung als auch das Event veröffentlicht werden?
+
+**Lösung:** Wir schreiben das Event in eine **Outbox-Tabelle** in derselben Transaktion wie die Geschäftsdaten.
+
+### Ablauf
+
+1. Business-Logik speichert Daten + Event in `outbox`-Tabelle (gleiche TX)
+2. Ein separater Prozess (Polling oder CDC) liest die Outbox und publiziert Events
+3. Nach erfolgreicher Publikation wird der Outbox-Eintrag gelöscht/markiert
+
+---
+
+## Outbox Entity
+
+```java
+@Entity
+@Table(name = "outbox")
+public class OutboxEvent {
+    @Id @GeneratedValue
+    private Long id;
+    private String aggregateType;  // z.B. "Order"
+    private String aggregateId;    // z.B. "12345"
+    private String eventType;      // z.B. "OrderCreated"
+
+    @Column(columnDefinition = "TEXT")
+    private String payload;        // JSON
+
+    private Instant createdAt;
+    private boolean published;
+}
+```
+
+---
+
+## Outbox: Speichern in einer Transaktion
+
+```java
+@Service
+public class OrderService {
+
+    @Transactional
+    public Order createOrder(Order order) {
+        // 1. Business-Daten speichern
+        Order saved = orderRepository.save(order);
+
+        // 2. Event in Outbox schreiben (gleiche Transaktion!)
+        OutboxEvent event = new OutboxEvent();
+        event.setAggregateType("Order");
+        event.setAggregateId(saved.getId().toString());
+        event.setEventType("OrderCreated");
+        event.setPayload(objectMapper.writeValueAsString(saved));
+        outboxRepository.save(event);
+
+        return saved;
+    }
+}
+```
+
+---
+
+## Outbox: Publisher (Polling-Variante)
+
+```java
+@Component
+public class OutboxPublisher {
+
+    @Scheduled(fixedDelay = 1000)
+    @Transactional
+    public void publishPendingEvents() {
+        List<OutboxEvent> events = outboxRepository.findByPublishedFalse();
+
+        for (OutboxEvent event : events) {
+            try {
+                kafkaTemplate.send("domain-events", event.getAggregateId(), event.getPayload());
+                event.setPublished(true);  // Oder: outboxRepository.delete(event);
+            } catch (Exception e) {
+                log.warn("Event {} konnte nicht publiziert werden", event.getId());
+                // Retry beim nächsten Durchlauf
+            }
+        }
+    }
+}
+```
+
+---
+
+# Idempotenz
+
+---
+
+## Warum Idempotenz?
+
+In verteilten Systemen können Nachrichten **mehrfach zugestellt** werden ("at-least-once" delivery).
+
+* **Problem:** `releaseInventory()` wird zweimal aufgerufen → Bestand wird doppelt erhöht
+* **Lösung:** Idempotency Key tracken
+
+Eine Operation ist **idempotent**, wenn sie mehrmals ausgeführt werden kann, ohne zusätzliche Seiteneffekte zu erzeugen.
+
+---
+
+## Idempotenz: Implementierung
+
+```java
+@Service
+public class InventoryService {
+
+    @Transactional
+    public void releaseInventory(String orderId, String idempotencyKey) {
+        // Prüfen, ob diese Operation bereits durchgeführt wurde
+        if (processedOperationRepository.existsByKey(idempotencyKey)) {
+            log.info("Operation {} bereits verarbeitet, überspringe", idempotencyKey);
+            return;
+        }
+
+        // Geschäftslogik ausführen
+        Inventory inv = inventoryRepository.findByOrderId(orderId);
+        inv.release();
+        inventoryRepository.save(inv);
+
+        // Operation als verarbeitet markieren
+        processedOperationRepository.save(new ProcessedOperation(idempotencyKey));
+    }
+}
+```
+
+---
+
+## Idempotency Key Strategien
+
+| Strategie            | Beispiel               | Vorteil           |
+|----------------------|------------------------|-------------------|
+| **Message-ID**       | `msg.getMessageId()`   | Broker liefert ID |
+| **Composite Key**    | `orderId + "_release"` | Deterministisch   |
+| **Client-Generated** | UUID im Header         | Volle Kontrolle   |
+
+**Wichtig:** Der Key muss die *Operation* identifizieren, nicht nur die Nachricht!
+
+---
+
+# Transactional Outbox mit Debezium (CDC)
+
+---
+
+## Von Polling zu CDC
+
+Die Polling-Variante des Outbox Patterns hat Nachteile:
+
+* Latenz (je nach Polling-Intervall)
+* Zusätzliche DB-Last
+
+**Alternative:** Change Data Capture (CDC) mit **Debezium**.
+
+---
+
+## Change Data Capture (CDC)
+
+Statt Polling der Outbox-Tabelle: **Debezium** liest das Datenbank-Log (WAL/Binlog).
+
+* **Vorteil:** Keine zusätzliche Last auf der DB
+* **Vorteil:** Near-Realtime (Millisekunden)
+* **Nachteil:** Komplexeres Setup (Debezium Connector)
+
+---
+
+## Debezium Outbox Architektur
+
+```
+┌─────────────────┐      ┌─────────────┐      ┌─────────┐
+│  Spring Boot    │      │  Debezium   │      │  Kafka  │
+│  (TX: Order +   │ ──▶  │  Connector  │ ──▶  │  Topic  │
+│   Outbox)       │      │  (CDC)      │      │         │
+└─────────────────┘      └─────────────┘      └─────────┘
+         │                      │
+         ▼                      ▼
+   ┌──────────┐          Liest WAL/Binlog
+   │ Postgres │          (kein Polling!)
+   └──────────┘
+```
+
+---
+
+## Debezium Outbox Transformer
+
+Debezium bietet einen speziellen **Outbox Event Router**:
+
+```json
+{
+  "name": "outbox-connector",
+  "config": {
+    "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+    "transforms": "outbox",
+    "transforms.outbox.type": "io.debezium.transforms.outbox.EventRouter",
+    "transforms.outbox.table.field.event.key": "aggregate_id",
+    "transforms.outbox.table.field.event.type": "event_type",
+    "transforms.outbox.table.field.event.payload": "payload",
+    "transforms.outbox.route.topic.replacement": "${routedByValue}"
+  }
+}
+```
+
+Das Outbox-Event wird automatisch ins richtige Topic geroutet!

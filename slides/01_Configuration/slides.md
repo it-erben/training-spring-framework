@@ -12,10 +12,11 @@ paginate: true
 
 ## In diesem Modul
 
-* Spring Boot AutoConfiguration (+ Demo)
+* Spring Boot AutoConfiguration (+ Deep Dive)
 * Externalisierte Configuration (+ Demo)
 * Eigene Starter/Autoconfiguration
-* Demo: Starter und Übungsaufgabe
+* @ConfigurationPropertiesScan vs. @EnableConfigurationProperties
+* Kubernetes-native Konfiguration (ConfigMaps, Secrets)
 
 ---
 
@@ -356,3 +357,177 @@ public class PortInUseFailureAnalyzer
 ```
 
 Dies verwandelt einen Stacktrace in eine besser lesbare Fehlermeldung in der Konsole.
+
+---
+
+# Configuration Properties: Scan vs. Enable
+
+---
+
+## @ConfigurationPropertiesScan vs. @EnableConfigurationProperties
+
+Zwei Wege, um `@ConfigurationProperties`-Klassen zu aktivieren:
+
+| Annotation                                       | Verwendung                              |
+|--------------------------------------------------|-----------------------------------------|
+| `@EnableConfigurationProperties(MyProps.class)`  | Explizit einzelne Klassen registrieren  |
+| `@ConfigurationPropertiesScan`                   | Automatisch alle im Package scannen     |
+
+---
+
+## @EnableConfigurationProperties
+
+Explizite Registrierung – volle Kontrolle, aber mehr Boilerplate.
+
+```java
+@Configuration
+@EnableConfigurationProperties({
+    MailProperties.class,
+    StorageProperties.class
+})
+public class AppConfig {
+    // Jede neue Properties-Klasse muss hier hinzugefügt werden
+}
+```
+
+**Vorteil:** Klar ersichtlich, welche Properties aktiv sind.
+**Nachteil:** Vergisst man eine Klasse, wird sie nicht gebunden.
+
+---
+
+## @ConfigurationPropertiesScan
+
+Automatisches Scanning – weniger Boilerplate, wie `@ComponentScan`.
+
+```java
+@SpringBootApplication
+@ConfigurationPropertiesScan("com.example.config")
+public class Application {
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+    }
+}
+```
+
+**Vorteil:** Neue Properties-Klassen werden automatisch erkannt.
+**Nachteil:** Weniger explizit; kann unerwartete Beans erzeugen.
+
+---
+
+## Empfehlung
+
+| Szenario                       | Empfehlung                                  |
+|--------------------------------|---------------------------------------------|
+| Kleine Anwendung, wenige Props | `@ConfigurationPropertiesScan`              |
+| Library / Starter              | `@EnableConfigurationProperties` (explizit) |
+| Strikte Kontrolle erforderlich | `@EnableConfigurationProperties`            |
+| Viele Properties-Klassen       | `@ConfigurationPropertiesScan`              |
+
+---
+
+# Kubernetes-native Konfiguration
+
+---
+
+## Rückblick: Externalized Configuration
+
+Wir haben bereits **Spring Cloud Config** und **Vault** als externe Konfigurationsquellen kennengelernt.
+
+In Kubernetes-Umgebungen gibt es eine **native Alternative**: ConfigMaps und Secrets direkt importieren – ohne zusätzliche Infrastruktur wie Config Server.
+
+---
+
+## spring.config.import für Kubernetes
+
+Seit Spring Boot 2.4+ können ConfigMaps und Secrets **direkt** importiert werden – ohne Spring Cloud Kubernetes.
+
+```yaml
+spring:
+  config:
+    import:
+      - "optional:configtree:/etc/config/"
+```
+
+**configtree:** Liest Dateien aus einem Verzeichnis als Properties.
+Jede Datei wird zum Property-Namen, der Inhalt zum Wert.
+
+---
+<style scoped>
+section {
+    font-size: 1.3rem;
+}
+</style>
+
+## Kubernetes Volume Mount
+
+```yaml
+# Kubernetes Deployment
+spec:
+  containers:
+    - name: app
+      volumeMounts:
+        - name: config-volume
+          mountPath: /etc/config
+  volumes:
+    - name: config-volume
+      configMap:
+        name: my-app-config
+```
+
+**ConfigMap:**
+
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: my-app-config
+data:
+  database.url: "jdbc:postgresql://db:5432/mydb"
+  cache.enabled: "true"
+```
+
+---
+
+## Resultat im Spring Boot
+
+Die Dateien unter `/etc/config/` werden zu Properties:
+
+| Datei                       | Property         |
+|-----------------------------|------------------|
+| `/etc/config/database.url`  | `database.url`   |
+| `/etc/config/cache.enabled` | `cache.enabled`  |
+
+```java
+@Value("${database.url}")
+private String dbUrl;  // "jdbc:postgresql://db:5432/mydb"
+```
+
+---
+<style scoped>
+section {
+    font-size: 1.4rem;
+}
+</style>
+
+## Secrets als Config importieren
+
+Für sensible Daten funktioniert es identisch mit Kubernetes Secrets:
+
+```yaml
+spring:
+  config:
+    import:
+      - "optional:configtree:/etc/secrets/"
+```
+
+```yaml
+# Kubernetes Secret (base64-encoded)
+apiVersion: v1
+kind: Secret
+metadata:
+  name: db-credentials
+data:
+  spring.datasource.password: c3VwZXJTZWNyZXQ=  # "superSecret"
+```
+
+**Vorteil:** Keine zusätzlichen Dependencies, nativer Kubernetes-Support.

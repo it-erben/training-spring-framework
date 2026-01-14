@@ -23,6 +23,8 @@ img[alt~="center"] {
 * Dynamische/Nested Tests & Extensions
 * Spring Boot Test-Strategien: `@SpringBootTest` vs. Slices
 * Infrastrukturtests mit Testcontainers
+* @MockitoBean (Spring Boot 3.4+)
+* Contract Testing mit Spring Cloud Contract
 * Demo und Übungsaufgaben
 
 ---
@@ -41,7 +43,7 @@ img[alt~="center"] {
 
 Im Gegensatz zu JUnit 4 ist JUnit 5 modular aufgebaut. Es besteht aus drei Hauptkomponenten:
 
-![center](./images/junit-parts.drawio.png)
+![center](./images/junit-parts.drawio.svg)
 
 ---
 
@@ -637,3 +639,173 @@ section {
         assertThat(output).contains("Operation successful");
     }
     ```
+
+---
+
+# Neuerungen in Spring Boot 3.4+
+
+---
+
+## @MockitoBean und @MockitoSpyBean
+
+Ab Spring Boot 3.4 ersetzen diese Annotationen `@MockBean` und `@SpyBean`:
+
+| Alt (deprecated) | Neu (3.4+)        |
+|------------------|-------------------|
+| `@MockBean`      | `@MockitoBean`    |
+| `@SpyBean`       | `@MockitoSpyBean` |
+
+**Warum?** Bessere Integration mit dem Test-Lifecycle und klarere Semantik.
+
+---
+
+## @MockitoBean Beispiel
+
+```java
+@SpringBootTest
+class OrderServiceTest {
+
+    @MockitoBean  // Ersetzt @MockBean
+    private PaymentClient paymentClient;
+
+    @Autowired
+    private OrderService orderService;
+
+    @Test
+    void shouldProcessOrder() {
+        given(paymentClient.charge(any())).willReturn(new PaymentResult(true));
+
+        Order result = orderService.process(new Order());
+
+        assertThat(result.getStatus()).isEqualTo(Status.PAID);
+    }
+}
+```
+
+---
+
+## @MockitoSpyBean Beispiel
+
+```java
+@SpringBootTest
+class AuditServiceTest {
+
+    @MockitoSpyBean  // Ersetzt @SpyBean
+    private AuditService auditService;
+
+    @Test
+    void shouldCallAuditMethod() {
+        // Echte Implementierung wird verwendet
+        orderController.createOrder(new Order());
+
+        // Aber wir können verifizieren, dass Methoden aufgerufen wurden
+        verify(auditService).logAction(eq("ORDER_CREATED"), any());
+    }
+}
+```
+
+---
+
+# Contract Testing
+
+---
+
+## Warum Contract Testing?
+
+In Microservice-Architekturen (→ siehe Modul **Microservices**) ist die **Schnittstelle zwischen Services** kritisch.
+
+* **Problem:** Service A ändert sein API → Service B bricht (erst in Produktion bemerkt).
+* **Lösung:** Contracts definieren die erwartete Kommunikation und werden von beiden Seiten getestet.
+* **Kontext:** Ergänzt die im Microservices-Modul besprochenen Resilience Patterns.
+
+---
+
+## Consumer-Driven Contracts
+
+Der **Consumer** (Client) definiert, was er vom **Producer** (Server) erwartet.
+
+1. Consumer schreibt einen Contract: "Ich erwarte GET /users/1 → {id: 1, name: 'Alice'}"
+2. Producer generiert Tests aus dem Contract
+3. Beide Seiten testen gegen denselben Contract
+
+**Tools:** Spring Cloud Contract, Pact
+
+---
+
+## Spring Cloud Contract: Producer-Seite
+
+**Contract Definition** (`/src/test/resources/contracts/user.groovy`):
+
+```groovy
+Contract.make {
+    description "should return user by id"
+    request {
+        method GET()
+        url "/users/1"
+    }
+    response {
+        status OK()
+        headers {
+            contentType applicationJson()
+        }
+        body([
+            id: 1,
+            name: "Alice",
+            email: "alice@example.com"
+        ])
+    }
+}
+```
+
+---
+
+## Spring Cloud Contract: Generierte Tests
+
+Das Maven/Gradle Plugin generiert automatisch Tests:
+
+```java
+// Auto-generated
+public class ContractVerifierTest extends UserServiceBase {
+
+    @Test
+    public void validate_shouldReturnUserById() {
+        // Given:
+        MockMvcRequestSpecification request = given();
+
+        // When:
+        ResponseOptions response = given().spec(request).get("/users/1");
+
+        // Then:
+        assertThat(response.statusCode()).isEqualTo(200);
+        assertThat(response.body().jsonPath().get("name")).isEqualTo("Alice");
+    }
+}
+```
+
+---
+
+## Spring Cloud Contract: Consumer-Seite (Stub)
+
+Der Producer veröffentlicht einen **Stub** (JAR mit WireMock-Mappings).
+Der Consumer nutzt diesen Stub in seinen Tests:
+
+```java
+@SpringBootTest
+@AutoConfigureStubRunner(
+    ids = "com.example:user-service:+:stubs:8080",
+    stubsMode = StubRunnerProperties.StubsMode.LOCAL
+)
+class UserClientTest {
+
+    @Autowired
+    private UserClient userClient;
+
+    @Test
+    void shouldFetchUser() {
+        // Stub antwortet gemäß Contract
+        User user = userClient.getUser(1L);
+
+        assertThat(user.getName()).isEqualTo("Alice");
+    }
+}
+```
