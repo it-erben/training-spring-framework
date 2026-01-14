@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: resilience4j-demo
+
+# External pricing service URL
+pricing:
+  service:
+    url: http://localhost:8081
+
+# TODO: Add Resilience4J configuration here
+# resilience4j:
+#   circuitbreaker:
+#     instances:
+#       pricingService:
+#         ...
+
+# Actuator
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics

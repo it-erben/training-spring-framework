@@ -28,6 +28,7 @@
         <module>sb-advanced-messaging-amqp-demo</module>
         <module>sb-advanced-messaging-kafka-demos</module>
         <module>sb-advanced-security-oauth2-demo</module>
+        <module>sb-advanced-resilience4j-demo</module>
     </modules>
 
 </project>
