@@ -71,7 +71,7 @@ public class ActuatorSecurity {
     // Import: org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(auth -> auth
+        return http.authorizeHttpRequests(auth -> auth
                 .requestMatchers(EndpointRequest.toAnyEndpoint()).hasRole("ADMIN") // Nur Admins
                 .anyRequest().permitAll()
             )

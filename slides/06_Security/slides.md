@@ -327,7 +327,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/admin/**").hasAuthority("SCOPE_admin")
                 .anyRequest().authenticated()
             )
-            .oauth2ResourceServer(oauth2 -> oauth2.jwt());
+            .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()));
 
         return http.build();
     }

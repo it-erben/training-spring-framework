@@ -252,7 +252,7 @@ section {
 
 ---
 
-# Spring Boot Startet
+# Spring Boot Starter
 
 ---
 

@@ -6,6 +6,13 @@ footer: Alexander Erben
 paginate: true
 ---
 
+<style>
+img[alt~="center"] {
+  display: block;
+  margin: 0 auto;
+}
+</style>
+
 # RESTful Web Services in Spring Boot
 
 ---

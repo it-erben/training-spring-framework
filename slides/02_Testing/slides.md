@@ -210,22 +210,26 @@ Verschachtelte Tests sind beispielsweise für Behaviour Driven Design-Testing si
 ```java
 @DisplayName("Ein Stack")
 class StackTest {
-    
+
     Stack<Integer> stack = new Stack<Integer>();
 
-    @Test 
+    @Test
     @DisplayName("ist initial leer")
     void isNew() { assertTrue(stack.isEmpty()); }
 
-    @Nested 
+    @Nested
     @DisplayName("nach dem Push eines Elements")
     class AfterPush {
-        
-        @Test 
-        @DisplayName("ist er nicht mehr leer")
-        void isNotEmpty() { 
+
+        @BeforeEach
+        void pushElement() {
             stack.push(1);
-            assertFalse(stack.isEmpty()); 
+        }
+
+        @Test
+        @DisplayName("ist er nicht mehr leer")
+        void isNotEmpty() {
+            assertFalse(stack.isEmpty());
         }
     }
 }
@@ -602,7 +606,7 @@ Man kann Testcontainers auch nutzen, um die Umgebung für `main` (lokales Starte
 
 ```java
 public class TestApplication {
-    public static void main(String[] args) {
+    static void main(String[] args) {
         SpringApplication.from(MyApplication::main)
             .with(TestcontainersConfiguration.class) // Definiert Container
             .run(args);
