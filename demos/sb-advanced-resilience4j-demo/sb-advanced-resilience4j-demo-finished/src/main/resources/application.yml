@@ -1,0 +1,104 @@
+spring:
+  application:
+    name: resilience4j-demo
+
+# External pricing service URL (can be overridden for testing)
+pricing:
+  service:
+    url: http://localhost:8081
+
+# Resilience4J Configuration
+resilience4j:
+  # Circuit Breaker Configuration
+  circuitbreaker:
+    configs:
+      default:
+        registerHealthIndicator: true
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        waitDurationInOpenState: 10s
+        failureRateThreshold: 50
+        eventConsumerBufferSize: 10
+    instances:
+      pricingService:
+        baseConfig: default
+        slidingWindowSize: 5
+        waitDurationInOpenState: 5s
+
+  # Retry Configuration
+  retry:
+    configs:
+      default:
+        maxAttempts: 3
+        waitDuration: 500ms
+        enableExponentialBackoff: true
+        exponentialBackoffMultiplier: 2
+        retryExceptions:
+          - java.io.IOException
+          - java.util.concurrent.TimeoutException
+          - org.springframework.web.client.RestClientException
+    instances:
+      pricingService:
+        baseConfig: default
+        maxAttempts: 3
+
+  # Rate Limiter Configuration
+  ratelimiter:
+    configs:
+      default:
+        registerHealthIndicator: true
+        limitForPeriod: 10
+        limitRefreshPeriod: 1s
+        timeoutDuration: 0s
+        eventConsumerBufferSize: 100
+    instances:
+      productApi:
+        baseConfig: default
+        limitForPeriod: 5
+        limitRefreshPeriod: 1s
+
+  # Bulkhead Configuration
+  bulkhead:
+    configs:
+      default:
+        maxConcurrentCalls: 10
+        maxWaitDuration: 0ms
+    instances:
+      productService:
+        baseConfig: default
+        maxConcurrentCalls: 3
+        maxWaitDuration: 100ms
+
+  # Time Limiter Configuration
+  timelimiter:
+    configs:
+      default:
+        timeoutDuration: 3s
+        cancelRunningFuture: true
+    instances:
+      pricingService:
+        baseConfig: default
+        timeoutDuration: 2s
+
+# Actuator Configuration for Resilience4J Metrics
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus,circuitbreakers,circuitbreakerevents,ratelimiters,ratelimiterevents,retries,retryevents,bulkheads,bulkheadevents,timelimiters,timelimiterevents
+  endpoint:
+    health:
+      show-details: always
+  health:
+    circuitbreakers:
+      enabled: true
+    ratelimiters:
+      enabled: true
+
+# Logging
+logging:
+  level:
+    tech.erben.springboot.resilience4jdemo: DEBUG
+    io.github.resilience4j: DEBUG
