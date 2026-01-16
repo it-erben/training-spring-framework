@@ -1,4 +1,4 @@
-# Übungsaufgabe: Spring Boot Test Slices mit `@ControllerAdvice`
+# Übungsaufgabe: Spring Boot Test Slices
 
 ## Ziel der Übung
 
