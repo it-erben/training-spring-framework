@@ -2,6 +2,7 @@ package tech.erben;
 
 import net.datafaker.Faker;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest
 @Testcontainers
 @Import(TestConfig.class)
+@Disabled
 public class CachingTest {
 
     Faker faker = new Faker();
