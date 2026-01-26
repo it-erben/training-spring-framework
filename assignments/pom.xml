@@ -14,9 +14,6 @@
     </parent>
 
     <modules>
-        <module>sb-advanced-actuator-assignment</module>
-        <module>sb-advanced-testing-assignment</module>
-        <module>sb-advanced-reactive-assignment</module>
         <module>sb-advanced-data-mongodb-assignment</module>
         <module>sb-advanced-data-jpa-assignment</module>
     </modules>

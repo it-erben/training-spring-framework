@@ -21,13 +21,7 @@ Ziel: Erweitere die Bibliotheks-Verwaltung um Beziehungen, Auditing, Projections
 1. **Interface Projection**: Wir wollen manchmal nur den Buchtitel und die ISBN sehen. Erstelle ein Interface `BookIdentity` mit entsprechenden Getter-Methoden. Füge eine Query-Methode im Repository hinzu.
 2. **DTO mit JPQL**: Erstelle eine Klasse `BookAuthorDTO` (Felder: `title`, `authorName`). Schreibe eine JPQL-Query im Repository, die dieses DTO direkt befüllt (`SELECT new ...`).
 
-## Aufgabe 4: Modifying Query
-
-1. Schreibe eine Methode `updatePublisherName(String oldName, String newName)` im Repository.
-2. Nutze `@Modifying` und `@Query` mit einem UPDATE-Statement.
-3. Hinweis: Damit das im Test/Runner funktioniert, benötigst du eine aktive Transaktion (z.B. `@Transactional` am Test/Service).
-
-## Aufgabe 5: Runner Implementation
+## Aufgabe 4: Runner Implementation
 
 Erweitere den `CommandLineRunner`:
 
@@ -36,4 +30,3 @@ Erweitere den `CommandLineRunner`:
 * Suche ein Buch mit Reviews und gib die Anzahl der Reviews aus (EntityGraph Test).
 * Lade nur die `BookIdentity` Projection.
 * Lade die `BookAuthorDTO`s.
-* (Optional) Führe das Update aus.
