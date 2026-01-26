@@ -72,12 +72,6 @@ public class LibraryApplication {
                 .findDtosByPublisher("Manning")
                 .forEach(dto -> System.out.println(dto));
 
-            System.out.println("--------------------------------");
-            System.out.println("Modifying Update (Manning -> Manning Publications):");
-            repository.updatePublisherName("Manning", "Manning Publications");
-            repository
-                .findDtosByPublisher("Manning Publications")
-                .forEach(dto -> System.out.println("Updated: " + dto));
         };
     }
 }

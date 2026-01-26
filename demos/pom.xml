@@ -18,11 +18,8 @@
         <module>sb-advanced-actuator-demo</module>
         <module>sb-advanced-testing-demo</module>
         <module>sb-advanced-web-demo</module>
-        <module>sb-advanced-starter</module>
-        <module>sb-advanced-reactive-demo</module>
         <module>sb-advanced-security-basic-demo</module>
         <module>sb-advanced-data-mongodb-demo</module>
-        <module>sb-advanced-data-redis-demo</module>
         <module>sb-advanced-data-jpa-demo</module>
         <module>sb-advanced-vault-demo</module>
         <module>sb-advanced-messaging-amqp-demo</module>

@@ -1,84 +1,101 @@
+# Übungsaufgabe: Spring Boot Test Slices
 
-### Übung 1: JUnit 5 Basics & Parametrisierung
+## Ziel der Übung
 
-- Schreibe parametrisierte Tests für den `StringValidator` (`@ValueSource`, `@CsvSource`, `@MethodSource`).
-    > Hinweis: Die benötigten Annotationen lauten `@ParameterizedTest`, `@ValueSource`, `@CsvSource`, `@MethodSource`.
-- Nutze verschachtelte Tests (`@Nested`) und ein kleines Beispiel für `@TestFactory` (dynamische Tests).
-    > Die Grundstruktur eines DynamicTests sieht folgendermaßen aus:
->
-    > ```java
-    > @TestFactory
-    > Stream<DynamicTest> dynamicTests() {
-    >     return Stream.of(
-    >         DynamicTest.dynamicTest("test1", () -> { /* ... */ }),
-    >         DynamicTest.dynamicTest("test2", () -> { /* ... */ })
-    >     );
-    > }
-    > ```
+In dieser Übung lernt ihr, wie **Spring Boot Test Slices** eingesetzt werden, um schnelle und fokussierte Tests für
+einzelne Schichten (JPA, MVC) zu schreiben.
 
-- Zeige bedingte Ausführung mit `@EnabledOnOs`, `@EnabledIfEnvironmentVariable` oder `@EnabledIf` an einem beliebigen Beispiel.
+---
 
-### Übung 2: Test Slices
+## Fachliches Szenario
 
-- Erstelle einen Test für den `PersonController` mit `@WebMvcTest`. Mocke das `PersonService` und prüfe den GET `/api/person`.
-    > Die benötigten Annotationen lauten: `@WebMvcTest(PersonController.class)` und `@MockBean`.
-- `@JsonTest`: Teste die Serialisierung des `Person`-Modells.
-    > Dazu benötigst du den `JacksonTester`, den du dir autowiren kannst. Er enthält Methoden wie `assertThat(result).extractingJsonPathStringValue("$.name").isEqualTo("Alice");` für die Assertions.
-- Rest Client Test: Erstelle einen Test, der `MockRestServiceServer` verwendet, um die Klasse `QuoteClient` zu testen. Dazu müsst du Konfigurationsvariable  `quote.api.base-url` stubben.
-    > Du benötgist dafür auf der Klasse die Annotationen
-`@RestClientTest(QuoteClient.class)` sowie
-`@org.springframework.test.context.TestPropertySource(...)`. Die Grundstruktur für ein Matching auf dem Mock-Server ist:
->
-    >```java
-    >server
-    >   .expect(requestTo("..."))
-    >   .andRespond(
-    >       withSuccess(
-    >          """
-    >          ...
-    >          """,
-    >          MediaType.APPLICATION_JSON
-    >      )
-    >   );
-    >```
+Ihr implementiert einen kleinen **Contact-Service**.
 
-### Übung 3: Mocking & Spying
+Ein `Contact` besteht aus:
 
-- Erstelle einen `@SpringBootTest`, der `PersonRepository` als `@MockBean` ersetzt und `PersonLoggingService` als `@SpyBean` nutzt. Verifiziere, dass `createPerson` beides aufruft.
-- Nutze `CapturedOutput` bzw. `OutputCaptureExtension`, um Log-Ausgaben von `PersonLoggingService` zu prüfen.
-    > Beispiel für das Setup:
->
-    > ```java
-    > @ExtendWith(OutputCaptureExtension.class)
-    > @SpringBootTest
-    > class PersonLoggingServiceTest {
-    >     
-    >    @Test
-    >    void capturesLogOutput(CapturedOutput output) {
-    > ```
+- Vorname
+- Nachname
+- E-Mail-Adresse
 
-### Übung 4: Datenbanktests mit Testcontainers (moderne Variante)
+Der Service soll:
 
-- Schreibe einen `@DataJpaTest` mit Postgres-Testcontainer auf moderne Weise, also mit `@ServiceConnection`.
-  > Man setzt ein Postgres-Test mit Testcontainers folgendermaßen auf:
->
-  > ```java
-  >  @DataJpaTest(properties = "spring.jpa.hibernate.ddl-auto=create-drop")
-  >  @Testcontainers
-  >  @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-  >  class PersonRepositoryPostgresTest {
-  >  
-  >      @Container
-  >      @ServiceConnection
-  >      static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>(
-  >          "postgres:15-alpine"
-  >     );
+- neue Contacts anlegen
+- Contacts nach Nachnamen suchen
 
-    ```
+---
 
-- Optional: Vergleiche Laufzeit/Startverhalten mit/ohne Container. Dazu musst du einfach nur das Setup von Testcontainers entfernen, damit `@DataJpaTest` das Rpository mockt.
+## Teil A – Implementierung (Grundlage für Tests)
 
-### Bonus: Eigene Extension
+Erstellt einen neuen Spring-Boot-Service mit diesen Abhängigkeiten:
 
-- Implementiere die Klasse `support/TimingExtension` (Start-Projekt) mit `BeforeTestExecutionCallback`/`AfterTestExecutionCallback`, die die Testdauer misst und ausgibt.
-- Nutze die Extension in einem Beispieltest und zeige, dass Laufzeit erfasst wurde.
+- Spring Web
+- Spring Data JPA
+- H2 Database
+
+### Entity `Contact`
+
+- `id: Long`
+- `firstName: String`
+- `lastName: String`
+- `email: String`
+
+### DTOs
+
+- `ContactCreateDto(firstName, lastName, email)`
+- Optional: `ContactResponseDto` für die Antwort (oder die Entity, wenn ihr es simpel haltet).
+
+### Repository `ContactRepository`
+
+- `Optional<Contact> findByEmail(String email)`
+- `List<Contact> findByLastNameStartingWithIgnoreCase(String prefix)` (oder ähnlich)
+
+### Service `ContactService`
+
+- `Contact create(ContactCreateDto dto)`
+- `List<Contact> searchByLastNamePrefix(String prefix)`
+
+### Controller `ContactController`
+
+- `POST /contacts`
+    - Request Body: `ContactCreateDto`
+    - Response:
+        - `201 Created` + Response-DTO/Entity
+- `GET /contacts?lastNamePrefix=...`
+    - Response: Liste von Contacts
+
+---
+
+## Teil B – `@DataJpaTest`
+
+Schreibt einen `ContactRepositoryTest` mit `@DataJpaTest`.
+
+Pflichttests:
+
+1. `findByEmail_returnsContact_whenExists`
+    - Given: Contact speichern
+    - When: `findByEmail`
+    - Then: gefunden, E-Mail korrekt
+
+---
+
+## Teil C – `@WebMvcTest`
+
+Ziel: Nur die MVC-Schicht laden, Service mocken, HTTP/JSON prüfen.
+
+Schreibt einen `ContactsControllerWebMvcTest` mit `@WebMvcTest(ContactController.class)`.
+
+### Setup
+
+- `@Autowired MockMvc`
+- `@MockBean ContactService`
+
+### Pflichttests
+
+1. `postContacts_returns201_whenValid`
+    - Given: POST mit validem JSON
+    - When: Service mockt Rückgabe eines Contact/DTO
+    - Then: `201`, Response enthält `email`
+2. `getContacts_delegatesToService_andReturns200`
+    - Given: Service liefert Liste
+    - When: `GET /contacts?lastNamePrefix=Sm`
+    - Then: `200`, Liste enthält erwartete Einträge

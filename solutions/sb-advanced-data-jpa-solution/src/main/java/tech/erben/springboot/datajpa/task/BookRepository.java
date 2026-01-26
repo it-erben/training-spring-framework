@@ -24,10 +24,4 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     )
     List<BookAuthorDTO> findDtosByPublisher(String publisherName);
 
-    @Modifying
-    @Transactional // Required for Modifying queries in some contexts, though Service layer is better
-    @Query(
-        "UPDATE Book b SET b.publisherInfo.name = :newName WHERE b.publisherInfo.name = :oldName"
-    )
-    void updatePublisherName(String oldName, String newName);
 }

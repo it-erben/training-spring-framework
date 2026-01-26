@@ -14,11 +14,11 @@ Wir steigen damit ein, dass wir uns einen Tomcat "as code" zusammenschrauben.
 Erzeuge eine leere tech.erben.various.Main-Klasse mit tech.erben.various.Main-Methode. Füge die folgende Dependency zur POM hinzu:
 
 ```xml
-<dependency>
-    <groupId>org.apache.tomcat.embed</groupId>
-    <artifactId>tomcat-embed-core</artifactId>
-    <version>10.1.11</version>
-</dependency>
+            <dependency>
+                <groupId>org.apache.tomcat.embed</groupId>
+                <artifactId>tomcat-embed-core</artifactId>
+                <version>10.1.11</version>
+            </dependency>
 ```
 
 Baue die rohe Application mit Embedded Tomcat:
