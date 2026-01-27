@@ -16,6 +16,7 @@
     <modules>
         <module>sb-advanced-data-mongodb-assignment</module>
         <module>sb-advanced-data-jpa-assignment</module>
+        <module>sb-advanced-actuator-micrometer-assignment</module>
     </modules>
 
 </project>
