@@ -6,13 +6,13 @@ Ihr erweitert eine kleine CRUD-Anwendung um Observability:
 
 1. Actuator-Endpunkte freischalten.
 2. Eigene Micrometer-Metriken einführen.
-3. Den Prometheus-Endpunkt gezielt absichern.
+3. Den Prometheus-Endpunkt absichern.
 
 Die Dependencies für Actuator, Prometheus und Security sind bereits enthalten.
 Die Konfiguration in `application.properties` und Teile der Security fehlen aber
 noch.
 
-## Fachliches Szenario
+## Szenario
 
 Ihr betreibt einen kleinen Product-Catalog-Service.
 
@@ -43,7 +43,7 @@ Ergänzt in `src/main/resources/application.properties` mindestens:
 
 ### Kurz erklärt: Wozu `/actuator/prometheus`?
 
-Prometheus „scraped" diesen Endpunkt regelmäßig. Das heißt: Prometheus ruft ihn
+Prometheus "scraped" diesen Endpunkt regelmäßig. Das heißt: Prometheus ruft ihn
 in einem festen Intervall auf, liest das Textformat und speichert die Metriken
 für Abfragen, Dashboards und Alerts.
 
@@ -69,8 +69,15 @@ Implementiert mindestens diese Metriken:
 
 ### Checks
 
-1. Führt mehrere Requests gegen `/products` aus.
-2. Prüft die Metriken:
+1. Führt mehrere Requests gegen `/products` aus. Wenn ihr immer den gleichen
+   Produktnamen verwendet, wird es ab dem zweiten Request zu einem
+   Duplicate-Error kommen. Hier ist ein Beispiel mit curl:
+
+   ```bash
+   curl -X POST http://127.0.0.1:8080/products -d '{"name":"Skyr 500ml", "price": 1.50, "inventory": 100}' -H "Content-Type: application/json"
+   ```
+
+2. Prüft nach eurem Test den aktuellen Wert der Metriken:
    `/actuator/metrics/products.created`
    `/actuator/metrics/products.rejected`
    `/actuator/metrics/products.search`
@@ -78,8 +85,8 @@ Implementiert mindestens diese Metriken:
 ## Teil C: Prometheus-Endpunkt absichern (BASIC AUTH)
 
 Ziel: `/actuator/prometheus` und der Metrik-Endpunkt sollen nur mit festen
-Credentials per BASIC AUTH
-aufrufbar sein. Alle anderen Endpunkte dürfen offen bleiben.
+Credentials per BASIC AUTH aufrufbar sein. Alle anderen Endpunkte dürfen offen
+bleiben.
 
 Arbeitet in `SecurityConfig`.
 
