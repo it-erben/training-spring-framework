@@ -28,7 +28,7 @@ Es gibt bereits Endpunkte unter `/products` für:
 
 Ergänzt in `src/main/resources/application.properties` mindestens:
 
-- `management.endpoints.web.exposure.include=health,info,metrics,prometheus`
+- `management.endpoints.web.exposure.include=health,metrics,prometheus`
 - `management.endpoint.health.show-details=always`
 - `management.metrics.tags.application=${spring.application.name}`
 
@@ -58,7 +58,6 @@ Implementiert mindestens diese Metriken:
 1. Counter `products.created`
 2. Counter `products.rejected`
 3. Timer `products.search`
-4. Gauge `products.count`
 
 ### Hinweise zur Implementierung
 
@@ -67,9 +66,6 @@ Implementiert mindestens diese Metriken:
 - Messt die Dauer der `list(...)`-Methode mit einem Timer.
 - Erhöht `products.created` nach erfolgreichem Anlegen.
 - Erhöht `products.rejected` bei Duplicate-Fehlern.
-- Für den Gauge könnt ihr eine `AtomicInteger` verwenden und den Wert nach
-  `create`, `update` und `delete` setzen.
-- Alternativ könnt ihr `repository.count()` referenzieren.
 
 ### Checks
 
@@ -78,32 +74,14 @@ Implementiert mindestens diese Metriken:
    `/actuator/metrics/products.created`
    `/actuator/metrics/products.rejected`
    `/actuator/metrics/products.search`
-   `/actuator/metrics/products.count`
 
 ## Teil C: Prometheus-Endpunkt absichern (BASIC AUTH)
 
-Ziel: `/actuator/prometheus` soll nur mit festen Credentials per BASIC AUTH
+Ziel: `/actuator/prometheus` und der Metrik-Endpunkt sollen nur mit festen
+Credentials per BASIC AUTH
 aufrufbar sein. Alle anderen Endpunkte dürfen offen bleiben.
 
 Arbeitet in `SecurityConfig`.
-
-### Vorgehen mit Snippets (bitte übertragen)
-
-Übertragt die folgenden Snippets in die vorhandene Klasse. Achtet darauf, die
-benötigten Imports zu ergänzen.
-
-Benötigte Imports:
-
-- Spring-Boot-Actuator-Security-Package:
-  `org.springframework.boot.security.autoconfigure.actuate.web.servlet`
-- Klasse: `EndpointRequest`
-- `org.springframework.security.config.Customizer`
-- `org.springframework.security.core.userdetails.User`
-- `org.springframework.security.core.userdetails.UserDetails`
-- `org.springframework.security.core.userdetails.UserDetailsService`
-- `org.springframework.security.provisioning.InMemoryUserDetailsManager`
-
-#### Snippet 1: `SecurityFilterChain`
 
 Ersetzt den Inhalt der bestehenden Methode durch dieses Snippet:
 
@@ -126,8 +104,6 @@ SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     return http.build();
 }
 ```
-
-#### Snippet 2: In-Memory-User
 
 Fügt zusätzlich diesen Bean in `SecurityConfig` ein:
 
