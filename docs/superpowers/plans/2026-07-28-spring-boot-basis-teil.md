@@ -1379,9 +1379,8 @@ class CourseControllerTest {
     void unknownCodeReturnsNotFound() throws Exception {
         mockMvc.perform(get("/api/courses/GIBT-ES-NICHT"))
                 .andExpect(status().isNotFound())
-                .andExpect(content().contentTypeCompatibleWith(
-                        MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.code").value("GIBT-ES-NICHT"));
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.error").exists());
     }
 
     @Test
