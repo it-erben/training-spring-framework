@@ -18,7 +18,7 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
     /** Derived Query: {@code where code = ?} — funktioniert ab Aufgabe 1 ohne weiteres Zutun. */
     Optional<Course> findByCode(String code);
 
-    /** Derived Query: {@code where lower(title) like lower('%fragment%')} — funktioniert ab Aufgabe 1. */
+    /** Derived Query: {@code where upper(title) like upper('%fragment%')} — funktioniert ab Aufgabe 1. */
     List<Course> findByTitleContainingIgnoreCase(String fragment);
 
     /** Derived Query: {@code where seats > ?} — funktioniert ab Aufgabe 1. */

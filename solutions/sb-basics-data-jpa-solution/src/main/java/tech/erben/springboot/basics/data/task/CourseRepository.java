@@ -18,7 +18,7 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
     /** Derived Query: {@code where code = ?}. */
     Optional<Course> findByCode(String code);
 
-    /** Derived Query: {@code where lower(title) like lower('%fragment%')}. */
+    /** Derived Query: {@code where upper(title) like upper('%fragment%')}. */
     List<Course> findByTitleContainingIgnoreCase(String fragment);
 
     /** Derived Query: {@code where seats > ?}. */
