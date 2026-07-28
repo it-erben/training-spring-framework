@@ -81,11 +81,12 @@ Ausgangspunkt ist die `-start`-Variante. Nach jedem Schritt laeuft
    Unit-Tests in Millisekunden, der Slice-Test braucht einen kleinen
    Kontext, der Integrationstest ist mit Abstand am teuersten. Dabei
    einordnen: Die zwei Tests je Art sind ein Demo-Artefakt, damit jede
-   Testart einmal vorkommt — keine Empfehlung fuer ein
-   1:1:1-Verhaeltnis. In echten Projekten gilt die Testpyramide: viele
-   Unit-Tests, gezielt Slices, eine Handvoll Integrationstests fuer die
-   kritischen Pfade. Der Laufzeitunterschied, den die Demo zeigt, ist
-   die Begruendung fuer dieses Verhaeltnis — nicht sein Beleg.
+   Testart einmal vorkommt — keine Empfehlung, Unit-, Slice- und
+   Integrationstests in gleicher Zahl zu schreiben. In echten Projekten
+   gilt die Testpyramide: viele Unit-Tests, gezielt Slices, eine
+   Handvoll Integrationstests fuer die kritischen Pfade. Der
+   Laufzeitunterschied, den die Demo zeigt, ist die Begruendung fuer
+   dieses Verhaeltnis — nicht sein Beleg.
 
 Als Uebung fuer danach: Welchen Status liefert ein POST mit leerem
 Titel? Erst eine Vermutung aufstellen, dann den Slice- oder

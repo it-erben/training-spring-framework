@@ -373,7 +373,7 @@ void unknownIsbnReturnsNotFound() throws Exception {
 
 ## @DataJpaTest
 
-Das Gegenstück für die Persistenzschicht aus Modul 03 — nur Entities, Repositories und eine In-Memory-Datenbank:
+Das Gegenstück für die Persistenzschicht — nur Entities, Repositories und eine In-Memory-Datenbank. Das Beispiel stammt aus der Data-JPA-Demo von Modul 03 (nicht Teil dieser Demo):
 
 ```java
 @DataJpaTest
@@ -406,7 +406,7 @@ Keine Aufzählung, sondern eine Entscheidungsfrage: **Was genau soll dieser Test
 | Liefern Mapping und Queries das Richtige? | `@DataJpaTest` |
 | Spielen die Schichten wirklich zusammen? | wenige `@SpringBootTest` |
 
-* Die Demo hat je **zwei** Tests pro Art — das dient der Übersichtlichkeit und ist **keine Empfehlung** für ein 1:1:1-Verhältnis. In echten Projekten gilt die Pyramide: viele Unit-Tests, gezielt Slices, eine Handvoll Integrationstests für die kritischen Pfade.
+* Die Demo hat je **zwei** Tests pro Art — ein Demo-Artefakt, damit jede Testart einmal vorkommt, und **keine Empfehlung**, Unit-, Slice- und Integrationstests in gleicher Zahl zu schreiben. In echten Projekten gilt die Pyramide: viele Unit-Tests, gezielt Slices, eine Handvoll Integrationstests für die kritischen Pfade.
 * Im Zweifel: die **billigste** Testart wählen, die die Frage beantwortet. Was ein Unit-Test beweisen kann, braucht keinen Kontext.
 * Mehr Werkzeug — parametrisierte Tests, das Extension-Modell, echte Datenbanken per Testcontainers — liefert das Aufbaumodul 12.
 
