@@ -34,10 +34,12 @@ public class BookService {
                 "Java ist auch eine Insel", new BigDecimal("49.90")));
     }
 
+    // TODO: Modul 02 — Schritt 1: vom BookController fuer GET /api/books aufrufen
     public List<Book> findAll() {
         return List.copyOf(books.values());
     }
 
+    // TODO: Modul 02 — Schritt 3: vom BookController fuer GET /api/books/{isbn} aufrufen
     public Book findByIsbn(String isbn) {
         Book book = books.get(isbn);
         if (book == null) {
@@ -46,11 +48,13 @@ public class BookService {
         return book;
     }
 
+    // TODO: Modul 02 — Schritt 5: vom BookController fuer POST /api/books aufrufen (Eingabe kommt als validierter BookRequest)
     public Book create(Book book) {
         books.put(book.isbn(), book);
         return book;
     }
 
+    // TODO: Modul 02 — Schritt 6: vom BookController fuer DELETE /api/books/{isbn} aufrufen
     public void delete(String isbn) {
         if (books.remove(isbn) == null) {
             throw new BookNotFoundException(isbn);

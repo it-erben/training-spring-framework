@@ -8,6 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * hier automatisch ein eingebetteter Tomcat auf Port 8080 — konfiguriert hat
  * ihn niemand, das erledigt die AutoConfiguration.
  */
+// TODO: Modul 02 — Schritt 1: hier ist nichts zu aendern — der neue BookController liegt im selben Paket und wird vom Component-Scan automatisch gefunden
 @SpringBootApplication
 public class WebDemoApplication {
 

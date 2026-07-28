@@ -5,6 +5,7 @@ package tech.erben.springboot.basics.web;
  * kein HTTP — in der Live-Demo entsteht ein Exception-Handler, der diese
  * Ausnahme in einen 404-Status uebersetzt.
  */
+// TODO: Modul 02 — Schritt 4: im RestExceptionHandler in Status 404 uebersetzen — ohne Handler wird daraus ein 500
 public class BookNotFoundException extends RuntimeException {
 
     private final String isbn;

@@ -27,7 +27,7 @@ record BookResponse(String isbn, String title, BigDecimal netPrice, BigDecimal g
 
 | Modul | Inhalt |
 | --- | --- |
-| `sb-basics-web-demo-start` | Fachlogik fertig (`Book`, `BookService`, `BookNotFoundException`), aber ohne Web-Schicht — Controller, DTOs und Exception-Handler entstehen live. |
+| `sb-basics-web-demo-start` | Fachlogik fertig (`Book`, `BookService`, `BookNotFoundException`), aber ohne Web-Schicht — Controller, DTOs und Exception-Handler entstehen live. `TODO: Modul 02`-Marken im Code (IDE: TODO-Ansicht, Anker fuer die neuen Typen in `package-info.java`) verweisen mit Schrittnummern auf den Ablauf unten. |
 | `sb-basics-web-demo-finished` | Vollstaendige REST-Schnittstelle inklusive Tests. |
 
 ## Ablauf der Live-Demo

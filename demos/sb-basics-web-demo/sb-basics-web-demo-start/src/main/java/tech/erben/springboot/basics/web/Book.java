@@ -7,5 +7,7 @@ import java.math.BigDecimal;
  * In der Live-Demo entsteht darum herum die REST-Schnittstelle mit eigenen
  * Request- und Response-DTOs.
  */
+// TODO: Modul 02 — Schritt 2: nach aussen geht kuenftig BookResponse (mit grossPrice) statt dieses Records
+// TODO: Modul 02 — Schritt 5: BookRequest.toBook() erzeugt aus validierten Eingaben dieses Domaenenobjekt
 public record Book(String isbn, String title, BigDecimal netPrice) {
 }
