@@ -17,6 +17,7 @@
         <module>sb-basics-core-assignment</module>
         <module>sb-basics-web-assignment</module>
         <module>sb-basics-data-jpa-assignment</module>
+        <module>sb-basics-testing-assignment</module>
         <module>sb-advanced-data-mongodb-assignment</module>
         <module>sb-advanced-data-jpa-assignment</module>
         <module>sb-advanced-actuator-micrometer-assignment</module>
