@@ -2,3 +2,8 @@
 **/target
 .npm-cache
 node_modules
+.DS_Store
+
+# Arbeitsverzeichnisse der Agenten-Werkzeuge
+.claude/worktrees/
+.superpowers/
