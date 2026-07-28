@@ -57,6 +57,10 @@ class BookServiceTest {
         BigDecimal total = bookService.totalFor("978-0-13-468599-1", 4);
 
         assertThat(total).isEqualByComparingTo(new BigDecimal("400.00"));
+        // Das Stubbing oben arbeitet mit anyString() — wuerde der Service
+        // eine falsche ISBN ans Repository durchreichen, faende die
+        // Rueckgabewert-Pruefung das nicht. Erst dieses verify deckt es
+        // auf: genau ein Aufruf, und zwar mit der echten ISBN.
         verify(bookRepository, times(1)).findByIsbn("978-0-13-468599-1");
     }
 }

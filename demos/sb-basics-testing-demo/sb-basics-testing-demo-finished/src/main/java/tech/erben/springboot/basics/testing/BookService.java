@@ -16,7 +16,7 @@ import java.math.RoundingMode;
 public class BookService {
 
     /** Ab dieser Stueckzahl greift der Mengenrabatt. */
-    static final int DISCOUNT_THRESHOLD = 5;
+    private static final int DISCOUNT_THRESHOLD = 5;
 
     /** Zehn Prozent Nachlass — es bleiben 90 Prozent des Preises. */
     private static final BigDecimal DISCOUNT_FACTOR = new BigDecimal("0.90");

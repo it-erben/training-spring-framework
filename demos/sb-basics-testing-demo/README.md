@@ -77,10 +77,15 @@ Ausgangspunkt ist die `-start`-Variante. Nach jedem Schritt laeuft
    `TestRestTemplate` legt per POST ein Buch an und liest es per GET
    zurueck (die von der Datenbank vergebene Id beweist das Speichern);
    der zweite Test prueft die Rabattregel Ende-zu-Ende ueber HTTP.
-4. **Abschluss:** Testpyramide an der Laufzeit ablesen — die
-   Surefire-Ausgabe zeigt: Unit-Tests in Millisekunden, der Slice-Test
-   braucht einen kleinen Kontext, der Integrationstest ist mit Abstand
-   am teuersten. Viel unten, wenig oben.
+4. **Abschluss:** Laufzeiten in der Surefire-Ausgabe vergleichen —
+   Unit-Tests in Millisekunden, der Slice-Test braucht einen kleinen
+   Kontext, der Integrationstest ist mit Abstand am teuersten. Dabei
+   einordnen: Die zwei Tests je Art sind ein Demo-Artefakt, damit jede
+   Testart einmal vorkommt — keine Empfehlung fuer ein
+   1:1:1-Verhaeltnis. In echten Projekten gilt die Testpyramide: viele
+   Unit-Tests, gezielt Slices, eine Handvoll Integrationstests fuer die
+   kritischen Pfade. Der Laufzeitunterschied, den die Demo zeigt, ist
+   die Begruendung fuer dieses Verhaeltnis — nicht sein Beleg.
 
 Als Uebung fuer danach: Welchen Status liefert ein POST mit leerem
 Titel? Erst eine Vermutung aufstellen, dann den Slice- oder
