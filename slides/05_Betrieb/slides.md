@@ -225,8 +225,8 @@ Aus dem Property-Namen wird in **drei Schritten** der Variablenname — am Beisp
 2. Bindestriche **ersatzlos streichen**: `shop_pagesize`
 3. Alles groß: `SHOP_PAGESIZE`
 
-* Der Klassiker: `SHOP_PAGE_SIZE` sieht richtig aus — aber der Unterstrich steht für einen **Punkt**, die Variable meint also `shop.page.size` und bindet **nicht** an `shop.page-size`. Kein Fehler, keine Warnung — der Wert kommt einfach nie an.
-* Deshalb bei „Property wirkt nicht"-Symptomen im Container zuerst die Variablennamen prüfen. Merkregel: Punkt → `_`, Bindestrich → nichts.
+* Das ist die **dokumentierte kanonische Form** — die einzige Schreibweise, auf die man sich überall verlassen kann. Das Relaxed Binding verzeiht zwar einiges (auch `SHOP_PAGE_SIZE` mit Bindestrich → Unterstrich kommt an) — aber gewöhnt euch die kanonische Form an, statt auszuprobieren, was gerade noch durchgeht.
+* Tückisch ist, was **danebenliegt**: Ein Vertipper wie `SHOP_PAGESIZ` bindet an gar nichts — kein Fehler, keine Warnung, die Anwendung startet stillschweigend mit dem Default aus dem JAR. Deshalb bei „Property wirkt nicht"-Symptomen im Container zuerst die Variablennamen prüfen.
 
 ---
 
@@ -311,8 +311,8 @@ Die Buchhandlung läuft im Container, meldet ihren Zustand und lässt sich von a
 | Eigene Metriken & Health | Micrometer-Counter und -Timer, eigene `HealthIndicator` und Actuator-Endpoints, Prometheus & Grafana |
 | Distributed Tracing | Micrometer Tracing, Context Propagation über HTTP und Messaging, Observation API |
 | Security | Spring Security: Filterkette, Method Security, OAuth2, CORS/CSRF, mTLS |
-| Messaging | Kafka, JMS und AMQP, Dead-Letter Queues, Transactional Outbox |
-| Resilience-Patterns | Circuit Breaker, Bulkhead, Saga Pattern für verteilte Transaktionen |
+| Messaging | Kafka, JMS und AMQP, Spring Cloud Stream, Schema Registry, Dead-Letter Queues, Saga Pattern und Transactional Outbox |
+| Resilience-Patterns | Circuit Breaker und Bulkhead gegen Kaskadenfehler in verteilten Systemen |
 | Microservice-Architektur | DDD und Bounded Contexts, API Gateway, Service Discovery |
 
 Dazu vertiefen eigene Module Konfiguration (eigene Starter, Kubernetes ConfigMaps & Secrets), Testing (Testcontainers, Contract Testing), Persistenz (Transaktionen, Migrations) und Web (HTTP-Clients, OpenAPI, Virtual Threads).
