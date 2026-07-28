@@ -30,45 +30,76 @@ Die Property-Dateien bauen aufeinander auf:
 
 ## Ablauf der Live-Demo
 
-1. **Starter und AutoConfiguration:** In der `pom.xml` steht genau eine
-   Web-Abhaengigkeit — `spring-boot-starter-web`. Anwendung starten und
-   zeigen: Ein Tomcat laeuft auf Port 8080, ohne dass ihn jemand
-   konfiguriert haette. Wer sehen will, was Spring Boot alles entschieden
-   hat, startet einmal mit `--debug` und wirft einen Blick in den
-   Condition-Evaluation-Report.
-2. **Properties-Bindung:** `GET /info` aufrufen — die Antwort zeigt die
-   Werte aus `application.properties`, gebunden an das Record
+Alle Schritte nutzen dasselbe Fat-JAR — einmal bauen, danach ist jeder
+Neustart nur ein neuer `java -jar`-Aufruf mit anderen Argumenten:
+
+```bash
+mvn package
+```
+
+1. **Starter und AutoConfiguration:** Ohne Argumente starten:
+
+   ```bash
+   java -jar target/sb-basics-boot-demo-1.0.0-SNAPSHOT.jar
+   ```
+
+   In der `pom.xml` steht genau eine Web-Abhaengigkeit —
+   `spring-boot-starter-web`. Trotzdem laeuft jetzt ein Tomcat auf Port
+   8080, ohne dass ihn jemand konfiguriert haette. Wer sehen will, was
+   Spring Boot alles entschieden hat, startet einmal mit `--debug` und
+   wirft einen Blick in den Condition-Evaluation-Report.
+
+2. **Properties-Bindung:** `curl localhost:8080/info` — die Antwort zeigt
+   die Werte aus `application.properties`, gebunden an das Record
    `ShopProperties` (`shop.page-size` wird per Relaxed Binding zu
-   `pageSize`).
-3. **Profile:** Mit `--spring.profiles.active=dev` neu starten. Zwei
-   Effekte: `/info` meldet `"pageSize":5` (die Profil-Datei gewinnt gegen
-   die Basis-Datei), und im Log erscheint die Startmeldung des
-   `DevDataInitializer` — die Bean existiert nur in diesem Profil. Zum
-   Vergleich mit `prod` starten: `"pageSize":50`, keine Startmeldung.
-4. **Rangfolge der Property-Quellen — die Pointe:** Mit
-   `--shop.page-size=99` starten. `/info` meldet `"pageSize":99` —
-   Kommandozeilenargumente schlagen jede Property-Datei. Dieselbe
-   Anwendung, dasselbe Jar, drei Konfigurationswege mit klarer Rangfolge:
+   `pageSize`): `"pageSize":20`, `"activeProfiles":[]`.
+
+3. **Profil `dev`:** Mit aktivem Profil `dev` neu starten:
+
+   ```bash
+   java -jar target/sb-basics-boot-demo-1.0.0-SNAPSHOT.jar \
+        --spring.profiles.active=dev
+   ```
+
+   Zwei Effekte: `/info` meldet `"pageSize":5` und
+   `"activeProfiles":["dev"]` — die Profil-Datei gewinnt gegen die
+   Basis-Datei. Und im Log erscheint die Startmeldung des
+   `DevDataInitializer`, denn die Bean existiert nur in diesem Profil.
+
+4. **Profil `prod`:** Derselbe Vergleich mit `prod`:
+
+   ```bash
+   java -jar target/sb-basics-boot-demo-1.0.0-SNAPSHOT.jar \
+        --spring.profiles.active=prod
+   ```
+
+   `/info` meldet `"pageSize":50` und `"activeProfiles":["prod"]`. Die
+   Startmeldung bleibt aus — den `DevDataInitializer` legt der Container
+   in diesem Profil gar nicht erst an.
+
+5. **Rangfolge der Property-Quellen — die Pointe:** Profil-Datei und
+   Kommandozeile gleichzeitig:
+
+   ```bash
+   java -jar target/sb-basics-boot-demo-1.0.0-SNAPSHOT.jar \
+        --spring.profiles.active=dev --shop.page-size=99
+   ```
+
+   `/info` meldet `"pageSize":99` — das Kommandozeilenargument schlaegt
+   die Profil-Datei (5) und die Basis-Datei (20). Dieselbe Anwendung,
+   dasselbe Jar, drei Konfigurationswege mit klarer Rangfolge:
    Kommandozeile vor Profil-Datei vor Basis-Datei.
 
-## Starten
+## Starten ohne Fat-JAR
+
+Alternativ laeuft die Demo auch direkt aus Maven:
 
 ```bash
 mvn spring-boot:run
 ```
 
-Oder als Fat-JAR — so laesst sich die Rangfolge der Property-Quellen am
-saubersten vorfuehren, weil das Jar unveraendert bleibt:
-
-```bash
-mvn package
-java -jar target/sb-basics-boot-demo-1.0.0-SNAPSHOT.jar \
-     --server.port=8081 --shop.page-size=99
-curl localhost:8081/info
-```
-
-Erwartete Antwort (verkuerzt): `"pageSize":99` — die Kommandozeile hat
-die `20` aus der Datei ueberschrieben.
+Laeuft parallel schon etwas auf Port 8080, hilft `--server.port=8081` —
+auch der Port ist nur eine Property.
 
 ## Tests
 
@@ -76,5 +107,12 @@ die `20` aus der Datei ueberschrieben.
 mvn test
 ```
 
-Der Test aktiviert das Profil `dev` und prueft, dass die Profil-Datei die
-Basis-Properties ueberschreibt (`pageSize == 5`).
+Jede Behauptung der Live-Demo ist durch einen Test abgesichert:
+
+| Test | Behauptung |
+| --- | --- |
+| `ShopInfoControllerTest` | Der Web-Stack startet per AutoConfiguration; `GET /info` liefert die gebundenen Basis-Properties und die aktiven Profile |
+| `ShopPropertiesTest` | Profil `dev` ueberschreibt `shop.page-size` auf 5 |
+| `ShopPropertiesProdTest` | Profil `prod` ueberschreibt `shop.page-size` auf 50 |
+| `DevDataInitializerProfileTest` | Die `dev`-Bean existiert nur bei aktivem Profil `dev` |
+| `CommandLinePrecedenceTest` | Kommandozeilenargumente schlagen Profil- und Basis-Datei |

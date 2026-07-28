@@ -20,6 +20,6 @@ public class DevDataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        log.info("Dev-Profil aktiv: Testkatalog der Buchhandlung wird geladen.");
+        log.info("Dev-Profil aktiv — hier wuerden jetzt Testdaten fuer die Buchhandlung eingespielt.");
     }
 }
