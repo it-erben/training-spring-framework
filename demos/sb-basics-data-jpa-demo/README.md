@@ -6,6 +6,9 @@ JPQL, dazu ein Service mit `@Transactional` — inklusive der Rollback-Demo,
 die zeigt, dass bei einer RuntimeException die komplette Transaktion
 zurueckgerollt wird. Als Datenbank dient eine In-Memory-H2; das Schema
 erzeugt Hibernate beim Start aus den Entities (`ddl-auto=create-drop`).
+Das taugt nur fuer Demos und Tests: In Produktion kaeme das Schema aus
+versionierten Migrationen (Flyway oder Liquibase, siehe Aufbaumodul
+*13_Data*), und `ddl-auto` stuende auf `validate`.
 
 Anders als in Modul 02 gibt es keinen Web-Server: Die Anwendung startet,
 der `SeedDataRunner` laeuft einmal durch, danach faehrt der Kontext wieder
@@ -201,4 +204,4 @@ ist durch einen Test abgesichert:
 | JPQL-Query findet Buecher ueber den Autorennamen (Join) | `findsByAuthorName` |
 | Cascade PERSIST speichert einen neuen Autor beim Speichern des Buchs mit | `cascadesAuthorPersist` |
 | `raisePrices` hebt alle Preise per Dirty Checking an (kein `save()`) und committet | `raisesAllPrices` |
-| `raisePricesAndFail` wirft `IllegalStateException`, die Preisaenderung wird zurueckgerollt | `rollsBackOnFailure` |
+| `raisePricesAndFail` fuehrt die UPDATEs tatsaechlich aus (`flush()`), wirft `IllegalStateException`, und die Aenderung wird zurueckgerollt | `rollsBackOnFailure` (zaehlt die Entity-Updates per Hibernate-Statistik — ohne echte UPDATEs vor dem Rollback wird er rot) |
