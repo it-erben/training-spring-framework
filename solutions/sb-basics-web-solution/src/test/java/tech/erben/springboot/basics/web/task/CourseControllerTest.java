@@ -8,8 +8,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -30,10 +32,16 @@ class CourseControllerTest {
     }
 
     @Test
-    @DisplayName("Aufgabe 2: Unbekannter Kurscode liefert 404")
+    @DisplayName("Aufgabe 2: Unbekannter Kurscode liefert 404 mit Fehlerkoerper")
     void unknownCodeReturnsNotFound() throws Exception {
+        // Der Status allein reicht nicht: Eine 404 liefert Spring auch fuer
+        // eine gar nicht existierende Route. Erst der JSON-Koerper mit dem
+        // error-Feld beweist, dass der RestExceptionHandler die Antwort
+        // erzeugt hat.
         mockMvc.perform(get("/api/courses/GIBT-ES-NICHT"))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.error").exists());
     }
 
     @Test
@@ -50,6 +58,28 @@ class CourseControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(header().string("Location",
                         "/api/courses/K8S-INTRO"));
+    }
+
+    @Test
+    @DisplayName("Aufgabe 3: DELETE liefert 204, ein zweiter Aufruf 404")
+    void deleteRemovesCourse() throws Exception {
+        // Eigenen Kurs anlegen, damit der Test unabhaengig von den
+        // Seed-Daten und der Ausfuehrungsreihenfolge bleibt.
+        mockMvc.perform(post("/api/courses")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"code":"DOCKER-BASIC",
+                                 "title":"Docker Grundlagen",
+                                 "seats":8,
+                                 "netFee":1200.00}
+                                """))
+                .andExpect(status().isCreated());
+
+        mockMvc.perform(delete("/api/courses/DOCKER-BASIC"))
+                .andExpect(status().isNoContent());
+
+        mockMvc.perform(delete("/api/courses/DOCKER-BASIC"))
+                .andExpect(status().isNotFound());
     }
 
     @Test

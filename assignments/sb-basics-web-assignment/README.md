@@ -27,11 +27,11 @@ Alle Klassen liegen in `src/main/java` unter `tech.erben.springboot.basics.web.t
 | `CourseController` | **Fehlt komplett** — baut ihr in Aufgabe 1–3 |
 | `CourseResponse`, `CourseRequest` | **Fehlen komplett** — baut ihr in Aufgabe 1 und 3 |
 | `RestExceptionHandler` | **Fehlt komplett** — baut ihr in Aufgabe 2 und 4 |
-| `CourseControllerTest` | Die vier Tests, die den Fortschritt messen |
+| `CourseControllerTest` | Die fünf Tests, die den Fortschritt messen |
 
 Die `TODO`-Marken in `package-info.java` listen jeden Handgriff auf. Der Startzustand ist **absichtlich rot**: `mvn test -DskipAssignmentTests=false` schlägt fehl, weil ohne Controller jede Anfrage mit `404` beantwortet wird.
 
-Anders als in Übung 00 werden die Tests hier **einzeln grün**, sobald die jeweilige Aufgabe gelöst ist — der Anwendungskontext startet von Anfang an, es fehlen ja keine Beans. Eine Kuriosität gibt es trotzdem: Der Test zu *Aufgabe 2* ist schon am Start grün, denn die erwartete `404` kommt anfangs schlicht daher, dass die Route noch gar nicht existiert. Verdient ist dieses Grün erst später — sobald ihr `GET /{code}` gebaut habt, wird der Test sogar kurz rot (die unbehandelte `CourseNotFoundException` bricht ihn mit einem Fehler ab; im laufenden Server wäre das ein `500` beim Client), und erst euer `RestExceptionHandler` macht ihn wieder grün.
+Anders als in Übung 00 werden die Tests hier **einzeln grün**, sobald die jeweilige Aufgabe gelöst ist — der Anwendungskontext startet von Anfang an, es fehlen ja keine Beans. Ein Detail zum Test von *Aufgabe 2*: Er gibt sich nicht mit dem Status zufrieden, sondern prüft auch den JSON-Körper der Fehlerantwort. Die `404`, die Spring für eine schlicht nicht existierende Route liefert, reicht ihm deshalb nicht — grün wird er erst, wenn euer `RestExceptionHandler` die Antwort wirklich erzeugt. Baut ihr `GET /{code}` vor dem Handler, bricht der Test mit der unbehandelten `CourseNotFoundException` ab (im laufenden Server wäre das ein `500` beim Client).
 
 ## Aufgaben
 
@@ -40,11 +40,11 @@ Anders als in Übung 00 werden die Tests hier **einzeln grün**, sobald die jewe
    - Legt den `CourseController` an (`@RestController`, `@RequestMapping("/api/courses")`) und liefert unter `GET /api/courses` alle Kurse als `CourseResponse`-Liste.
 2. **Einzelnen Kurs holen — und `404` statt `500`** (Test: *Aufgabe 2*)
    - Ergänzt `GET /api/courses/{code}` mit `@PathVariable`. Der `CourseService` wirft bei unbekanntem Code eine `CourseNotFoundException` — probiert aus, was ohne weitere Maßnahme beim Client ankommt.
-   - Legt den `RestExceptionHandler` an (`@RestControllerAdvice`) und übersetzt die `CourseNotFoundException` in einen `404` mit kurzer JSON-Fehlermeldung.
-3. **Kurse anlegen und löschen** (Test: *Aufgabe 3*)
+   - Legt den `RestExceptionHandler` an (`@RestControllerAdvice`) und übersetzt die `CourseNotFoundException` in einen `404`, dessen JSON-Körper die Meldung in einem Feld `error` trägt — genau darauf prüft der Test.
+3. **Kurse anlegen und löschen** (Tests: *Aufgabe 3*)
    - Legt den Record `CourseRequest` an (`code`, `title`, `seats`, `netFee`) mit einer Methode `toCourse()`.
    - Ergänzt `POST /api/courses`: Antwort `201` mit `Location`-Header auf die neue Ressource (`ResponseEntity.created(…)`).
-   - Ergänzt `DELETE /api/courses/{code}` mit Antwort `204` — bei unbekanntem Code greift automatisch euer Handler aus Aufgabe 2.
+   - Ergänzt `DELETE /api/courses/{code}` mit Antwort `204` — bei unbekanntem Code greift automatisch euer Handler aus Aufgabe 2. Der zweite Aufgabe-3-Test prüft genau diese Kette: erst `204`, beim zweiten Löschen `404`.
 4. **Eingaben validieren** (Test: *Aufgabe 4*)
    - Versehen den `CourseRequest` mit Bean Validation: `code` und `title` nicht leer, `title` maximal 200 Zeichen, `seats` und `netFee` positiv.
    - Markiert den Request-Parameter im Controller mit `@Valid`.
@@ -62,7 +62,7 @@ mvn test -DskipAssignmentTests=false
 
 ## Erfolgskriterien
 
-- [ ] `mvn test -DskipAssignmentTests=false` läuft grün — alle vier Tests in `CourseControllerTest` bestehen
+- [ ] `mvn test -DskipAssignmentTests=false` läuft grün — alle fünf Tests in `CourseControllerTest` bestehen
 - [ ] `Course`, `CourseService` und `CourseNotFoundException` sind unverändert geblieben
 - [ ] Das Domänenmodell `Course` taucht in keiner Controller-Signatur auf — nach außen gehen nur `CourseRequest` und `CourseResponse`
 
