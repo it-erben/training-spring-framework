@@ -582,6 +582,6 @@ Code: `demos/sb-basics-core-demo` (Ordner `-start` zum Mitbauen, `-finished` als
 3. Konstruktor-Injection im `CourseService` implementieren.
 4. Die Mehrdeutigkeit zwischen zwei `FeeCalculator`-Beans mit `@Primary` und `@Qualifier` auflösen.
 
-Die mitgelieferten Tests zeigen, wann alles sitzt: `mvn test` muss grün sein.
+Die mitgelieferten Tests zeigen, wann alles sitzt: `mvn test -DskipAssignmentTests=false` muss grün sein. (Ohne den Schalter überspringt der Build die Aufgaben-Tests — sie sind Aufgabenstellung, nicht Regression.)
 
 **Ausblick:** Modul *11_Configuration* vertieft, wie Spring Boot per **AutoConfiguration** viele dieser Beans automatisch konfiguriert — und wie man eigene AutoConfigurations und Starter baut.

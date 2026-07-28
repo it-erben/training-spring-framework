@@ -32,7 +32,7 @@ Alle Klassen liegen in `src/main/java` unter `tech.erben.springboot.basics.core.
 | `TrainerConfig` | Methode fertig, **`@Configuration` und `@Bean` fehlen** |
 | `CourseServiceTest` | Die vier Tests, die den Fortschritt messen |
 
-Der Startzustand ist **absichtlich rot**: `mvn test -DskipAssignmentTests=false` schlägt fehl, weil der Container keine der benötigten Beans findet. Jede gelöste Aufgabe bringt euch näher an Grün. Die `TODO`-Kommentare im Code markieren alle Stellen.
+Der Startzustand ist **absichtlich rot**: `mvn test -DskipAssignmentTests=false` schlägt fehl, weil der Container keine der benötigten Beans findet. Wundert euch dabei nicht: **Alle vier Tests bleiben rot, bis alle vier Aufgaben gelöst sind** — auch die zu bereits erledigten. Das ist kein Fehler, sondern Absicht von Spring: Der Container baut den kompletten Anwendungskontext auf, bevor der erste Test läuft. Fehlt irgendwo noch eine Bean, scheitert dieser Aufbau — und mit ihm alle vier Tests gleichzeitig. Euer Fortschritt zeigt sich stattdessen in der Fehlermeldung: Die `NoSuchBeanDefinitionException` nennt immer die **nächste** fehlende Bean. Wer sie liest, weiß, welche Aufgabe als Nächstes dran ist. Die `TODO`-Kommentare im Code markieren alle Stellen.
 
 ## Aufgaben
 
