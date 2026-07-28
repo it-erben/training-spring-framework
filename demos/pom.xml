@@ -17,6 +17,7 @@
         <module>sb-basics-core-demo</module>
         <module>sb-basics-boot-demo</module>
         <module>sb-basics-web-demo</module>
+        <module>sb-basics-data-jpa-demo</module>
         <module>sb-advanced-autoconfiguration-demo</module>
         <module>sb-advanced-actuator-demo</module>
         <module>sb-advanced-testing-demo</module>
