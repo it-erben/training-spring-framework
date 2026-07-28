@@ -210,6 +210,31 @@ git status --short
 Erwartung: Liste der Änderungen. Committe oder stashe sie, bis
 `git status --short` leer ist. Nicht einfach überschreiben.
 
+**Bekannter roter Test im Ausgangszustand.** Stand 2026-07-28 schlägt
+`mvn test` in einem Modul fehl:
+
+```text
+tech.erben.security.oauth2.web.OAuth2DemoControllerTest
+  .apiMeReturnsUserInfoWhenOAuth2LoggedIn
+Caused by: Client id of registration 'github' must not be empty.
+```
+
+Der Test stammt aus dem noch untrackten Verzeichnis
+`demos/sb-advanced-security-oauth2-demo/src/test/`. Er lädt den vollen
+Anwendungskontext, findet aber keine OAuth2-Client-Registrierung. Behebbar
+durch `src/test/resources/application.properties` in diesem Modul mit
+Platzhalterwerten:
+
+```properties
+spring.security.oauth2.client.registration.github.client-id=test-client-id
+spring.security.oauth2.client.registration.github.client-secret=test-secret
+```
+
+Das ist Bestandsarbeit, nicht Teil des Basis-Teils. Entweder vorab beheben
+oder bewusst offen lassen — dann schlägt aber Task 18 Schritt 2 fehl und die
+Prüfung muss auf die Basis-Module eingegrenzt werden. Die Entscheidung
+gehört dem Nutzer; nicht ungefragt am Bestand herumreparieren.
+
 - [ ] **Schritt 2: Slide-Verzeichnisse umbenennen**
 
 ```bash
@@ -2241,6 +2266,12 @@ mvn -B verify
 
 Erwartung: `BUILD SUCCESS`. Die vier Assignments überspringen ihre Tests
 (bzw. haben keine), alle Solutions und Demos laufen grün.
+
+Voraussetzung: Der in Task 1 Schritt 1 beschriebene rote
+`OAuth2DemoControllerTest` ist behoben. Ist er es nicht, endet dieser
+Schritt zwangsläufig rot — dann auf die Basis-Module eingrenzen (Kommando
+unten) und den offenen Bestandsfehler im Abschlussbericht nennen, statt ihn
+zu übergehen.
 
 Achtung, Laufzeit: Der Advanced-Teil enthält Testcontainers-Tests, die
 Docker-Images ziehen (unter anderem `rabbitmq:3.13-management`). Der erste
