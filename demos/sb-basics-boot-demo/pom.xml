@@ -1,0 +1,94 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>sb-basics-boot-demo</artifactId>
+
+    <parent>
+        <groupId>tech.erben</groupId>
+        <artifactId>sb-training-demos</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <!-- Statt spring-boot-starter-parent: BOM-Import. Das Dependency-
+         Management von Spring Boot (abgestimmte Versionen fuer alle
+         Bibliotheken) kommt so in dieses Projekt, ohne dass Spring Boot
+         der Maven-Parent sein muss. -->
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot.version}</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <!-- Ein Starter buendelt alles fuer einen Anwendungsfall: Spring MVC,
+             Jackson und der eingebettete Tomcat kommen ueber diese eine
+             Abhaengigkeit — keine Versionen noetig, das regelt die BOM. -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <!-- Erzeugt Metadaten fuer @ConfigurationProperties, damit die IDE
+             shop.name & Co. in application.properties vervollstaendigt.
+             Nur zur Build-Zeit noetig, landet nicht im Jar. -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <scope>provided</scope>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- Automatischer Neustart bei Klassenaenderungen waehrend der
+             Entwicklung. optional: wird nicht an abhaengige Module vererbt;
+             im Fat-JAR ist DevTools ohnehin deaktiviert. -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <scope>runtime</scope>
+            <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin.version}</version>
+                <configuration>
+                    <compilerArgs>
+                        <arg>-parameters</arg>
+                    </compilerArgs>
+                </configuration>
+            </plugin>
+            <!-- Ohne spring-boot-starter-parent muss das repackage-Goal
+                 explizit gebunden werden — erst dadurch wird aus dem
+                 normalen Jar ein ausfuehrbares Fat-JAR. -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>${spring-boot.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
