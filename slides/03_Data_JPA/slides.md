@@ -435,6 +435,17 @@ Propagation und Isolation — was passiert, wenn Transaktionen aufeinandertreffe
 
 ---
 
+## Vergessenes @Transactional: der lautlose Fehler
+
+Der gefährlichste Fall ist keiner der beiden Stolpersteine, sondern die schlicht **vergessene Annotation** — denn es gibt keine Fehlermeldung:
+
+* Ohne umschließende Transaktion öffnet jeder Repository-Aufruf seine eigene Kurz-Transaktion. Nach `findAll()` sind die geladenen Entities sofort **detached**.
+* Die Setter ändern dann nur noch Java-Objekte im Speicher — kein Persistence Context beobachtet sie, Dirty Checking findet nie statt, **kein einziges UPDATE** wird abgesetzt.
+* Die Preisänderung verschwindet lautlos: keine Exception, nichts im SQL-Log, die Datenbank bleibt unverändert.
+* Deshalb prüft der Rollback-Test der Demo nicht nur „Preise unverändert", sondern zählt per Hibernate-Statistik, dass die UPDATEs vor dem Rollback **wirklich ausgeführt** wurden — sonst wäre vergessenes `@Transactional` von korrektem Rollback nicht zu unterscheiden.
+
+---
+
 # Datenbank und Konfiguration
 
 ---

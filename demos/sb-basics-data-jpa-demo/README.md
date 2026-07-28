@@ -25,7 +25,7 @@ Zeile Implementierung aus:
 | Methode | Mechanik |
 | --- | --- |
 | `findByIsbn(String)` | Derived Query: `where isbn = ?` |
-| `findByTitleContainingIgnoreCase(String)` | Derived Query: `where lower(title) like lower('%…%')` |
+| `findByTitleContainingIgnoreCase(String)` | Derived Query: `where upper(title) like upper('%…%')` |
 | `findByNetPriceLessThan(BigDecimal)` | Derived Query: `where net_price < ?` |
 | `findByAuthorName(String)` | JPQL per `@Query` — Join ueber die Beziehung |
 

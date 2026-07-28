@@ -20,7 +20,7 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     /** Derived Query: {@code where isbn = ?}. */
     Optional<Book> findByIsbn(String isbn);
 
-    /** Derived Query: {@code where lower(title) like lower('%fragment%')}. */
+    /** Derived Query: {@code where upper(title) like upper('%fragment%')}. */
     List<Book> findByTitleContainingIgnoreCase(String fragment);
 
     /** Derived Query: {@code where net_price < ?}. */
