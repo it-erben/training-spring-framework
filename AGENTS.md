@@ -48,9 +48,10 @@ Sie verhindert, dass die Demo-Lösung in die Übung kopierbar ist.
 ### Konventionen der Basis-Module
 
 - Kein Lombok. Records für DTOs, explizite Getter/Setter für Entities.
-- Kein `spring-boot-starter-parent`; die Boot-Version kommt per BOM-Import
-  aus dem Root-POM. Ein lauffähiges Fat-JAR braucht deshalb eine explizite
-  `repackage`-Execution.
+- Kein `spring-boot-starter-parent`; das Root-POM definiert nur die
+  Property `spring-boot.version` (kein `dependencyManagement`), und jedes
+  Leaf-POM importiert `spring-boot-dependencies` selbst. Ein lauffähiges
+  Fat-JAR braucht deshalb eine explizite `repackage`-Execution.
 - Assignment-Tests sind im Ausgangszustand rot und werden im Gesamtbuild
   über die Property `skipAssignmentTests` übersprungen. Kein Assignment-Test
   darf im Ausgangszustand grün sein — ein Test, der besteht, bevor die

@@ -8,8 +8,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Instanz — der statische Zaehler macht das sichtbar. Hier fehlen zwei
  * Annotationen: die Bean-Deklaration und der Scope.
  */
-// TODO: Modul 00 — als Spring-Bean deklarieren
-// TODO: Modul 00 — als Spring-Bean deklarieren
+// TODO: Modul 00 — Schritt 5: mit @Component als Bean deklarieren
+// TODO: Modul 00 — Schritt 5: mit @Scope("prototype") pro Anfrage eine neue Instanz liefern lassen
 public class PrototypeCounter {
 
     private static final AtomicInteger INSTANCES = new AtomicInteger();

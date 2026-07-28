@@ -92,7 +92,7 @@ Ein Starter ist ein kuratiertes **Dependency-Bündel** für einen Anwendungsfall
 
 ## spring-boot-dependencies als BOM
 
-Zwei Wege, an Springs Versionskatalog zu kommen. Der übliche: `spring-boot-starter-parent` als Maven-Parent. Unser Kurs-Repo hat aber schon einen **eigenen** Parent — deshalb der zweite Weg, der BOM-Import (*Bill of Materials*):
+Zwei Wege, an Springs Versionskatalog zu kommen. Der übliche: `spring-boot-starter-parent` als Maven-Parent. Unser Kurs-Repo hat aber schon einen **eigenen** Parent — deshalb der zweite Weg, der BOM-Import (*Bill of Materials*). Er steht in **jedem Modul-POM selbst**; der Parent steuert nur die Versions-Property bei:
 
 ```xml
 <dependencyManagement>
@@ -322,7 +322,7 @@ public record ShopProperties(String name, String currency, int pageSize) {
 
 * **Constructor-Binding:** Boot ruft den Record-Konstruktor mit den gebundenen Werten auf — das Objekt ist danach unveränderlich.
 * **Relaxed Binding:** `shop.page-size` aus der Properties-Datei landet im Parameter `pageSize` — kebab-case und camelCase werden automatisch abgeglichen.
-* Records tragen keine Stereotyp-Annotation — deshalb steht `@ConfigurationPropertiesScan` an der `BootDemoApplication`: es registriert alle `@ConfigurationProperties`-Typen im Package-Baum.
+* `@ConfigurationProperties` ist keine Stereotyp-Annotation — der Component-Scan übersieht den Typ, egal ob Record oder Klasse. Deshalb steht `@ConfigurationPropertiesScan` an der `BootDemoApplication`: es registriert alle `@ConfigurationProperties`-Typen im Package-Baum.
 * Verwendung wie jede Bean: `ShopInfoController` bekommt `ShopProperties` per Konstruktor-Injection.
 
 ---
@@ -339,6 +339,24 @@ Dieselbe Property kann aus mehreren Quellen kommen. Die für den Einstieg wichti
 
 * Praxis-Muster: Defaults ins JAR, Umgebungsspezifisches per Environment oder Kommandozeile von außen — **ein Artefakt für alle Umgebungen**.
 * Die vollständige Liste hat über 15 Quellen — die bringt Modul *11_Configuration*. Für heute reichen diese fünf.
+
+---
+
+## Konfiguration von außerhalb des JARs
+
+Zwei Properties erweitern, **wo** Boot nach Konfiguration sucht:
+
+```properties
+# Weitere Datei einbinden — "optional:" toleriert ihr Fehlen
+spring.config.import=optional:file:./shop-lokal.properties
+
+# Zusätzlicher Suchort neben src/main/resources
+spring.config.additional-location=file:/etc/bookstore/
+```
+
+* `spring.config.import` zieht eine weitere Konfigurationsdatei hinzu — auch eine, die nicht `application.properties` heißt.
+* `spring.config.additional-location` nennt zusätzliche Ablageorte, die Boot **neben** den Standardorten durchsucht — externe Konfiguration ohne Neubau des JARs.
+* Was `spring.config.import` außer Dateien noch importieren kann, zeigt Modul *11_Configuration*.
 
 ---
 

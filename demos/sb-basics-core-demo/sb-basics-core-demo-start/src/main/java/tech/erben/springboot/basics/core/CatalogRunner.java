@@ -13,7 +13,7 @@ import java.time.LocalDate;
  * der Runner auch laeuft, solange {@link PrototypeCounter} noch keine
  * Bean ist.
  */
-// TODO: Modul 00 — als Spring-Bean deklarieren
+// TODO: Modul 00 — Schritt 3: mit @Component als Bean deklarieren — erst dann laeuft der Runner beim Start
 public class CatalogRunner implements CommandLineRunner {
 
     private final BookService bookService;

@@ -7,7 +7,7 @@ import java.util.List;
  * Fachlogik der Buchhandlung. Die Klasse ist fertig geschrieben, aber noch
  * keine Bean — der Container instanziiert sie erst, wenn sie deklariert ist.
  */
-// TODO: Modul 00 — als Spring-Bean deklarieren
+// TODO: Modul 00 — Schritt 2: mit @Service als Bean deklarieren
 public class BookService {
 
     private final BookRepository bookRepository;
@@ -16,7 +16,7 @@ public class BookService {
 
     public BookService(BookRepository bookRepository,
                        PriceCalculator defaultCalculator,
-                       // TODO: Modul 00 — als Spring-Bean deklarieren
+                       // TODO: Modul 00 — Schritt 4: @Qualifier("netPriceCalculator") an diesen Parameter — der unqualifizierte davor behaelt die @Primary-Bean
                        PriceCalculator netCalculator) {
         this.bookRepository = bookRepository;
         this.defaultCalculator = defaultCalculator;

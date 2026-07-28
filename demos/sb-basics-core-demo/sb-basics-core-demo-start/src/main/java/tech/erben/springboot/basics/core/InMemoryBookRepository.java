@@ -7,7 +7,7 @@ import java.util.Optional;
 /**
  * In-Memory-Implementierung mit drei festen Buechern.
  */
-// TODO: Modul 00 — als Spring-Bean deklarieren
+// TODO: Modul 00 — Schritt 1: mit @Repository als Bean deklarieren
 public class InMemoryBookRepository implements BookRepository {
 
     private final List<Book> books = List.of(

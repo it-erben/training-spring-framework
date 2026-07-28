@@ -317,7 +317,7 @@ Ein Slice startet nicht die ganze Anwendung, sondern **eine Schicht** — mit ge
 
 * Alles außerhalb des Slices existiert nicht — was der Controller braucht, wird gemockt (gleich: `@MockitoBean`).
 * Deutlich schneller als der volle Kontext, und **fokussiert**: Schlägt ein `@WebMvcTest` fehl, liegt es an der Web-Schicht — nicht irgendwo.
-* Seit Boot 4 liegen die Slices in eigenen Test-Startern: `spring-boot-starter-webmvc-test` für `@WebMvcTest`, `spring-boot-starter-restclient-test` für das `TestRestTemplate` — beide stehen in der `pom.xml` der Demo.
+* Seit Boot 4 liegen die Slices in eigenen Test-Startern: `spring-boot-starter-webmvc-test` für `@WebMvcTest`, `spring-boot-starter-restclient-test` für das `TestRestTemplate` — dessen Basis (`RestTemplateBuilder`) steckt zusätzlich in `spring-boot-starter-restclient`. Alle drei stehen im Test-Scope in der `pom.xml` der Demo.
 
 ---
 

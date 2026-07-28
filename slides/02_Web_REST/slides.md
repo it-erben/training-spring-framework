@@ -415,6 +415,8 @@ public class RestExceptionHandler {
 }
 ```
 
+* `@RestControllerAdvice` = `@ControllerAdvice` + `@ResponseBody`: Rückgabewerte der Handler landen direkt im Response-Body — dasselbe Muster wie bei `@RestController`.
+
 Warum global besser ist:
 
 * **Ein** Ort für die Abbildung Fachfehler → Statuscode, statt Kopien in jedem Controller.

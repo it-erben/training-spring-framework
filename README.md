@@ -72,9 +72,13 @@ entsprechend.
 Nur die Basis-Module:
 
 ```bash
-mvn verify -pl "$(ls -d demos/sb-basics-* assignments/sb-basics-* \
-    solutions/sb-basics-* | paste -sd, -)" -am
+mvn verify -pl "$(find demos assignments solutions -maxdepth 2 -type d \
+    -name 'sb-basics-*' | paste -sd, -)" -am
 ```
+
+Das `find` erfasst auch die `-start`-/`-finished`-Kindmodule der
+Live-Coding-Demos — ein `-pl` auf die Aggregator-Verzeichnisse allein
+würde sie nicht mitbauen.
 
 ### Übungen
 

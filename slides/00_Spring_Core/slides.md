@@ -478,7 +478,7 @@ POMs können erben — das Kind übernimmt Konfiguration und Versionen vom Paren
 ```
 
 * Typisch geerbt: Java-Version (bei uns **21**), Plugin-Versionen, gemeinsame Properties.
-* Spring-Boot-Projekte nutzen oft `spring-boot-starter-parent` als Parent. Unser Kurs-Repo hat einen **eigenen** Parent und importiert stattdessen Springs Versionskatalog:
+* Spring-Boot-Projekte nutzen oft `spring-boot-starter-parent` als Parent. Unser Kurs-Repo hat einen **eigenen** Parent — der liefert aber nur die Property `spring-boot.version`. Springs Versionskatalog importiert **jedes Modul selbst** in seinem eigenen POM:
 
 ```xml
 <dependencyManagement>
