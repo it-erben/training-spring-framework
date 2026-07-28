@@ -4,8 +4,10 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 /**
- * Schlaegt 19 % Mehrwertsteuer auf den Nettopreis auf.
+ * Schlaegt 19 % Mehrwertsteuer auf den Nettopreis auf. Hier fehlen zwei
+ * Annotationen: die Bean-Deklaration und der Vorrang bei Mehrdeutigkeit.
  */
+// TODO: Modul 00 — als Spring-Bean deklarieren
 // TODO: Modul 00 — als Spring-Bean deklarieren
 public class GrossPriceCalculator implements PriceCalculator {
 

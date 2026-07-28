@@ -14,26 +14,35 @@ Unterschied zwischen Singleton- und Prototype-Scope sichtbar gemacht.
 
 ## Ablauf der Live-Demo
 
-Die `-start`-Variante wird in dieser Reihenfolge verdrahtet — nach jedem
-Schritt lohnt ein Neustart, um die Wirkung zu zeigen:
+Die `-start`-Variante wird in dieser Reihenfolge verdrahtet. Jeder
+Zwischenzustand startet — nach jedem Schritt lohnt ein Neustart, um die
+Wirkung zu zeigen:
 
 1. **Repository:** `InMemoryBookRepository` mit `@Repository` deklarieren.
    Der Container legt die Bean an, sie tut aber noch nichts Sichtbares.
-2. **Service:** `BookService` mit `@Service` deklarieren. Der Konstruktor
-   verlangt `BookRepository` und `PriceCalculator` — der Start schlaegt
-   fehl, solange die Kalkulatoren keine Beans sind. Also
-   `NetPriceCalculator` und `GrossPriceCalculator` mit `@Component`
-   deklarieren.
+2. **Service und Kalkulatoren:** `BookService` mit `@Service` deklarieren.
+   Der Konstruktor verlangt ein `BookRepository` und **zwei**
+   `PriceCalculator`-Parameter. Also `NetPriceCalculator` mit
+   `@Component("netPriceCalculator")` und `GrossPriceCalculator` mit
+   `@Component("grossPriceCalculator")` **und sofort `@Primary`**
+   deklarieren: Ohne `@Primary` kann der Container die unqualifizierten
+   Parameter bei zwei Beans desselben Typs nicht aufloesen, und der Start
+   bricht ab (`expected single matching bean but found 2`). Sichtbar
+   passiert noch nichts — es gibt noch keinen Runner.
 3. **Runner:** `CatalogRunner` mit `@Component` deklarieren, dazu
    `ShippingConfig` (`@Configuration` + `@Bean Clock clock()`) und
    `ShopProperties` (`@Component` + `@Value("${shop.name:Buchhandlung Erben}")`).
-   Jetzt erscheint beim Start der Katalog.
-4. **Mehrdeutigkeit:** Zwei `PriceCalculator`-Beans — welcher gewinnt?
-   `@Primary` auf `GrossPriceCalculator` setzt den Standard. Im
-   `BookService`-Konstruktor stehen beide Auflösungswege nebeneinander:
-   Der unqualifizierte Parameter bekommt die `@Primary`-Bean, der mit
-   `@Qualifier("netPriceCalculator")` annotierte Parameter explizit die
-   andere.
+   Jetzt erscheint beim Start der Katalog — beide Preisspalten zeigen
+   denselben Bruttowert, denn noch bekommen beide Konstruktor-Parameter
+   die `@Primary`-Bean. Die letzte Zeile meldet
+   `Prototype-Demo noch nicht aktiv` (kommt in Schritt 5).
+4. **Mehrdeutigkeit:** `@Qualifier("netPriceCalculator")` an den dritten
+   Konstruktor-Parameter von `BookService` setzen. Jetzt stehen beide
+   Aufloesungswege in einer Signatur nebeneinander: Der unqualifizierte
+   Parameter bekommt die `@Primary`-Bean, der qualifizierte explizit die
+   andere — die Netto-Spalte zeigt ab jetzt echte Nettopreise. Wer das
+   Fehlerbild aus Schritt 2 zeigen will: `@Primary` kurz entfernen und
+   starten, danach wieder einsetzen.
 5. **Scopes:** `PrototypeCounter` mit `@Component` und
    `@Scope("prototype")` deklarieren. Der `CatalogRunner` fordert zwei
    Instanzen an — die Ausgabe zeigt zwei verschiedene Instanznummern.
@@ -56,8 +65,8 @@ mvn spring-boot:run
 ```
 
 Die `-start`-Variante startet und beendet sich kommentarlos — es gibt noch
-keine Beans. Die `-finished`-Variante gibt den Katalog mit Bruttopreisen
-und den Scope-Vergleich aus.
+keine Beans. Die `-finished`-Variante gibt den Katalog mit Brutto- und
+Nettopreisen sowie den Scope-Vergleich aus.
 
 ## Tests
 
