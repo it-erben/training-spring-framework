@@ -14,6 +14,7 @@
     </parent>
 
     <modules>
+        <module>sb-basics-core-demo</module>
         <module>sb-advanced-autoconfiguration-demo</module>
         <module>sb-advanced-actuator-demo</module>
         <module>sb-advanced-testing-demo</module>

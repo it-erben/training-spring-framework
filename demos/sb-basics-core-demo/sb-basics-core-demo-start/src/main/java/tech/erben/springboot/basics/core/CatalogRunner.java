@@ -1,0 +1,48 @@
+package tech.erben.springboot.basics.core;
+
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.CommandLineRunner;
+
+import java.time.Clock;
+import java.time.LocalDate;
+
+/**
+ * Soll nach dem Start des Containers den Katalog mit Bruttopreisen ausgeben.
+ * Solange die Klasse keine Bean ist, laeuft sie nicht.
+ */
+// TODO: Modul 00 — als Spring-Bean deklarieren
+public class CatalogRunner implements CommandLineRunner {
+
+    private final BookService bookService;
+    private final ShopProperties shopProperties;
+    private final Clock clock;
+    private final ObjectProvider<PrototypeCounter> counterProvider;
+
+    public CatalogRunner(BookService bookService,
+                         ShopProperties shopProperties,
+                         Clock clock,
+                         ObjectProvider<PrototypeCounter> counterProvider) {
+        this.bookService = bookService;
+        this.shopProperties = shopProperties;
+        this.clock = clock;
+        this.counterProvider = counterProvider;
+    }
+
+    @Override
+    public void run(String... args) {
+        System.out.printf("Katalog von %s (Stand: %s)%n",
+                shopProperties.getName(), LocalDate.now(clock));
+
+        for (Book book : bookService.findAll()) {
+            System.out.printf("  %s | %s | %s EUR (brutto)%n",
+                    book.isbn(), book.title(), bookService.priceFor(book));
+        }
+
+        // Prototype-Scope: Jede Anfrage an den Container liefert eine neue Instanz.
+        PrototypeCounter first = counterProvider.getObject();
+        PrototypeCounter second = counterProvider.getObject();
+        System.out.printf("Prototype-Scope: Instanz #%d und Instanz #%d — %s%n",
+                first.instanceNumber(), second.instanceNumber(),
+                first == second ? "dieselbe Instanz" : "zwei verschiedene Instanzen");
+    }
+}
