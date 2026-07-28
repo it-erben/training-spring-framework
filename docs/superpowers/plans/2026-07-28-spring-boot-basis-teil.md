@@ -85,6 +85,14 @@ wiederholt.
   zugehörige Solution enthält dieselben Tests und ist grün. Ausnahme ist
   Task 15 (Testing-Assignment) — dort ist der Produktivcode fertig und die
   Teilnehmer schreiben die Tests.
+- **Kein Assignment-Test darf im Ausgangszustand grün sein.** Ein Test, der
+  besteht, bevor die Aufgabe gelöst ist, taugt nicht als Gate. Der
+  häufigste Fall: ein Test prüft nur einen Statuscode, den der leere
+  Ausgangszustand zufällig auch liefert — etwa `404`, weil die Route noch
+  gar nicht existiert. Solche Tests brauchen zusätzlich eine Zusicherung
+  auf den Antwortkörper oder den Content-Type. Jeder Assignment-Task
+  verifiziert das explizit: einmal mit leerem Ausgangszustand laufen
+  lassen und **pro Test** den Fehlschlagsgrund berichten.
 - **Assignments müssen kompilieren.** Der Surefire-Skip hält rote Tests aus
   dem Gesamtbuild heraus, aber gegen einen Compile-Fehler hilft er nicht —
   der bricht den Reaktor für alle folgenden Module. Alle Typen und
@@ -1137,6 +1145,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -1345,6 +1354,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -1368,7 +1378,10 @@ class CourseControllerTest {
     @DisplayName("Aufgabe 2: Unbekannter Kurscode liefert 404")
     void unknownCodeReturnsNotFound() throws Exception {
         mockMvc.perform(get("/api/courses/GIBT-ES-NICHT"))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentTypeCompatibleWith(
+                        MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.code").value("GIBT-ES-NICHT"));
     }
 
     @Test
