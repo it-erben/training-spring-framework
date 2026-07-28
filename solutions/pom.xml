@@ -17,6 +17,7 @@
     <modules>
         <module>sb-basics-core-solution</module>
         <module>sb-basics-web-solution</module>
+        <module>sb-basics-data-jpa-solution</module>
         <module>sb-advanced-testing-solution</module>
         <module>sb-advanced-data-mongodb-solution</module>
         <module>sb-advanced-data-jpa-solution</module>
