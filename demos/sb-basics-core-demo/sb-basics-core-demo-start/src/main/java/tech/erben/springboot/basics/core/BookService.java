@@ -12,16 +12,14 @@ public class BookService {
 
     private final BookRepository bookRepository;
     private final PriceCalculator defaultCalculator;
+    private final PriceCalculator netCalculator;
 
-    private PriceCalculator netCalculator;
-
-    public BookService(BookRepository bookRepository, PriceCalculator defaultCalculator) {
+    public BookService(BookRepository bookRepository,
+                       PriceCalculator defaultCalculator,
+                       // TODO: Modul 00 — als Spring-Bean deklarieren
+                       PriceCalculator netCalculator) {
         this.bookRepository = bookRepository;
         this.defaultCalculator = defaultCalculator;
-    }
-
-    // TODO: Modul 00 — als Spring-Bean deklarieren
-    public void setNetCalculator(PriceCalculator netCalculator) {
         this.netCalculator = netCalculator;
     }
 

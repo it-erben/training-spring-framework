@@ -29,9 +29,11 @@ Schritt lohnt ein Neustart, um die Wirkung zu zeigen:
    `ShopProperties` (`@Component` + `@Value("${shop.name:Buchhandlung Erben}")`).
    Jetzt erscheint beim Start der Katalog.
 4. **Mehrdeutigkeit:** Zwei `PriceCalculator`-Beans — welcher gewinnt?
-   `@Primary` auf `GrossPriceCalculator` setzt den Standard, die
-   Setter-Methode in `BookService` holt sich per
-   `@Qualifier("netPriceCalculator")` explizit den anderen.
+   `@Primary` auf `GrossPriceCalculator` setzt den Standard. Im
+   `BookService`-Konstruktor stehen beide Auflösungswege nebeneinander:
+   Der unqualifizierte Parameter bekommt die `@Primary`-Bean, der mit
+   `@Qualifier("netPriceCalculator")` annotierte Parameter explizit die
+   andere.
 5. **Scopes:** `PrototypeCounter` mit `@Component` und
    `@Scope("prototype")` deklarieren. Der `CatalogRunner` fordert zwei
    Instanzen an — die Ausgabe zeigt zwei verschiedene Instanznummern.

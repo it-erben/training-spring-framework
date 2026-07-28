@@ -1,6 +1,5 @@
 package tech.erben.springboot.basics.core;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
@@ -8,14 +7,15 @@ import java.math.BigDecimal;
 import java.util.List;
 
 /**
- * Fachlogik der Buchhandlung. Zeigt zwei Wege, die Mehrdeutigkeit zwischen
- * den beiden {@link PriceCalculator}-Beans aufzuloesen:
+ * Fachlogik der Buchhandlung. Eine einzige Konstruktor-Signatur zeigt beide
+ * Wege, die Mehrdeutigkeit zwischen den zwei {@link PriceCalculator}-Beans
+ * aufzuloesen, nebeneinander:
  *
  * <ul>
- *   <li>Der Konstruktor verlangt einen {@link PriceCalculator} ohne
- *       Qualifier — durch {@code @Primary} injiziert der Container den
+ *   <li>{@code defaultCalculator} traegt keinen Qualifier — durch
+ *       {@code @Primary} injiziert der Container den
  *       {@link GrossPriceCalculator}.</li>
- *   <li>Die Setter-Methode waehlt per {@code @Qualifier} explizit den
+ *   <li>{@code netCalculator} waehlt per {@code @Qualifier} explizit den
  *       {@link NetPriceCalculator}.</li>
  * </ul>
  */
@@ -24,16 +24,13 @@ public class BookService {
 
     private final BookRepository bookRepository;
     private final PriceCalculator defaultCalculator;
+    private final PriceCalculator netCalculator;
 
-    private PriceCalculator netCalculator;
-
-    public BookService(BookRepository bookRepository, PriceCalculator defaultCalculator) {
+    public BookService(BookRepository bookRepository,
+                       PriceCalculator defaultCalculator,
+                       @Qualifier("netPriceCalculator") PriceCalculator netCalculator) {
         this.bookRepository = bookRepository;
         this.defaultCalculator = defaultCalculator;
-    }
-
-    @Autowired
-    public void setNetCalculator(@Qualifier("netPriceCalculator") PriceCalculator netCalculator) {
         this.netCalculator = netCalculator;
     }
 
