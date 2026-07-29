@@ -57,38 +57,3 @@
   etwas offen bleibt, dem Nutzer außerhalb von Code, Docs, Markdown, Kommentaren,
   PR-Beschreibungen, Commit-Nachrichten oder allem anderen in diesem Repo und
   seiner angeschlossenen Pipeline Bescheid geben.
-
-## Aufbau dieses Repos
-
-Zwei Blöcke, getrennt über die Nummerierung der Slide-Verzeichnisse:
-
-- `slides/00_` bis `05_` — Basis-Block, 2 Tage, Marp-Header
-  `Spring Boot Basics`, Maven-Module mit Präfix `sb-basics-`.
-- `slides/10_` bis `17_` — Advanced-Block, 3 Tage, Marp-Header
-  `Spring Boot Advanced`, Maven-Module mit Präfix `sb-advanced-`.
-
-Der Basis-Block setzt keine Spring-Kenntnisse voraus. Mehrere
-Advanced-Module beginnen mit „Wiederholung:"-Slides, die sich auf ihn
-beziehen — eine Änderung im Basis-Block kann dort eine Lücke reißen.
-
-`assignments` enthält Übungsaufgaben, `solutions` deren Lösungen. Beide
-bleiben synchron.
-
-## Fallstricke dieses Repos
-
-- **Die `TODO`-Marken in `*-start`-Modulen und Assignments sind Lehrmaterial
-  und bleiben stehen.** Sie markieren die Handgriffe des Live-Codings. Die
-  Regel zum Entfernen von TODO-Markern gilt für sie nicht.
-- **Assignment-Tests sind im Ausgangszustand rot** und werden im
-  Gesamtbuild über die Property `skipAssignmentTests` übersprungen. Kein
-  Assignment-Test darf im Ausgangszustand grün sein. Sichtbar machen mit
-  `-DskipAssignmentTests=false`.
-- **Jeder Zwischenschritt** einer `-start`-README muss lauffähig sein. Ein
-  `package`-Lauf beweist das nicht — die Schritte einzeln anwenden und
-  starten.
-- **Demos nutzen eine Buchhandlung, Übungen eine Kursverwaltung.** Die
-  Trennung verhindert, dass die Demo-Lösung in die Übung kopierbar ist.
-- Kein Lombok in den Basis-Modulen. Kein `spring-boot-starter-parent`: Das
-  Root-POM definiert nur die Property `spring-boot.version`, jedes Leaf-POM
-  importiert `spring-boot-dependencies` selbst. Ein lauffähiges Fat-JAR
-  braucht deshalb eine explizite `repackage`-Execution.
