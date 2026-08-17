@@ -21,7 +21,7 @@ public class ProductService {
 
     public ProductResponse create(ProductCreateRequest request) {
         if (repository.existsByNameIgnoreCase(request.getName())) {
-            // TODO rejected Counter erhoehen
+            // TODO rejected Counter erhöhen
             throw new IllegalArgumentException(
                     "A product with the name '" + request.getName() + "' already exists."
             );
@@ -31,13 +31,13 @@ public class ProductService {
                 new Product(request.getName(), request.getPrice(), request.getInventory())
         );
 
-        // TODO success Counter erhoehen
+        // TODO success Counter erhöhen
         return ProductResponse.from(saved);
     }
 
     @Transactional(readOnly = true)
     public List<ProductResponse> list(String query) {
-        // TODO Ausfuehrungszeit mit einem Timer messen
+        // TODO Ausführungszeit mit einem Timer messen
         List<Product> products;
         if (query == null || query.isBlank()) {
             products = repository.findAll();
@@ -81,6 +81,6 @@ public class ProductService {
                 .findById(id)
                 .orElseThrow(() -> new ProductNotFoundException(id));
         repository.delete(product);
-        // TODO optional: delete Counter erhoehen
+        // TODO optional: delete Counter erhöhen
     }
 }

@@ -39,7 +39,7 @@ sb-advanced-tracing-demo/
      -d '{"description":"Express Delivery","amount":19.90}'
    ```
 
-4. Jaeger UI oeffnen:
+4. Jaeger UI öffnen:
 
    ```text
    http://localhost:16686

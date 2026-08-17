@@ -1,28 +1,31 @@
 # AMQP-Demo (RabbitMQ)
 
-Dieses Modul zeigt Schritt für Schritt, wie man mit Spring Boot und RabbitMQ Nachrichten austauscht.
+Nachrichtenaustausch mit Spring Boot und RabbitMQ: Topic- und Fanout-Routing, Dead-Letter-Handling, Auto-Ack gegen manuelles Ack, Publisher Confirms.
 
-## Was wird demonstriert?
+## Topologie
 
-- **Exchanges & Routing Keys**: Ein Topic-Exchange `orders.topic` verteilt Bestellungen auf unterschiedliche Queues per Routing Key (`order.standard.#`, `order.priority.#`, `order.#` für ein Audit-Tap). Ein Fanout-Exchange `notifications.fanout` broadcastet an mehrere Abonnenten (E-Mail & SMS).
-- **Dead-Letter-Handling**: Beide Order-Queues besitzen eine Dead-Letter-Exchange `orders.dlx`, die Nachrichten in die DLQ `orders.dlq` umlenkt, wenn sie abgelehnt werden.
-- **Auto-Ack vs. manuelles Ack**: Standard-Bestellungen laufen mit Auto-Ack. Priority-Bestellungen nutzen ein eigenes Listener-Container-Factory-Bean mit `AcknowledgeMode.MANUAL`. Bei Fehlern kann absichtlich ein NACK gesendet werden, was die Nachricht in die DLQ schiebt.
-- **Publisher Confirms & Returns**: Das `RabbitTemplate` ist so konfiguriert, dass Publisher Confirms/Returns geloggt werden, wenn RabbitMQ etwas ablehnt.
-- **Nachrichtenformat**: JSON-Konvertierung via `Jackson2JsonMessageConverter`, sodass einfache Java-Records automatisch serialisiert werden.
+| Baustein | Verhalten |
+| --- | --- |
+| Topic-Exchange `orders.topic` | Verteilt Bestellungen per Routing Key auf `order.standard.#`, `order.priority.#` und `order.#` (Audit-Tap) |
+| Fanout-Exchange `notifications.fanout` | Broadcast an `notifications.email` und `notifications.sms` |
+| Dead-Letter-Exchange `orders.dlx` | Beide Order-Queues lenken abgelehnte Nachrichten nach `orders.dlq` um |
+| Acknowledge | `orders.standard` läuft mit Auto-Ack, `orders.priority` über eine eigene Listener-Container-Factory mit `AcknowledgeMode.MANUAL` |
+| Publisher Confirms und Returns | Das `RabbitTemplate` loggt, was RabbitMQ ablehnt |
+| Nachrichtenformat | JSON über `Jackson2JsonMessageConverter`, Records werden automatisch serialisiert |
 
-## Wo im Code passiert was?
+## Wo im Code
 
-- `src/main/java/tech/erben/springboot/amqpdemo/config/RabbitTopologyConfig.java`: Legt Exchanges, Queues, Bindings, den JSON MessageConverter, das `RabbitTemplate` und die manuell ackende Listener-Factory an.
-- `src/main/java/tech/erben/springboot/amqpdemo/service/OrderMessagingService.java`: Baut Nachrichten (mit Zeitstempel und UUID) und schickt sie mit dem `RabbitTemplate` an die Exchanges.
-- `src/main/java/tech/erben/springboot/amqpdemo/messaging/OrderListeners.java`: Alle `@RabbitListener`-Methoden – verarbeitet Bestellungen, schreibt Logs, schickt bei `simulateError=true` ein NACK in die DLQ.
-- `src/main/java/tech/erben/springboot/amqpdemo/service/InMemoryDeliveryLog.java`: Einfaches In-Memory-Log, damit man ohne Datenbank sehen kann, welche Nachrichten wohin zugestellt wurden.
-- `src/main/java/tech/erben/springboot/amqpdemo/web/MessagingDemoController.java`: HTTP-API zum Senden von Nachrichten und zum Auslesen/Löschen des Logs.
-- `src/main/resources/application.yml`: RabbitMQ-Connection (localhost/guest/guest) und aktivierte Publisher Confirms/Returns.
+- `src/main/java/tech/erben/springboot/amqpdemo/config/RabbitTopologyConfig.java`: Exchanges, Queues, Bindings, JSON-MessageConverter, `RabbitTemplate` und die manuell ackende Listener-Factory.
+- `src/main/java/tech/erben/springboot/amqpdemo/service/OrderMessagingService.java`: Baut Nachrichten mit Zeitstempel und UUID und schickt sie an die Exchanges.
+- `src/main/java/tech/erben/springboot/amqpdemo/messaging/OrderListeners.java`: Alle `@RabbitListener`-Methoden; schickt bei `simulateError=true` ein NACK in die DLQ.
+- `src/main/java/tech/erben/springboot/amqpdemo/service/InMemoryDeliveryLog.java`: In-Memory-Log der Zustellungen, damit die Demo ohne Datenbank auskommt.
+- `src/main/java/tech/erben/springboot/amqpdemo/web/MessagingDemoController.java`: HTTP-API zum Senden von Nachrichten und zum Auslesen und Löschen des Logs.
+- `src/main/resources/application.yml`: RabbitMQ-Connection (localhost/guest/guest), Publisher Confirms und Returns aktiviert.
 
 ## Voraussetzungen
 
-- Laufender RabbitMQ auf `localhost:5672` mit `guest/guest`.
-- Java 21 und Maven.
+- RabbitMQ auf `localhost:5672` mit `guest/guest`
+- Java 21 und Maven
 
 ## Starten
 
@@ -33,9 +36,9 @@ mvn spring-boot:run
 
 Die Anwendung läuft danach auf `http://localhost:8080`.
 
-## API – Schritt für Schritt testen
+## API Schritt für Schritt testen
 
-1) **Standard-Bestellung (auto-ack)**  
+1) **Standard-Bestellung (auto-ack)**
 
    ```bash
    curl -X POST http://localhost:8080/api/orders \
@@ -45,7 +48,7 @@ Die Anwendung läuft danach auf `http://localhost:8080`.
 
    Erwartung: landet in `orders.standard`, wird auto-acknowledged und zusätzlich im Audit-Tap `orders.audit` verarbeitet.
 
-2) **Priority-Bestellung mit manuellem Ack**  
+2) **Priority-Bestellung mit manuellem Ack**
 
    ```bash
    curl -X POST http://localhost:8080/api/orders \
@@ -55,7 +58,7 @@ Die Anwendung läuft danach auf `http://localhost:8080`.
 
    Erwartung: Listener ackt manuell; bleibt beim Erfolg in `orders.priority` verarbeitet und ebenfalls im Audit-Tap.
 
-3) **Priority-Bestellung absichtlich fehlschlagen lassen** (`simulateError=true`)  
+3) **Priority-Bestellung absichtlich fehlschlagen lassen** (`simulateError=true`)
 
    ```bash
    curl -X POST http://localhost:8080/api/orders \
@@ -65,7 +68,7 @@ Die Anwendung läuft danach auf `http://localhost:8080`.
 
    Erwartung: Listener schickt `basicNack(..., requeue=false)`, Nachricht wird über die DLX in `orders.dlq` umgeleitet.
 
-4) **Broadcast an alle (Fanout)**  
+4) **Broadcast an alle (Fanout)**
 
    ```bash
    curl -X POST http://localhost:8080/api/announcements \
@@ -75,7 +78,7 @@ Die Anwendung läuft danach auf `http://localhost:8080`.
 
    Erwartung: Nachricht landet gleichzeitig in `notifications.email` und `notifications.sms`.
 
-5) **Logs ansehen** (zeigen, was wirklich zugestellt wurde)  
+5) **Zustellungen ansehen**
 
    ```bash
    curl http://localhost:8080/api/logs
@@ -83,34 +86,12 @@ Die Anwendung läuft danach auf `http://localhost:8080`.
 
    Optional gefiltert nach Queue: `curl "http://localhost:8080/api/logs?queue=orders.dlq"`.
 
-6) **Logs löschen** (damit der nächste Test sauber ist)  
+6) **Log löschen**, damit der nächste Test sauber ist
 
    ```bash
    curl -X DELETE http://localhost:8080/api/logs
    ```
 
-## Was sieht man im Log?
+## Inhalt des Logs
 
-Das Log enthält Zeilen wie:
-
-- Queue-Name (z. B. `orders.priority`, `orders.dlq`, `notifications.email`)
-- Eine kurze Notiz, was passiert ist (z. B. „priority order (manual-ack)“ oder „simulateError=true -> basicNack to DLQ“)
-- Den Payload (OrderMessage oder BroadcastMessage)
-- Zeitstempel der Verarbeitung
-
-Damit kann man gut nachvollziehen:
-
-- Automatisches vs. manuelles Acknowledge
-- Dead-Letter-Routing bei Fehlern
-- Topic-Routing (Standard vs. Priority vs. Audit-Tap)
-- Fanout an mehrere Konsumenten gleichzeitig
-
-## Warum ist das nützlich?
-
-Die Demo ist ein kompaktes Nachschlagewerk für typische RabbitMQ-Patterns in Spring Boot:
-
-- Wie man Exchanges, Queues und Bindings per Java Config aufsetzt
-- Wie man das `RabbitTemplate` für Publisher Confirms/Returns konfiguriert
-- Wie man `@RabbitListener` mit manuellem Ack nutzt
-- Wie Dead-Letter-Exchanges/-Queues funktionieren und getestet werden können
-- Wie man schnell per HTTP Nachrichten schickt und den Effekt live beobachtet, ohne extra UI
+Jeder Eintrag enthält den Queue-Namen (z.B. `orders.priority`, `orders.dlq`, `notifications.email`), eine kurze Notiz zum Verlauf (z.B. "priority order (manual-ack)" oder "simulateError=true -> basicNack to DLQ"), den Payload (`OrderMessage` oder `BroadcastMessage`) und den Zeitstempel der Verarbeitung.

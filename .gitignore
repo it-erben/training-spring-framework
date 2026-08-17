@@ -1,4 +1,12 @@
 .idea
+.bloop/
+.metals/
 **/target
 .npm-cache
 node_modules
+.DS_Store
+.lycheecache
+
+# Arbeitsverzeichnisse der Agenten-Werkzeuge
+.claude/worktrees/
+.superpowers/
