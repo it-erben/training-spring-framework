@@ -5,6 +5,13 @@ header: Spring Boot Basics
 footer: Alexander Erben
 paginate: true
 ---
+<!-- Dichte-Stufen gegen Folienueberlauf, siehe tools/check-slide-overflow.mjs -->
+<style>
+section.dense { font-size: 24.5px; }
+section.denser { font-size: 21px; }
+section.densest { font-size: 17.5px; }
+section.densest-xs { font-size: 15.5px; }
+</style>
 
 # Spring Core: Der Container
 
@@ -23,7 +30,8 @@ paginate: true
 
 ---
 
-## Das Problem: Objekte selbst verdrahten
+<!-- _class: dense -->
+## Das Problem: Abhängigkeiten selbst auflösen
 
 Ohne Framework bauen wir unseren Objektgraphen von Hand zusammen:
 
@@ -45,23 +53,24 @@ Das funktioniert — skaliert aber schlecht:
 
 ## Inversion of Control
 
-**Idee:** Nicht die Klasse besorgt sich ihre Abhängigkeiten — ein Container tut das.
+**Idee:** Nicht die Klasse besorgt sich ihre Abhängigkeiten, ein Container tut das.
 
-* Klassisch: Der Code **ruft** Bibliotheken auf und kontrolliert den Ablauf.
-* IoC: Das Framework kontrolliert den Ablauf und **ruft unseren Code** auf ("Hollywood-Prinzip: *Don't call us, we call you*").
+* Klassisch: Der Code ruft Bibliotheken auf und kontrolliert den Ablauf.
+* IoC: Das Framework kontrolliert den Ablauf und ruft unseren Code auf ("Hollywood-Prinzip: *Don't call us, we call you*").
 * Der Spring-Container übernimmt:
   * **Erzeugen** der Objekte (Beans)
-  * **Verdrahten** der Abhängigkeiten untereinander
+  * **Injizieren** der Abhängigkeiten untereinander
   * **Verwalten** des Lebenszyklus (Erzeugung bis Zerstörung)
-* Unser Fachcode deklariert nur noch, **was** er braucht — nicht **woher** es kommt.
+* Unser Fachcode deklariert nur noch, **was** er braucht, nicht **woher** es kommt.
 
 ---
 
+<!-- _class: dense -->
 ## Dependency Injection
 
 Dependency Injection (DI) ist die konkrete Technik hinter IoC:
 
-* Eine Klasse bekommt ihre Abhängigkeiten **von außen hineingereicht** — statt sie mit `new` selbst zu erzeugen.
+* Eine Klasse bekommt ihre Abhängigkeiten **von außen hineingereicht** statt sie mit `new` selbst zu erzeugen.
 * `BookService` hängt nur vom Interface `BookRepository` ab:
 
 ```java
@@ -74,16 +83,17 @@ public interface BookRepository {
 ```
 
 * Welche Implementierung zur Laufzeit dahintersteckt, entscheidet der Container.
-* Gewinn: **lose Kopplung** — Implementierungen sind austauschbar, Tests können Fakes injizieren.
+* Gewinn: **lose Kopplung**. Implementierungen sind austauschbar, Tests können Fakes injizieren.
 
 ---
 
+<!-- _class: denser -->
 ## Der ApplicationContext
 
-Der `ApplicationContext` **ist** der Spring-Container:
+Der `ApplicationContext` ist der Spring-Container:
 
-* Er kennt alle **Bean-Definitionen** (welche Klassen, welche Scopes, welche Abhängigkeiten).
-* Beim Start erzeugt er die Beans in der richtigen Reihenfolge und verdrahtet sie.
+* Er kennt alle Bean-Definitionen (welche Klassen, welche Scopes, welche Abhängigkeiten).
+* Beim Start erzeugt er die Beans in der richtigen Reihenfolge und verbindet sie.
 * In Spring Boot startet ihn eine Zeile:
 
 ```java
@@ -96,7 +106,7 @@ public class CoreDemoApplication {
 }
 ```
 
-* `SpringApplication.run(...)` baut den Context auf, führt danach z.B. `CommandLineRunner`-Beans aus — und gibt den Context zurück, falls man ihn braucht.
+* `SpringApplication.run(...)` baut den Context auf, führt danach z.B. `CommandLineRunner`-Beans aus und gibt den Context zurück, falls man ihn braucht.
 
 ---
 
@@ -104,6 +114,7 @@ public class CoreDemoApplication {
 
 ---
 
+<!-- _class: densest -->
 ## @Component und die Stereotypen
 
 Eine **Bean** ist ein Objekt, das der Container erzeugt und verwaltet. Der einfachste Weg dorthin: eine Stereotyp-Annotation an der Klasse.
@@ -115,20 +126,21 @@ public class InMemoryBookRepository implements BookRepository {
 }
 ```
 
-| Annotation | Bedeutung |
-| --- | --- |
-| `@Component` | Generische Bean — Basis aller Stereotypen |
-| `@Service` | Fachlogik / Geschäftsdienste |
-| `@Repository` | Datenzugriff (+ Exception-Übersetzung) |
-| `@Controller` / `@RestController` | Web-Schicht (Modul Web) |
+| Annotation                        | Bedeutung                                |
+|-----------------------------------|------------------------------------------|
+| `@Component`                      | Generische Bean. Basis aller Stereotypen |
+| `@Service`                        | Fachlogik / Geschäftsdienste             |
+| `@Repository`                     | Datenzugriff (+ Exception-Übersetzung)   |
+| `@Controller` / `@RestController` | Web-Schicht (Modul Web)                  |
 
-Technisch verhalten sich alle gleich — die Spezialisierungen dokumentieren die **Rolle** der Klasse und schalten teils Zusatzverhalten frei.
+Technisch verhalten sich alle gleich. Die Spezialisierungen dokumentieren die **Rolle** der Klasse und schalten teils Zusatzverhalten frei.
 
 ---
 
+<!-- _class: denser -->
 ## Component Scan
 
-Woher weiß der Container, welche Klassen Beans sind? Er **scannt** den Classpath:
+Woher weiß der Container, welche Klassen Beans sind? Er **scannt den Classpath**:
 
 ```java
 @SpringBootApplication
@@ -142,14 +154,15 @@ public class CoreDemoApplication {
 
 * `@SpringBootApplication` enthält u.a. `@ComponentScan`.
 * Gescannt wird ab dem **Package der Application-Klasse**, inklusive aller Sub-Packages.
-* Konvention: Application-Klasse ins **Root-Package** legen (hier `tech.erben.springboot.basics.core`) — dann wird alles darunter gefunden.
-* Klassen **außerhalb** dieses Baums werden nicht gefunden — eine häufige Fehlerquelle: `NoSuchBeanDefinitionException` beim Start.
+* Konvention: Application-Klasse ins **Root-Package** legen (hier `tech.erben.springboot.basics.core`), dann wird alles darunter gefunden.
+* Klassen außerhalb dieses Baums werden nicht gefunden, eine häufige Fehlerquelle: `NoSuchBeanDefinitionException` beim Start.
 
 ---
 
+<!-- _class: dense -->
 ## @Configuration und @Bean
 
-Nicht jede Klasse können wir annotieren — z.B. Klassen aus dem JDK oder aus Fremdbibliotheken. Dafür gibt es `@Bean`-Methoden:
+Nicht jede Klasse können wir annotieren, z.B. Klassen aus dem JDK oder aus Fremdbibliotheken. Dafür gibt es `@Bean`-Methoden:
 
 ```java
 @Configuration
@@ -163,20 +176,19 @@ public class ShippingConfig {
 ```
 
 * `@Configuration` markiert eine Klasse, die Bean-Definitionen enthält.
-* Jede `@Bean`-Methode liefert **eine Bean**; der Methodenname wird zum Bean-Namen (`clock`).
+* Jede `@Bean`-Methode liefert eine Bean; der Methodenname wird zum Bean-Namen (`clock`).
 * Der Rückgabewert wird vom Container verwaltet wie jede `@Component`-Bean.
-* Vorteil hier: In Tests lässt sich statt der Systemuhr eine **feste** `Clock` injizieren — Zeitlogik wird testbar.
 
 ---
 
 ## Wann @Component, wann @Bean?
 
-| Situation | Mittel der Wahl |
-| --- | --- |
-| Eigene Klasse, eine Implementierung | `@Component` / Stereotyp |
-| Fremde Klasse (JDK, Library) | `@Bean`-Methode |
-| Aufwendige Konstruktion (Builder, Parameter) | `@Bean`-Methode |
-| Mehrere Varianten derselben Klasse | Mehrere `@Bean`-Methoden |
+| Situation                                              | Mittel der Wahl             |
+|--------------------------------------------------------|-----------------------------|
+| Eigene Klasse, eine Implementierung                    | `@Component` / Stereotyp    |
+| Fremde Klasse (JDK, Library)                           | `@Bean`-Methode             |
+| Aufwendige Konstruktion (Builder, Parameter)           | `@Bean`-Methode             |
+| Mehrere Varianten derselben Klasse                     | Mehrere `@Bean`-Methoden    |
 | Bean nur unter Bedingungen (später: AutoConfiguration) | `@Bean` + `@Conditional...` |
 
 **Faustregel:** Eigener Code → Annotation an der Klasse. Fremder Code oder Konstruktionslogik → `@Bean`-Methode in einer `@Configuration`.
@@ -187,6 +199,7 @@ public class ShippingConfig {
 
 ---
 
+<!-- _class: denser -->
 ## Konstruktor-Injection
 
 Der empfohlene Weg: Abhängigkeiten als **Konstruktor-Parameter** deklarieren.
@@ -204,13 +217,14 @@ public class BookService {
 }
 ```
 
-* Der Container sieht: `BookService` braucht ein `BookRepository` — und injiziert die passende Bean (`InMemoryBookRepository`).
-* Seit Spring 4.3: Bei **genau einem Konstruktor** ist kein `@Autowired` nötig.
-* Felder können `final` sein — das Objekt ist nach der Konstruktion vollständig und unveränderlich verdrahtet.
+* Der Container sieht: `BookService` braucht ein `BookRepository` und injiziert die passende Bean (`InMemoryBookRepository`).
+* Seit Spring 4.3: Bei genau einem Konstruktor ist kein `@Autowired` nötig.
+* Felder können `final` sein. Das Objekt ist nach der Konstruktion vollständig und unveränderlich.
 
 ---
 
-## Warum nicht Feld-Injection?
+<!-- _class: denser -->
+## Warum nicht Field-Injection?
 
 ```java
 // So bitte nicht:
@@ -220,14 +234,15 @@ private BookRepository bookRepository;
 
 Drei konkrete Gründe dagegen:
 
-1. **Testbarkeit ohne Container:** Im Unit-Test lässt sich die Abhängigkeit nicht einfach übergeben — man braucht Reflection oder gleich den ganzen Spring-Context.
+1. **Testbarkeit ohne Container:** Im Unit-Test lässt sich die Abhängigkeit nicht einfach übergeben, man braucht Reflection oder gleich den ganzen Spring-Context.
 2. **Keine `final`-Felder:** Das Feld muss nach der Konstruktion beschreibbar bleiben. Unveränderlichkeit und garantierte Initialisierung gehen verloren.
-3. **Versteckte Abhängigkeiten:** Der Konstruktor lügt — `new BookService()` kompiliert, liefert aber ein kaputtes Objekt. Beim Konstruktor sieht man alle Abhängigkeiten auf einen Blick (und merkt, wenn es zu viele werden).
+3. **Versteckte Abhängigkeiten:** `new BookService()` kompiliert, liefert aber ein nicht voll funktionsfähiges Objekt. Beim Konstruktor sieht man alle Abhängigkeiten auf einen Blick (und merkt, wenn es zu viele werden).
 
 **Merksatz:** Konstruktor-Injection ist der Default. Setter-Injection nur für wirklich optionale, veränderbare Abhängigkeiten.
 
 ---
 
+<!-- _class: densest -->
 ## Mehrere Kandidaten: @Primary
 
 Was, wenn **zwei** Beans dasselbe Interface implementieren?
@@ -239,7 +254,7 @@ public interface PriceCalculator {
 }
 ```
 
-Ohne weitere Angabe scheitert der Start: `NoUniqueBeanDefinitionException`. Erste Lösung — eine Bean zum **Standard** erklären:
+Ohne weitere Angabe scheitert der Start: `NoUniqueBeanDefinitionException`. Erste Lösung: eine Bean zum **Standard** erklären:
 
 ```java
 @Component("grossPriceCalculator")
@@ -257,15 +272,10 @@ Jede unqualifizierte Injektion von `PriceCalculator` erhält jetzt den `GrossPri
 
 ---
 
+<!-- _class: densest -->
 ## Mehrere Kandidaten: @Qualifier
 
-<style scoped>
-section {
-    font-size: 25px;
-}
-</style>
-
-Zweite Lösung — die gewünschte Bean **beim Injizieren benennen**. Beide Wege im selben Konstruktor:
+Zweite Lösung: die gewünschte Bean **beim Injizieren benennen**. Beide Wege im selben Konstruktor:
 
 ```java
 @Service
@@ -286,13 +296,14 @@ public class BookService {
 ```
 
 * `defaultCalculator` trägt keinen Qualifier → `@Primary` greift → `GrossPriceCalculator`.
-* `netCalculator` wählt per `@Qualifier("netPriceCalculator")` explizit den `NetPriceCalculator` — der Name stammt aus `@Component("netPriceCalculator")`.
+* `netCalculator` wählt per `@Qualifier("netPriceCalculator")` explizit den `NetPriceCalculator`. Der Name stammt aus `@Component("netPriceCalculator")`.
 
 ---
 
+<!-- _class: denser -->
 ## Optionale Abhängigkeiten
 
-Nicht jede Abhängigkeit muss zwingend existieren — oder als Singleton vorliegen:
+Nicht jede Abhängigkeit muss zwingend existieren oder als Singleton vorliegen:
 
 ```java
 public CatalogRunner(BookService bookService,
@@ -303,11 +314,11 @@ public CatalogRunner(BookService bookService,
 }
 ```
 
-* `ObjectProvider<T>` injiziert eine **Fabrik** statt der Bean selbst:
-  * `getObject()` — Bean holen (bei Prototype: **jedes Mal eine neue**, gleich mehr dazu)
-  * `getIfAvailable()` — `null`-frei mit Fallback arbeiten, wenn die Bean fehlt
+* `ObjectProvider<T>` injiziert eine **Factory** statt der Bean selbst:
+  * `getObject()`: Bean holen (bei Prototype: **jedes Mal eine neue**, gleich mehr dazu)
+  * `getIfAvailable()`: `null`-frei mit Fallback arbeiten, wenn die Bean fehlt
 * Alternativen für "darf fehlen": `Optional<T>` als Parametertyp oder `@Autowired(required = false)` (Setter).
-* Auch möglich: `List<PriceCalculator>` — injiziert **alle** Implementierungen auf einmal.
+* Auch möglich: `List<PriceCalculator>` injiziert **alle** Implementierungen auf einmal.
 
 ---
 
@@ -317,14 +328,15 @@ public CatalogRunner(BookService bookService,
 
 ## Singleton (Default)
 
-* **Eine Instanz pro Container** — nicht pro JVM, nicht pro Aufruf.
+* **Eine Instanz pro Container**, nicht pro JVM, nicht pro Aufruf.
 * Jede Injektion von `BookService` liefert **dasselbe** Objekt.
 * Default für alle Beans; keine Annotation nötig.
-* Konsequenz: Singleton-Beans sollten **zustandslos** (stateless) sein oder ihren Zustand thread-sicher verwalten — viele Threads teilen sich dieselbe Instanz.
-* Erzeugung standardmäßig **eager** beim Container-Start: Fehler in der Verdrahtung fallen sofort auf, nicht erst beim ersten Request.
+* Konsequenz: Singleton-Beans sollten **zustandslos** (stateless) sein oder ihren Zustand thread-sicher verwalten. Viele Threads teilen sich dieselbe Instanz.
+* Erzeugung standardmäßig **eager** beim Container-Start: fehlende oder mehrdeutige Abhängigkeiten fallen sofort auf, nicht erst beim ersten Request.
 
 ---
 
+<!-- _class: denser -->
 ## Prototype
 
 `@Scope("prototype")`: Der Container liefert bei **jeder Anfrage eine neue Instanz**.
@@ -350,21 +362,22 @@ PrototypeCounter second = counterProvider.getObject();
 // first != second — zwei verschiedene Instanzen
 ```
 
-**Achtung:** In eine Singleton-Bean direkt injiziert, würde der Prototype nur **einmal** erzeugt — deshalb der `ObjectProvider`.
+**Achtung:** In eine Singleton-Bean direkt injiziert, würde der Prototype nur **einmal** erzeugt, deshalb der `ObjectProvider`.
 
 ---
 
 ## Request und Session (nur erwähnt)
 
 * In Web-Anwendungen gibt es weitere Scopes: **`request`** (eine Instanz pro HTTP-Request) und **`session`** (eine pro HTTP-Session).
-* Für dieses Modul genügt: Es gibt sie, sie brauchen einen Web-Context — wir kommen im Web-Modul darauf zurück.
+* Für dieses Modul genügt: Es gibt sie, sie brauchen einen Web-Context, wir kommen im Web-Modul darauf zurück.
 * Merken: In der Praxis sind **> 95 % aller Beans Singletons**.
 
 ---
 
+<!-- _class: denser -->
 ## @PostConstruct und @PreDestroy
 
-Der Container verwaltet den **Lebenszyklus** — und bietet Haken (Hooks) an:
+Der Container verwaltet den **Lebenszyklus** und bietet Hooks an:
 
 ```java
 @PostConstruct
@@ -378,10 +391,10 @@ void shutdown() {
 }
 ```
 
-* `@PostConstruct`: Initialisierung, die injizierte Abhängigkeiten braucht — im Konstruktor wäre das zu früh, wenn z.B. Proxies noch fehlen.
+* `@PostConstruct`: Initialisierung, die injizierte Abhängigkeiten braucht. Im Konstruktor wäre das zu früh, wenn z.B. Proxies noch fehlen.
 * `@PreDestroy`: Ressourcen freigeben (Verbindungen, Threads, Dateien).
-* Beide stammen aus `jakarta.annotation` — Standard, nicht Spring-spezifisch.
-* Bei **Prototype**-Beans ruft der Container `@PreDestroy` **nicht** auf — er verwaltet sie nach der Erzeugung nicht weiter.
+* Beide stammen aus `jakarta.annotation`. Standard, nicht Spring-spezifisch.
+* Bei **Prototype**-Beans ruft der Container `@PreDestroy` **nicht** auf. Er verwaltet sie nach der Erzeugung nicht weiter.
 
 ---
 
@@ -389,6 +402,7 @@ void shutdown() {
 
 ---
 
+<!-- _class: dense -->
 ## @Value
 
 Werte aus `application.properties` in Beans injizieren:
@@ -410,18 +424,19 @@ public class ShopProperties {
 }
 ```
 
-* `${...}` ist ein **Platzhalter** — der Container ersetzt ihn beim Erzeugen der Bean.
-* Quellen: `application.properties`, Umgebungsvariablen, Kommandozeile u.v.m. — die genaue Rangfolge behandelt Modul *Configuration*.
+* `${...}` ist ein Platzhalter. Der Container ersetzt ihn beim Erzeugen der Bean.
+* Quellen: `application.properties`, Umgebungsvariablen, Kommandozeile u.v.m.
 
 ---
 
+<!-- _class: dense -->
 ## Defaults und Platzhalter
 
-* Syntax: `${property.name:defaultwert}` — der Teil **nach dem Doppelpunkt** greift, wenn die Property fehlt.
-* Ohne Default und ohne Wert: Der Start **schlägt fehl** (`Could not resolve placeholder`). Das ist oft gewollt — fail fast statt stiller Fehlkonfiguration.
-* Typkonvertierung übernimmt Spring: `@Value("${shop.max-results:10}") int maxResults` funktioniert direkt.
+* Syntax: `${property.name:defaultwert}`. Der Teil nach dem Doppelpunkt greift, wenn die Property fehlt.
+* Ohne Default und ohne Wert: Der Start schlägt fehl (`Could not resolve placeholder`). Das ist oft gewollt: fail fast statt stiller Fehlkonfiguration.
+* Typkonvertierung übernimmt Spring: `@Value("${shop.max-results:10}") int maxResults` funktioniert sofort.
 * Platzhalter funktionieren auch in `@Bean`-Methoden-Parametern und in `application.properties` selbst (Verschachtelung).
-* **Ausblick:** Für viele zusammengehörige Werte gibt es `@ConfigurationProperties` (typsichere Objekte statt einzelner `@Value`-Felder) — Thema in Modul *11_Configuration*.
+* **Ausblick:** Für viele zusammengehörige Werte gibt es `@ConfigurationProperties` (typsichere Objekte statt einzelner `@Value`-Felder) - Thema in Modul *11_Configuration*.
 
 ---
 
@@ -429,6 +444,7 @@ public class ShopProperties {
 
 ---
 
+<!-- _class: densest -->
 ## Aufbau einer pom.xml
 
 Die `pom.xml` (*Project Object Model*) beschreibt ein Maven-Projekt:
@@ -453,20 +469,15 @@ Die `pom.xml` (*Project Object Model*) beschreibt ein Maven-Projekt:
 </project>
 ```
 
-* **Koordinaten** `groupId:artifactId:version` identifizieren jedes Artefakt eindeutig — auch jede Dependency.
+* **Koordinaten** `groupId:artifactId:version` identifizieren jedes Artefakt eindeutig, auch jede Dependency.
 * Maven lädt Dependencies aus **Repositories** (zentral: Maven Central) und legt sie im lokalen Cache ab (`~/.m2/repository`).
 
 ---
 
+<!-- _class: densest-xs -->
 ## Parent-POM und Vererbung
 
-<style scoped>
-section {
-    font-size: 25px;
-}
-</style>
-
-POMs können erben — das Kind übernimmt Konfiguration und Versionen vom Parent:
+POMs können erben. Das Kind übernimmt Konfiguration und Versionen vom Parent:
 
 ```xml
 <parent>
@@ -477,8 +488,8 @@ POMs können erben — das Kind übernimmt Konfiguration und Versionen vom Paren
 </parent>
 ```
 
-* Typisch geerbt: Java-Version (bei uns **21**), Plugin-Versionen, gemeinsame Properties.
-* Spring-Boot-Projekte nutzen oft `spring-boot-starter-parent` als Parent. Unser Kurs-Repo hat einen **eigenen** Parent — der liefert aber nur die Property `spring-boot.version`. Springs Versionskatalog importiert **jedes Modul selbst** in seinem eigenen POM:
+* Typischerweise geerbt: Java-Version (bei uns **21**), Plugin-Versionen, gemeinsame Properties.
+* Spring-Boot-Projekte nutzen oft `spring-boot-starter-parent` als Parent. Unser Kurs-Repo hat einen eigenen Parent. Der liefert aber nur die Property `spring-boot.version`. Springs Versionskatalog importiert jedes Modul selbst in seinem eigenen POM:
 
 ```xml
 <dependencyManagement>
@@ -494,13 +505,14 @@ POMs können erben — das Kind übernimmt Konfiguration und Versionen vom Paren
 </dependencyManagement>
 ```
 
-* `dependencyManagement` legt **Versionen** fest, zieht aber selbst noch nichts in den Classpath.
+* `dependencyManagement` legt Versionen fest, lädt aber selbst noch nichts in den Classpath.
 
 ---
 
+<!-- _class: densest-xs -->
 ## Eine Dependency aufnehmen
 
-Eine Bibliothek einbinden = ein Eintrag unter `<dependencies>`:
+Um eine neue Dependency hinzuzufügen, fügen wir einen ein Eintrag unter `<dependencies>` hinzu:
 
 ```xml
 <dependencies>
@@ -517,13 +529,14 @@ Eine Bibliothek einbinden = ein Eintrag unter `<dependencies>`:
 </dependencies>
 ```
 
-* **Keine Version nötig** — sie kommt aus dem importierten `spring-boot-dependencies`-Katalog.
-* `<scope>test</scope>`: nur im Test-Classpath, landet nicht im ausgelieferten Artefakt.
+* **Keine Version nötig**: sie wird aus dem importierten `spring-boot-dependencies`-Katalog übernommen.
+* `<scope>test</scope>`: Dependency erscheint nur im Test-Classpath und landet nicht im ausgelieferten Artefakt.
 * **Starter** sind kuratierte Dependency-Bündel: `spring-boot-starter` bringt Container, Logging und AutoConfiguration; `spring-boot-starter-web` später den ganzen Web-Stack.
-* Transitive Abhängigkeiten löst Maven automatisch auf — sichtbar mit `mvn dependency:tree`.
+* Transitive Abhängigkeiten löst Maven automatisch auf. Sichtbar mit `mvn dependency:tree`.
 
 ---
 
+<!-- _class: denser -->
 ## Der Reaktor
 
 Der **Reaktor** ist Mavens Mechanismus für Multi-Modul-Builds:
@@ -538,10 +551,10 @@ Der **Reaktor** ist Mavens Mechanismus für Multi-Modul-Builds:
 ```
 
 * Ein Aggregator-POM (`<packaging>pom</packaging>`) listet seine Module.
-* `mvn install` im Wurzelverzeichnis baut **alle Module** — der Reaktor berechnet die Reihenfolge aus den Abhängigkeiten zwischen den Modulen.
+* `mvn install` im Wurzelverzeichnis baut **alle Module**. Der Reaktor berechnet die Reihenfolge aus den Abhängigkeiten zwischen den Modulen.
 * Nützliche Flags:
-  * `mvn -pl demos/sb-basics-core-demo` — nur dieses Modul bauen
-  * `-am` (*also make*) — dessen Abhängigkeiten im Repo mitbauen
+  * `mvn -pl demos/sb-basics-core-demo`: nur dieses Modul bauen
+  * `-am` (*also make*): dessen Abhängigkeiten im Repo mitbauen
 * Unser Kurs-Repo ist genau so aufgebaut: ein Wurzel-Reaktor über `demos`, `assignments` und `solutions`.
 
 ---
@@ -550,20 +563,21 @@ Der **Reaktor** ist Mavens Mechanismus für Multi-Modul-Builds:
 
 ---
 
-## Was wir gleich bauen
+<!-- _class: densest-xs -->
+## Was wir gleich implementieren
 
-Eine kleine **Buchhandlung** als Konsolenanwendung — alles aus diesem Modul in Aktion:
+Eine kleine Buchhandlung als Konsolenanwendung mit allem aus diesem Modul in Aktion:
 
-| Baustein | Zeigt |
-| --- | --- |
-| `Book` (Record), `BookRepository`, `InMemoryBookRepository` | Interface + `@Repository`-Bean |
-| `BookService` | Konstruktor-Injection, `@Primary` vs. `@Qualifier` |
-| `GrossPriceCalculator`, `NetPriceCalculator` | Zwei Beans, ein Interface |
-| `ShippingConfig` | `@Bean`-Methode für eine JDK-Klasse (`Clock`) |
-| `ShopProperties` | `@Value` mit Default |
-| `PrototypeCounter`, `CatalogRunner` | Prototype-Scope, `CommandLineRunner` |
+| Baustein                                                    | Zeigt                                              |
+|-------------------------------------------------------------|----------------------------------------------------|
+| `Book` (Record), `BookRepository`, `InMemoryBookRepository` | Interface + `@Repository`-Bean                     |
+| `BookService`                                               | Konstruktor-Injection, `@Primary` vs. `@Qualifier` |
+| `GrossPriceCalculator`, `NetPriceCalculator`                | Zwei Beans, ein Interface                          |
+| `ShippingConfig`                                            | `@Bean`-Methode für eine JDK-Klasse (`Clock`)      |
+| `ShopProperties`                                            | `@Value` mit Default                               |
+| `PrototypeCounter`, `CatalogRunner`                         | Prototype-Scope, `CommandLineRunner`               |
 
-Erwartete Ausgabe: der Katalog mit Bruttopreisen (19 % MwSt.) — und der Nachweis, dass der Prototype-Scope **zwei verschiedene Instanzen** liefert.
+Erwartete Ausgabe: der Katalog mit Bruttopreisen (19 % MwSt.) und der Nachweis, dass der Prototype-Scope **zwei verschiedene Instanzen** liefert.
 
 Code: `demos/sb-basics-core-demo` (Ordner `-start` zum Mitbauen, `-finished` als Referenz).
 
@@ -573,15 +587,16 @@ Code: `demos/sb-basics-core-demo` (Ordner `-start` zum Mitbauen, `-finished` als
 
 ---
 
+<!-- _class: denser -->
 ## Assignment 00
 
-`assignments/sb-basics-core-assignment` — eine **Kursverwaltung** nach demselben Muster:
+`assignments/sb-basics-core-assignment`: eine **Kursverwaltung** nach demselben Muster:
 
 1. Stereotyp-Annotationen an den vorbereiteten Klassen ergänzen (Katalog, Kalkulatoren).
 2. Eine Fremdklasse (`TrainerDirectory`) per `@Bean`-Methode bereitstellen.
 3. Konstruktor-Injection im `CourseService` implementieren.
 4. Die Mehrdeutigkeit zwischen zwei `FeeCalculator`-Beans mit `@Primary` und `@Qualifier` auflösen.
 
-Die mitgelieferten Tests zeigen, wann alles sitzt: `mvn test -DskipAssignmentTests=false` muss grün sein. (Ohne den Schalter überspringt der Build die Aufgaben-Tests — sie sind Aufgabenstellung, nicht Regression.)
+Die mitgelieferten Tests zeigen, wann ihr fertig seid: `mvn test -DskipAssignmentTests=false` muss grün sein.
 
-**Ausblick:** Modul *11_Configuration* vertieft, wie Spring Boot per **AutoConfiguration** viele dieser Beans automatisch konfiguriert — und wie man eigene AutoConfigurations und Starter baut.
+**Ausblick:** Modul *11_Configuration* vertieft, wie Spring Boot per **AutoConfiguration** viele dieser Beans automatisch konfiguriert und wie man eigene AutoConfigurations und Starter baut.
