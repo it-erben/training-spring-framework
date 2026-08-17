@@ -10,7 +10,6 @@ paginate: true
 section.dense { font-size: 24.5px; }
 section.denser { font-size: 21px; }
 section.densest { font-size: 17.5px; }
-section.densest-xs { font-size: 15.5px; }
 </style>
 
 # Spring Core: Der Container
@@ -474,7 +473,7 @@ Die `pom.xml` (*Project Object Model*) beschreibt ein Maven-Projekt:
 
 ---
 
-<!-- _class: densest-xs -->
+<!-- _class: dense -->
 ## Parent-POM und Vererbung
 
 POMs können erben. Das Kind übernimmt Konfiguration und Versionen vom Parent:
@@ -489,7 +488,14 @@ POMs können erben. Das Kind übernimmt Konfiguration und Versionen vom Parent:
 ```
 
 * Typischerweise geerbt: Java-Version (bei uns **21**), Plugin-Versionen, gemeinsame Properties.
-* Spring-Boot-Projekte nutzen oft `spring-boot-starter-parent` als Parent. Unser Kurs-Repo hat einen eigenen Parent. Der liefert aber nur die Property `spring-boot.version`. Springs Versionskatalog importiert jedes Modul selbst in seinem eigenen POM:
+* Spring-Boot-Projekte nutzen oft `spring-boot-starter-parent` als Parent. Unser Kurs-Repo hat einen eigenen Parent, der nur die Property `spring-boot.version` liefert.
+
+---
+
+<!-- _class: dense -->
+## Versionskatalog importieren
+
+Ohne `spring-boot-starter-parent` importiert jedes Modul Springs Versionskatalog selbst in seinem eigenen POM:
 
 ```xml
 <dependencyManagement>
@@ -509,10 +515,10 @@ POMs können erben. Das Kind übernimmt Konfiguration und Versionen vom Parent:
 
 ---
 
-<!-- _class: densest-xs -->
+<!-- _class: denser -->
 ## Eine Dependency aufnehmen
 
-Um eine neue Dependency hinzuzufügen, fügen wir einen ein Eintrag unter `<dependencies>` hinzu:
+Um eine neue Dependency hinzuzufügen, kommt ein Eintrag unter `<dependencies>`:
 
 ```xml
 <dependencies>
@@ -531,8 +537,14 @@ Um eine neue Dependency hinzuzufügen, fügen wir einen ein Eintrag unter `<depe
 
 * **Keine Version nötig**: sie wird aus dem importierten `spring-boot-dependencies`-Katalog übernommen.
 * `<scope>test</scope>`: Dependency erscheint nur im Test-Classpath und landet nicht im ausgelieferten Artefakt.
+
+---
+
+## Starter und transitive Abhängigkeiten
+
 * **Starter** sind kuratierte Dependency-Bündel: `spring-boot-starter` bringt Container, Logging und AutoConfiguration; `spring-boot-starter-web` später den ganzen Web-Stack.
-* Transitive Abhängigkeiten löst Maven automatisch auf. Sichtbar mit `mvn dependency:tree`.
+* Transitive Abhängigkeiten löst Maven automatisch auf: Wer einen Starter aufnimmt, bekommt dessen Abhängigkeiten mit, ohne sie zu nennen.
+* Sichtbar mit `mvn dependency:tree`. Der Baum zeigt auch, woher eine Version stammt, wenn zwei Zweige dieselbe Bibliothek fordern.
 
 ---
 
@@ -563,7 +575,7 @@ Der **Reaktor** ist Mavens Mechanismus für Multi-Modul-Builds:
 
 ---
 
-<!-- _class: densest-xs -->
+<!-- _class: denser -->
 ## Was wir gleich implementieren
 
 Eine kleine Buchhandlung als Konsolenanwendung mit allem aus diesem Modul in Aktion:
@@ -577,9 +589,13 @@ Eine kleine Buchhandlung als Konsolenanwendung mit allem aus diesem Modul in Akt
 | `ShopProperties`                                            | `@Value` mit Default                               |
 | `PrototypeCounter`, `CatalogRunner`                         | Prototype-Scope, `CommandLineRunner`               |
 
-Erwartete Ausgabe: der Katalog mit Bruttopreisen (19 % MwSt.) und der Nachweis, dass der Prototype-Scope **zwei verschiedene Instanzen** liefert.
+---
 
-Code: `demos/sb-basics-core-demo` (Ordner `-start` zum Mitbauen, `-finished` als Referenz).
+## Erwartete Ausgabe
+
+Der Katalog erscheint mit Brutto- und Nettopreisen (19 % MwSt., kaufmännisch gerundet). Die letzte Zeile weist nach, dass der Prototype-Scope **zwei verschiedene Instanzen** liefert, der Singleton-Scope dagegen zweimal dieselbe.
+
+Code: `demos/sb-basics-core-demo`. Der Ordner `-start` ist der Ausgangspunkt zum Mitbauen, `-finished` die Referenz.
 
 ---
 
