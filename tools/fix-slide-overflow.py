@@ -116,21 +116,51 @@ def write(path, assigns, base_font):
     path.write_text("\n".join(lines), encoding="utf-8")
 
 
-def diagnose(path, slide):
-    """Benennt die wahrscheinliche Ursache einer nicht schrumpfbaren Folie.
-    Wird nur bei Folien aufgerufen, die auch auf der kleinsten Stufe
-    ueberlaufen; geraten wird dabei nicht, sondern im Quelltext nachgesehen."""
+def slide_body(lines, starts, slide):
+    return lines[starts[slide - 1] : (starts[slide] if slide < len(starts) else len(lines))]
+
+
+def headings(body):
+    """Ueberschriften einer Folie. Zeilen in Codebloecken zaehlen nicht, sonst
+    gilt jedes '# ' in einem Shell-Beispiel als Ueberschrift."""
+    out, fence = [], None
+    for line in body:
+        m = re.match(r"^\s*(`{3,}|~{3,})", line)
+        if m:
+            tok = m.group(1)[0]
+            fence = None if fence == tok else (fence or tok)
+            continue
+        if fence is None and re.match(r"^#{1,3} ", line):
+            out.append(line.lstrip("# ").strip())
+    return out
+
+
+def merged_slides(path):
+    """Folien mit mehr als einer Ueberschrift. Dort fehlt meist ein Trenner.
+    Wird unabhaengig vom Ueberlauf geprueft: eine verschmolzene Folie, die
+    verkleinert gerade noch passt, wuerde sonst still geschrumpft statt
+    getrennt."""
     lines = path.read_text(encoding="utf-8").split("\n")
     starts = slide_starts(lines, frontmatter_end(lines))
-    body = lines[starts[slide - 1] : (starts[slide] if slide < len(starts) else len(lines))]
-    text = "\n".join(body)
-    if re.search(r"!\[[^\]]*\]\([^)]*\)|<img\b", text):
+    found = []
+    for n in range(1, len(starts) + 1):
+        hs = headings(slide_body(lines, starts, n))
+        if len(hs) > 1:
+            found.append((n, hs))
+    return found
+
+
+def diagnose(path, slide):
+    """Benennt die Ursache einer nicht schrumpfbaren Folie. Geraten wird
+    dabei nicht, sondern im Quelltext nachgesehen."""
+    lines = path.read_text(encoding="utf-8").split("\n")
+    starts = slide_starts(lines, frontmatter_end(lines))
+    body = slide_body(lines, starts, slide)
+    if re.search(r"!\[[^\]]*\]\([^)]*\)|<img\b", "\n".join(body)):
         return "Enthaelt ein Bild; font-size skaliert es nicht. Grafik begrenzen."
-    headings = [l for l in body if re.match(r"^#{1,3} ", l)]
-    if len(headings) > 1:
-        return (f"Enthaelt {len(headings)} Ueberschriften "
-                f"({', '.join(h.lstrip('# ') for h in headings)}). "
-                "Vermutlich fehlt ein ---Trenner.")
+    hs = headings(body)
+    if len(hs) > 1:
+        return f"Enthaelt {len(hs)} Ueberschriften ({', '.join(hs)}). Vermutlich fehlt ein ---Trenner."
     return "Zu viel Inhalt fuer eine Folie. Aufteilen."
 
 
@@ -170,6 +200,13 @@ def run(args, paths):
     if args.reset:
         print("Marken entfernt: " + ", ".join(args.files))
         return 0
+
+    # Vor dem Verkleinern: verschmolzene Folien melden. Sie brauchen einen
+    # Trenner, keine kleinere Schrift.
+    merged = [(f, n, hs) for f, p in paths.items() for n, hs in merged_slides(p)]
+    for f, n, hs in merged:
+        print(f"  ! {f} Folie {n}: {len(hs)} Ueberschriften ({', '.join(hs)})."
+              f" Vermutlich fehlt ein ---Trenner; erst trennen, dann erneut laufen lassen.")
 
     data = measure(args.files)
     base = {f: max(r["font"] for r in data[f]) for f in args.files}
@@ -211,7 +248,7 @@ def run(args, paths):
         print(f"  ! {f} Folie {n}: laeuft auch auf der kleinsten Stufe um {over}px ueber."
               f" {diagnose(paths[f], n)}")
 
-    return 1 if stuck else 0
+    return 1 if stuck or merged else 0
 
 
 if __name__ == "__main__":

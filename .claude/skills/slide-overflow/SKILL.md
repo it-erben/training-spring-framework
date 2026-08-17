@@ -48,6 +48,11 @@ nichts und sieht im Quelltext nach, woran es liegt:
   verkleinern. Ein grosser Ueberlaufwert ist oft genau das.
 - **Sonst schlicht zu viel Inhalt.** Aufteilen.
 
+Auf verschmolzene Folien wird vor jedem Lauf geprueft, nicht erst wenn eine
+Folie zu gross zum Schrumpfen ist: sonst wuerde eine verschmolzene Folie,
+die verkleinert gerade noch passt, still geschrumpft statt getrennt. Der
+Lauf endet dann mit Exit-Code 1, auch wenn der Ueberlauf behoben wurde.
+
 Landet eine Folie auf `densest-xs`, wird das gemeldet. 53% sind lesbar, aber
 die Ueberschrift faellt gegenueber Nachbarfolien sichtbar ab. Das ist ein
 Hinweis auf zu viel Inhalt: **aufteilen statt weiter verkleinern**, und das
