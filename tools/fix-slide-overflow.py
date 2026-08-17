@@ -116,6 +116,24 @@ def write(path, assigns, base_font):
     path.write_text("\n".join(lines), encoding="utf-8")
 
 
+def diagnose(path, slide):
+    """Benennt die wahrscheinliche Ursache einer nicht schrumpfbaren Folie.
+    Wird nur bei Folien aufgerufen, die auch auf der kleinsten Stufe
+    ueberlaufen; geraten wird dabei nicht, sondern im Quelltext nachgesehen."""
+    lines = path.read_text(encoding="utf-8").split("\n")
+    starts = slide_starts(lines, frontmatter_end(lines))
+    body = lines[starts[slide - 1] : (starts[slide] if slide < len(starts) else len(lines))]
+    text = "\n".join(body)
+    if re.search(r"!\[[^\]]*\]\([^)]*\)|<img\b", text):
+        return "Enthaelt ein Bild; font-size skaliert es nicht. Grafik begrenzen."
+    headings = [l for l in body if re.match(r"^#{1,3} ", l)]
+    if len(headings) > 1:
+        return (f"Enthaelt {len(headings)} Ueberschriften "
+                f"({', '.join(h.lstrip('# ') for h in headings)}). "
+                "Vermutlich fehlt ein ---Trenner.")
+    return "Zu viel Inhalt fuer eine Folie. Aufteilen."
+
+
 def smallest_sufficient(row, floor=0):
     """Groesste Stufe ab floor, die den Inhalt in die Box bringt."""
     inner = row["box"] - row["pad"]
@@ -191,7 +209,7 @@ def run(args, paths):
 
     for f, n, over in stuck:
         print(f"  ! {f} Folie {n}: laeuft auch auf der kleinsten Stufe um {over}px ueber."
-              f" Vermutlich ein Bild, das font-size nicht skaliert.")
+              f" {diagnose(paths[f], n)}")
 
     return 1 if stuck else 0
 

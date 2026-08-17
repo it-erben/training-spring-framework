@@ -38,9 +38,15 @@ Vier Stufen, als Anteil der gemessenen Grundschriftgroesse: `dense` 85%,
 
 ## Grenzen, die eine Entscheidung brauchen
 
-`font-size` skaliert **keine Bilder**. Laeuft eine Folie wegen einer Grafik
-ueber, meldet das Werkzeug sie und aendert nichts. Dann ist die Grafik zu
-begrenzen oder die Folie zu teilen.
+Laeuft eine Folie auch auf der kleinsten Stufe ueber, aendert das Werkzeug
+nichts und sieht im Quelltext nach, woran es liegt:
+
+- **Bild auf der Folie.** `font-size` skaliert Grafiken nicht. Die Grafik
+  begrenzen oder die Folie teilen.
+- **Mehrere Ueberschriften auf einer Folie.** Dann fehlt meist ein
+  `---`-Trenner und zwei Folien sind verschmolzen. Trenner einsetzen, nicht
+  verkleinern. Ein grosser Ueberlaufwert ist oft genau das.
+- **Sonst schlicht zu viel Inhalt.** Aufteilen.
 
 Landet eine Folie auf `densest-xs`, wird das gemeldet. 53% sind lesbar, aber
 die Ueberschrift faellt gegenueber Nachbarfolien sichtbar ab. Das ist ein
