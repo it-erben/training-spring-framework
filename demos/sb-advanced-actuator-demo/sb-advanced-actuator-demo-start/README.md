@@ -13,17 +13,24 @@ management:
     web:
       base-path: /manage
       exposure:
-        include: health,info,metrics,loggers,prometheus
+        include: health,info,metrics,loggers,prometheus,featureToggle
   endpoint:
     health:
       show-details: always
       probes:
         enabled: true
+  info:
+    env:
+      enabled: true
 info:
   app:
     name: Actuator Demo
     version: 1.0.0
 ```
+
+`management.info.env.enabled` ist nötig, weil der Env-Info-Contributor
+(`InfoContributorAutoConfiguration`) standardmäßig deaktiviert ist; ohne
+diese Property liefert `/manage/info` `{}` statt der `info.*`-Properties.
 
 - Starte die App und rufe `/manage/health`, `/manage/info`, `/manage/metrics` auf. Zeige den Unterschied zwischen `/health`, `/health/liveness`, `/health/readiness`.
 
@@ -40,8 +47,12 @@ info:
 
 ## 4. Micrometer Metrics im Code
 
-- Zeige `OrderService`: `Counter orders.processed` und `Timer orders.processing.duration`.
-- Erkläre @Timed am `POST /api/orders`. Führe Requests aus:
+- Im `-start`-Modul haben `OrderService` und `OrderController` weder
+  `Counter`/`Timer` noch `@Timed` — diese Instrumentierung existiert erst
+  im `-finished`-Modul.
+- Zeige sie dort: `Counter orders.processed` und `Timer
+  orders.processing.duration` in `OrderService`, `@Timed` an `POST
+  /api/orders`. Führe Requests gegen das `-finished`-Modul aus:
   - `curl -X POST http://localhost:8080/api/orders -d '{"product":"book"}' -H 'Content-Type: application/json'`
   - `curl http://localhost:8080/manage/metrics/orders.processed -u "admin:admin"`
   - `curl http://localhost:8080/manage/metrics/http.server.requests -u "admin:admin"`
@@ -54,10 +65,15 @@ info:
 ## 6. Custom Endpoint
 
 - Zeige `FeatureToggleEndpoint` mit `@Endpoint(id="featureToggle")`.
-- `GET /manage/featureToggle` listet Flags, `POST /manage/featureToggle/{name}?enabled=true|false` ändert ein Flag.
-- Demo: Schalte `externalService=false` und zeige, dass der HealthIndicator auf DOWN geht.
+- `GET /manage/featureToggle` listet Flags (Exposure-Liste aus Schritt 1
+  vorausgesetzt). Im `-start`-Modul hat die Klasse nur eine
+  `@ReadOperation`; `POST /manage/featureToggle/{name}?enabled=true|false`
+  zum Ändern eines Flags gibt es erst im `-finished`-Modul
+  (`@WriteOperation`).
+- Demo im `-finished`-Modul: Schalte `externalService=false` und zeige,
+  dass der HealthIndicator auf DOWN geht.
 
 ## 7. Prometheus & Tracing Hinweis
 
 - Prometheus-Adapter ist eingebunden (`/manage/prometheus`). Zeige ein paar Beispielzeilen.
-- Erwähne Bonus: `management.tracing.propagation.type=b3` für alte Services, sonst W3C TraceContext Default.
+- Erwähne Bonus: `management.tracing.propagation.type=b3` für alte Services, sonst W3C TraceContext Default — gilt allgemein für Micrometer Tracing, dieses Modul hat keine Tracing-Abhängigkeit und zeigt es nicht live.

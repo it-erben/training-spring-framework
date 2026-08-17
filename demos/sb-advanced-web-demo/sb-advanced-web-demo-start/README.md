@@ -2,15 +2,15 @@
 
 Kurzziel: Während der Live-Demo schrittweise vom leeren Startprojekt zur fertigen API (JSON/XML, Validierung, ProblemDetails, Versionierung/HATEOAS, SSE, RestClient & deklarative HTTP-Interfaces).
 
-Startpunkt: `code/sb-advanced-web/sb-advanced-web-demo-start`  
-Fertige Lösung zum Nachsehen: `code/sb-advanced-web/sb-advanced-web-demo-finished`
+Startpunkt: `demos/sb-advanced-web-demo/sb-advanced-web-demo-start`  
+Fertige Lösung zum Nachsehen: `demos/sb-advanced-web-demo/sb-advanced-web-demo-finished`
 
 ## 0. Projekt starten
 
-1) Terminal in `code/sb-advanced-web` öffnen.
+1) Terminal in `demos/sb-advanced-web-demo` öffnen.
 2) Build/Run (Entwickel-Loop):
-   - `mvn -f ../pom.xml -pl sb-advanced-web/sb-advanced-web-demo-start -am spring-boot:run`
-   - Alternative ohne Watch: `mvn -f ../pom.xml -pl sb-advanced-web/sb-advanced-web-demo-start -am compile`
+   - `mvn -f ../pom.xml -pl sb-advanced-web-demo/sb-advanced-web-demo-start -am spring-boot:run`
+   - Alternative ohne Watch: `mvn -f ../pom.xml -pl sb-advanced-web-demo/sb-advanced-web-demo-start -am compile`
 
 ## 1. Domain & DTOs anlegen
 

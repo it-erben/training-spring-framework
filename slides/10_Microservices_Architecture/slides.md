@@ -5,6 +5,12 @@ header: Spring Boot Advanced
 footer: Alexander Erben
 paginate: true
 ---
+<!-- Dichte-Stufen gegen Folienueberlauf, siehe tools/check-slide-overflow.mjs -->
+<style>
+section.dense { font-size: 25.5px; }
+section.denser { font-size: 21.5px; }
+</style>
+
 <style>
 img[alt~="center"] {
   display: block;
@@ -119,7 +125,7 @@ Microservices wählen meist **AP** (Availability) und akzeptieren **Eventual Con
 
 ## Verteilte Transaktionen in Spring Boot
 
-* Spring Boot unterstützt **JTA (Java Transaction API)** und damit **XA-Transaktionen** (z.B. mit `spring-boot-starter-jta-atomikos`).
+* Spring Boot unterstützt **JTA (Java Transaction API)** und damit **XA-Transaktionen** (z.B. mit Atomikos' eigenem Starter `com.atomikos:transactions-spring-boot3-starter`).
 * Dies ermöglicht die Koordination von Transaktionen über mehrere **XA-kompatible Ressourcen** (z.B. zwei Datenbanken, oder eine Datenbank und einen JMS-Broker) hinweg.
 * In Microservice-Architekturen ist dies aber nicht von Vorteil.
 
@@ -253,21 +259,17 @@ Mit Bulkheads definieren wir pro Funktionseinheit eigene Limits:
 
 ---
 
+<!-- _class: denser -->
 ### Thread-Bulkheads
-
-<style scoped>
-section {
-    font-size: 25px;
-}
-</style>
 
 ```yaml
 resilience4j:
   thread-pool-bulkhead:
-    reportService:
-      core-thread-pool-size: 5
-      max-thread-pool-size: 10
-      queue-capacity: 20
+    instances:
+      reportService:
+        core-thread-pool-size: 5
+        max-thread-pool-size: 10
+        queue-capacity: 20
 ```
 
 ```java
@@ -291,8 +293,9 @@ public class ReportClient {
 ```yaml
 resilience4j:
   bulkhead:
-    loginService:
-      max-concurrent-calls: 20
+    instances:
+      loginService:
+        max-concurrent-calls: 20
 ```
 
 ```java

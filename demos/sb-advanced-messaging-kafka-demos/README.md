@@ -30,7 +30,7 @@ Nachrichten mit Spring Boot und Apache Kafka produzieren, konsumieren und Fehler
 ## Starten
 
 ```bash
-cd sb-advanced-messaging-kafka
+cd sb-advanced-messaging-kafka-demos
 mvn spring-boot:run
 ```
 

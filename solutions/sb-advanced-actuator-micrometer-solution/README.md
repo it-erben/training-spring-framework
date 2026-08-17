@@ -55,7 +55,7 @@ Führt in `ProductService` eigene Metriken ein.
 
 Implementiert mindestens diese Metriken:
 
-1. Counter `products.created`
+1. Counter `products.creations`
 2. Counter `products.rejected`
 3. Timer `products.search`
 4. Gauge `products.count`
@@ -65,7 +65,7 @@ Implementiert mindestens diese Metriken:
 - Injiziert ein `MeterRegistry`.
 - Legt Counter und Timer im Konstruktor an.
 - Messt die Dauer der `list(...)`-Methode mit einem Timer.
-- Erhöht `products.created` nach erfolgreichem Anlegen.
+- Erhöht `products.creations` nach erfolgreichem Anlegen.
 - Erhöht `products.rejected` bei Duplicate-Fehlern.
 - Für den Gauge könnt ihr eine `AtomicInteger` verwenden und den Wert nach
   `create`, `update` und `delete` setzen.
@@ -75,7 +75,7 @@ Implementiert mindestens diese Metriken:
 
 1. Führt mehrere Requests gegen `/products` aus.
 2. Prüft die Metriken:
-   `/actuator/metrics/products.created`
+   `/actuator/metrics/products.creations`
    `/actuator/metrics/products.rejected`
    `/actuator/metrics/products.search`
    `/actuator/metrics/products.count`

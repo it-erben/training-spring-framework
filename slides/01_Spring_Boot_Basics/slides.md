@@ -12,7 +12,7 @@ section.denser { font-size: 21px; }
 section.densest { font-size: 17.5px; }
 </style>
 
-# Spring Boot: Was Boot zu Spring beiträgt
+# Spring Boot Basics
 
 ---
 

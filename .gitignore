@@ -10,3 +10,6 @@ node_modules
 # Arbeitsverzeichnisse der Agenten-Werkzeuge
 .claude/worktrees/
 .superpowers/
+
+# Planungsartefakte des Superpowers-Workflows
+docs/superpowers/

@@ -146,7 +146,7 @@ management.endpoints.web.exposure.include=health,info,metrics,loggers
 
 ```properties
 management.info.env.enabled=true
-info.app.name=Buchhandlung GFU
+info.app.name=Buchhandlung Erben
 ```
 
 `/actuator/metrics` listet die verfügbaren Messwerte (u.a. `jvm.memory.used`); Mit Name im Pfad (`/actuator/metrics/jvm.memory.used`) wir der aktuelle Wert geliefert.

@@ -68,17 +68,12 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- TestRestTemplate für den Integrationstest: Der Client selbst
-             steckt im restclient-test-Starter, seine Basis (RestTemplateBuilder)
-             im restclient-Starter — beide nur im Test-Scope. -->
+        <!-- RestTemplateBuilder für TestRestTemplate im Integrationstest.
+             TestRestTemplate selbst kommt transitiv über
+             spring-boot-starter-webmvc-test (spring-boot-resttestclient). -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-restclient</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-restclient-test</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

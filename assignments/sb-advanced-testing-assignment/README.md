@@ -67,7 +67,8 @@ Erstellt einen neuen Spring-Boot-Service mit diesen Abhängigkeiten:
 
 ## Teil B – `@DataJpaTest`
 
-Schreibt einen `ContactRepositoryTest` mit `@DataJpaTest`.
+Schreibt einen `ContactRepositoryTest` mit `@DataJpaTest`
+(`org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest`).
 
 Pflichttests:
 
@@ -82,12 +83,14 @@ Pflichttests:
 
 Ziel: Nur die MVC-Schicht laden, Service mocken, HTTP/JSON prüfen.
 
-Schreibt einen `ContactsControllerWebMvcTest` mit `@WebMvcTest(ContactController.class)`.
+Schreibt einen `ContactsControllerWebMvcTest` mit `@WebMvcTest(ContactController.class)`
+(`org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest`).
 
 ### Setup
 
 - `@Autowired MockMvc`
-- `@MockBean ContactService`
+- `@MockitoBean ContactService`
+  (`org.springframework.test.context.bean.override.mockito.MockitoBean`)
 
 ### Pflichttests
 

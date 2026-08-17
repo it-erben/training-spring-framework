@@ -35,7 +35,7 @@ import static org.springframework.data.domain.ExampleMatcher.matching;
 @Testcontainers
 public class PersonRepositoryTest {
 
-    private static final DockerImageName MONGO_IMAGE = DockerImageName.parse("mongo:latest");
+    private static final DockerImageName MONGO_IMAGE = DockerImageName.parse("mongo:8.2");
     @Container
     static MongoDBContainer mongoDBContainer = new MongoDBContainer(MONGO_IMAGE);
     Faker faker = new Faker();
@@ -61,9 +61,7 @@ public class PersonRepositoryTest {
     }
 
     /**
-     * Test case to verify that when a user exists and is searched by username,
-     * the correct user is retrieved.
-     * Uses raw CrudRepository.
+     * Saves a person and loads it again by id via the repository.
      */
     @Test
     public void givenUserExists_whenFindByUsername_thenGetUser() {

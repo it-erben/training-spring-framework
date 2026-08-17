@@ -64,7 +64,7 @@ Gebe noch mal eine kurze Einführung zu Mocks. Danach füge folgende Dependency 
 MockMeBean mockMeBean;
 ```
 
-Führe den Test aus und zeige in der Kommandzeile, dass wie erwartet der Konstruktur aufgerufen wird. Ersetze danach `@Autowired` durch `@MockBean` und mocke die Methode im Test:
+Führe den Test aus und zeige in der Kommandzeile, dass wie erwartet der Konstruktur aufgerufen wird. Ersetze danach `@Autowired` durch `@MockitoBean` und mocke die Methode im Test:
 
 ```java
 @Test
@@ -75,7 +75,7 @@ public void mockingTest() {
 ```
 
 Zeige, dass weder Konstruktur noch richtige Methode aufgerufen wird.
-Erläutere, dass `@MockBean` anders als `@Mock` auch die Bean zum Context hinzufügt.
+Erläutere, dass `@MockitoBean` anders als `@Mock` auch die Bean zum Context hinzufügt.
 Erstelle dazu in Mein eine Klasse wie folgt:
 
 ```java
@@ -103,7 +103,7 @@ public void mockingDependencyTest() {
 }
 ```
 
-Zeige, dass er fehlschlägt. Ersetze `@Mock` wieder durch `@MockBean` und zeige, dass der Test grün wird.
+Zeige, dass er fehlschlägt. Ersetze `@Mock` wieder durch `@MockitoBean` und zeige, dass der Test grün wird.
 
 ## Expectations und Verifications
 
@@ -219,7 +219,7 @@ Zeige nun eine Alternative, die einen echten ApplicationContext hochfährt:
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class TestRestTemplateFileControllerTest {
 
-    @MockBean
+    @MockitoBean
     MockMeBean mmb;
 
     @Autowired
@@ -257,7 +257,7 @@ Implementiere und erläutere diesen Test:
 
 ```java
 @DataJpaTest
-@EntityScan("tech.erben.springboot.testing")
+@EntityScan("tech.erben.springboot")
 public class UserServiceTest {
 
     @Autowired

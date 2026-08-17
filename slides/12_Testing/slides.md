@@ -326,7 +326,7 @@ public class TimingExtension implements
 
 * Solche Tests starten den **vollen** ApplicationContext.
 * Das ist sehr mächtig, aber auch "teuer" (also langsam).
-* **Context Caching:** Spring versucht, den Context zwischen Tests wiederzuverwenden. Wenn ein Test den Context verändert (z.B. `@MockBean`, `@TestPropertySource`), muss er neu gestartet werden -> Performance-Killer.
+* **Context Caching:** Spring versucht, den Context zwischen Tests wiederzuverwenden. Wenn ein Test den Context verändert (z.B. `@MockitoBean`, `@TestPropertySource`), muss er neu gestartet werden -> Performance-Killer.
 
 ---
 <style scoped>
@@ -379,14 +379,14 @@ section {
 
 * Lädt nur Controller, ControllerAdvice, Json-Mapper, Filter.
 * Lädt **KEINE** Services, Repositories oder Entities.
-* Abhängigkeiten müssen gemockt werden (`@MockBean`).
+* Abhängigkeiten müssen gemockt werden (`@MockitoBean`).
 
 ```java
 @WebMvcTest(UserController.class)
 class UserControllerTest {
 
     @Autowired MockMvc mvc;
-    @MockBean UserService userService; // Pflicht, da nicht im Context
+    @MockitoBean UserService userService; // Pflicht, da nicht im Context
 
     @Test
     void getUser() throws Exception {
@@ -469,13 +469,13 @@ class GithubClientTest {
 
 ---
 
-## @MockBean
+## @MockitoBean
 
 * Entfernt die echte Bean aus dem Context und ersetzt sie durch einen Mockito-Mock.
 * Resetet den Mock automatisch nach jedem Test.
 * **Achtung:** Verändert den ApplicationContext -> kann Context-Reload auslösen.
 
-## @SpyBean
+## @MockitoSpyBean
 
 * Behält die **echte** Bean im Context, wickelt aber einen Mockito-Spy drumherum.
 * Nützlich, wenn man die echte Logik nutzen will, aber *verifizieren* möchte, ob Methoden aufgerufen wurden, oder *einzelne* Methoden stubben will.
@@ -486,7 +486,7 @@ class GithubClientTest {
 @SpringBootTest
 class AuditTest {
 
-    @SpyBean
+    @MockitoSpyBean
     private AuditService auditService; // Echte Logik läuft
 
     @Test

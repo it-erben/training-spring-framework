@@ -288,7 +288,7 @@ section {
 </style>
 
 ```java
-@AutoConfiguration // Alias für @Configuration in Boot 2.7+
+@AutoConfiguration // Spezialisierung von @Configuration (proxyBeanMethods = false), seit Boot 2.7
 @ConditionalOnClass(AuditService.class)
 @EnableConfigurationProperties(AuditProperties.class)
 public class AuditAutoConfiguration {

@@ -375,7 +375,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
 ## Flyway Setup
 
-**Dependency:** `org.flywaydb:flyway-core`
+**Dependency:** `org.flywaydb:flyway-core` und `org.flywaydb:flyway-database-postgresql` (seit Flyway 10 als eigenes Modul nötig)
 
 **Struktur:**
 

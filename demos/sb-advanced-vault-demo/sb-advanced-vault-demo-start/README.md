@@ -2,7 +2,7 @@
 
 ## 1. POM zeigen
 
-- `spring-cloud-starter-vault-config` und `spring-cloud-starter-actuator` sind bereits eingebunden.
+- `spring-cloud-starter-vault-config` und `spring-boot-starter-actuator` sind bereits eingebunden.
 - Controller nutzt `@ConfigurationProperties` und (im Endzustand) `@RefreshScope`, um Secrets nach `/actuator/refresh` neu zu laden.
 
 ## 2. Vault im Dev-Modus starten (lokal)
@@ -61,18 +61,27 @@ mvn spring-boot:run
 - Mit Vault-Config:
 
 ```
-curl http://localhost:8080/secrets          # Maskierte Ausgabe
-curl http://localhost:8080/secrets/raw      # Für die Demo: Klartext (nicht in Prod!)
+curl http://localhost:8080/secrets          # Klartext — der -start-SecretController maskiert nicht
 curl http://localhost:8080/message
 ```
+
+`/secrets/raw` gibt es im `-start`-Modul nicht (404). Der Endpoint kommt
+zusammen mit der Maskierung für `/secrets` erst im `-finished`-`SecretController`
+dazu.
 
 ## 6. Live-Update demonstrieren
 
 ```
 vault kv put secret/vault-demo datasource.password=newSecret api.key=newKey app.message="Jetzt live geändert"
 curl -X POST http://localhost:8080/actuator/refresh
-curl http://localhost:8080/secrets/raw
+curl http://localhost:8080/secrets
 curl http://localhost:8080/message
 ```
+
+Im `-start`-Modul hat `SecretController` kein `@RefreshScope`; `/secrets`
+und `/message` melden nach `/actuator/refresh` weiterhin die beim Start
+injizierten Werte. `@RefreshScope` (erst im `-finished`-Modul) ist nötig,
+damit der Controller nach dem Refresh neu instanziiert wird und die
+aktuellen `@ConfigurationProperties`-Werte liest.
 
 Hinweis: `/actuator/env` ist freigeschaltet; sensible Keys werden maskiert.

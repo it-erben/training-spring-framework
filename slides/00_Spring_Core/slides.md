@@ -41,7 +41,7 @@ PriceCalculator net = new NetPriceCalculator();
 BookService service = new BookService(repository, gross, net);
 ```
 
-Das funktioniert — skaliert aber schlecht:
+Das funktioniert, aber es skaliert schlecht:
 
 * Jede Klasse, die `BookService` braucht, muss wissen, **wie** man ihn baut.
 * Ändert sich ein Konstruktor, bricht Code an vielen Stellen.
@@ -488,7 +488,7 @@ POMs können erben. Das Kind übernimmt Konfiguration und Versionen vom Parent:
 ```
 
 * Typischerweise geerbt: Java-Version (bei uns **21**), Plugin-Versionen, gemeinsame Properties.
-* Spring-Boot-Projekte nutzen oft `spring-boot-starter-parent` als Parent. Unser Kurs-Repo hat einen eigenen Parent, der nur die Property `spring-boot.version` liefert.
+* Spring-Boot-Projekte nutzen oft `spring-boot-starter-parent` als Parent. Unser Kurs-Repo hat einen eigenen Parent, der u.a. `spring-boot.version`, `spring-cloud.version`, `maven-compiler-plugin.version` und die Java-Version liefert.
 
 ---
 

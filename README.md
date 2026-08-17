@@ -82,9 +82,10 @@ würde sie nicht mitbauen.
 
 ### Übungen
 
-Die Übungen bringen Tests mit, die im Ausgangszustand **absichtlich rot**
-sind — sie sind Aufgabenstellung, nicht Regression. Im Gesamtbuild werden
-sie deshalb übersprungen. Wer den roten Ausgangszustand sehen will:
+Im Basis-Block bringen die Übungen Tests mit, die im Ausgangszustand
+**absichtlich rot** sind — sie sind Aufgabenstellung, nicht Regression. Im
+Gesamtbuild werden sie deshalb übersprungen. Wer den roten Ausgangszustand
+sehen will:
 
 ```bash
 mvn test -pl assignments/sb-basics-core-assignment -DskipAssignmentTests=false
@@ -97,10 +98,11 @@ README der Übung beschrieben ist.
 
 ### Live-Coding-Demos
 
-Vier Demos liegen als Paar aus `-start` und `-finished` vor. Das
-`-start`-Modul ist der Ausgangszustand für die Vorführung, jeder Handgriff
-ist im Code mit einer `TODO`-Marke versehen, und die README des Demo-Moduls
-beschreibt die Schrittfolge. Jeder Zwischenschritt ist lauffähig.
+Vier Demos des Basis-Blocks liegen als Paar aus `-start` und `-finished`
+vor. Das `-start`-Modul ist der Ausgangszustand für die Vorführung, jeder
+Handgriff ist im Code mit einer `TODO`-Marke versehen, und die README des
+Demo-Moduls beschreibt die Schrittfolge. Jeder Zwischenschritt ist
+lauffähig.
 
 ## Slides bauen
 

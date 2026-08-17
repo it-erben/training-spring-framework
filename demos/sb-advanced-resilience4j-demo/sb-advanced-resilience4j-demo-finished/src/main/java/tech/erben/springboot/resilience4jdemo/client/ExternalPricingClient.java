@@ -33,8 +33,7 @@ public class ExternalPricingClient {
      * Fetches the price for a product from the external pricing service.
      * This method is protected by Circuit Breaker and Retry patterns.
      *
-     * The order of decorators (from outer to inner): Retry -> CircuitBreaker -> TimeLimiter
-     * This means: Retry wraps CircuitBreaker, which wraps TimeLimiter
+     * The order of decorators (from outer to inner): Retry -> CircuitBreaker
      */
     @CircuitBreaker(name = "pricingService", fallbackMethod = "getDefaultPrice")
     @Retry(name = "pricingService")

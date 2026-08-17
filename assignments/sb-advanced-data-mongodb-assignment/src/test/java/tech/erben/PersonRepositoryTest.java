@@ -2,6 +2,7 @@ package tech.erben;
 
 import net.datafaker.Faker;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringBootConfiguration;
@@ -14,22 +15,22 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.mongodb.MongoDBContainer;
 import org.testcontainers.utility.DockerImageName;
 
-import java.time.LocalDate;
-import java.util.Optional;
+import java.util.List;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
 
 @DataMongoTest
 @Testcontainers
-public class PersonRepositoryTest {
+class PersonRepositoryTest {
 
-    private static final DockerImageName MONGO_IMAGE = DockerImageName.parse("mongo:latest");
+    private static final DockerImageName MONGO_IMAGE = DockerImageName.parse("mongo:8.2");
 
     @Container
     static MongoDBContainer mongoDBContainer = new MongoDBContainer(MONGO_IMAGE);
+
     Faker faker = new Faker();
+
     @Autowired
     PersonRepository personRepository;
 
@@ -47,46 +48,63 @@ public class PersonRepositoryTest {
         personRepository.deleteAll();
     }
 
-    private Person randomPersonWithBirthday(LocalDate birthday) {
-        return new Person(
+    @Test
+    @DisplayName("Aufgabe 2: Abgeleitete Query nach firstname")
+    void derivedQueryFindsPersonByFirstname() {
+        Person saved = personRepository.save(randomPersonWithoutId());
+
+        List<Person> found = personRepository.findPersonsByFirstname(saved.firstname());
+
+        assertThat(found)
+                .extracting(Person::id)
+                .contains(saved.id());
+    }
+
+    @Test
+    @DisplayName("Aufgabe 2: Abgeleitete Query nach lastname")
+    void derivedQueryFindsPersonByLastname() {
+        Person saved = personRepository.save(randomPersonWithoutId());
+
+        List<Person> found = personRepository.findPersonsByLastname(saved.lastname());
+
+        assertThat(found)
+                .extracting(Person::id)
+                .contains(saved.id());
+    }
+
+    @Test
+    @DisplayName("Aufgabe 3: Person mit drei Phonenumbers speichern und laden")
+    void personIsSavedAndLoadedWithThreePhonenumbers() {
+        Person person = new Person(
                 null,
                 faker.name().firstName(),
                 faker.name().lastName(),
-                birthday
+                faker.timeAndDate().birthday(18, 80),
+                List.of(
+                        new Phonenumber(49, 15123456),
+                        new Phonenumber(1, 2025550112),
+                        new Phonenumber(44, 442071234)
+                )
         );
-    }
 
-    /**
-     * Test case to verify that when a user exists and is searched by username,
-     * the correct user is retrieved.
-     * Uses raw CrudRepository.
-     */
-    @Test
-    public void givenUserExists_whenFindByUsername_thenGetUser() {
-        Person appUser = randomPersonWithoutId();
-        Person saved = personRepository.save(appUser);
-        Optional<Person> foundUser = personRepository.findById(saved.id());
-        assertTrue(foundUser.isPresent());
-        assertThat(foundUser.get().firstname(), is(appUser.firstname()));
+        Person saved = personRepository.save(person);
+        Person reloaded = personRepository.findById(saved.id()).orElseThrow();
+
+        assertThat(reloaded.phonenumbers())
+                .extracting(Phonenumber::countryCode, Phonenumber::number)
+                .containsExactly(
+                        tuple(49, 15123456),
+                        tuple(1, 2025550112),
+                        tuple(44, 442071234)
+                );
     }
 
     private Person randomPersonWithoutId() {
-        LocalDate birthday = faker.timeAndDate().birthday(18, 80);
         return new Person(
                 null,
                 faker.name().firstName(),
                 faker.name().lastName(),
-                birthday
-        );
-    }
-
-    private Person randomPersonWithId(String id) {
-        LocalDate birthday = faker.timeAndDate().birthday(18, 80);
-        return new Person(
-                id,
-                faker.name().firstName(),
-                faker.name().lastName(),
-                birthday
+                faker.timeAndDate().birthday(18, 80)
         );
     }
 

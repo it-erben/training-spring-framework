@@ -9,8 +9,9 @@ Ihr erweitert eine kleine CRUD-Anwendung um Observability:
 3. Den Prometheus-Endpunkt absichern.
 
 Die Dependencies für Actuator, Prometheus und Security sind bereits enthalten.
-Die Konfiguration in `application.properties` und Teile der Security fehlen aber
-noch.
+Die Konfiguration in `application.properties` fehlt noch, ebenso Teile der
+Security. `SecurityConfig` liegt bereits mit einer offenen
+`anyRequest().permitAll()`-Regel bereit und wird erst in Teil C eingeschränkt.
 
 ## Szenario
 
@@ -55,17 +56,21 @@ Führt in `ProductService` eigene Metriken ein.
 
 Implementiert mindestens diese Metriken:
 
-1. Counter `products.created`
+1. Counter `products.creations`
 2. Counter `products.rejected`
 3. Timer `products.search`
+
+Der Konstruktor-Kommentar im Startcode erwähnt zusätzlich eine Gauge — die ist
+optional und nicht Teil dieser Übung.
 
 ### Hinweise zur Implementierung
 
 - Injiziert ein `MeterRegistry`.
 - Legt Counter und Timer im Konstruktor an.
 - Messt die Dauer der `list(...)`-Methode mit einem Timer.
-- Erhöht `products.created` nach erfolgreichem Anlegen.
-- Erhöht `products.rejected` bei Duplicate-Fehlern.
+- Erhöht `products.creations` nach erfolgreichem Anlegen.
+- Erhöht `products.rejected` bei Duplicate-Fehlern (nur beim Anlegen in
+  `create`, nicht bei `update`).
 
 ### Checks
 
@@ -78,7 +83,7 @@ Implementiert mindestens diese Metriken:
    ```
 
 2. Prüft nach eurem Test den aktuellen Wert der Metriken:
-   `/actuator/metrics/products.created`
+   `/actuator/metrics/products.creations`
    `/actuator/metrics/products.rejected`
    `/actuator/metrics/products.search`
 
@@ -90,6 +95,21 @@ bleiben.
 
 Arbeitet in `SecurityConfig`.
 
+`EndpointRequest`
+(`org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest`)
+gibt es in Spring Boot 4 nicht mehr. Die Absicherung läuft stattdessen über
+Pfadmuster.
+
+Ergänzt in `SecurityConfig` diese Imports:
+
+```java
+import org.springframework.security.config.Customizer;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+```
+
 Ersetzt den Inhalt der bestehenden Methode durch dieses Snippet:
 
 ```java
@@ -100,7 +120,7 @@ SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
                     .requestMatchers(
-                            EndpointRequest.to("prometheus", "metrics")
+                            "/actuator/prometheus", "/actuator/metrics/**"
                     )
                     .hasRole("PROMETHEUS")
                     .anyRequest()

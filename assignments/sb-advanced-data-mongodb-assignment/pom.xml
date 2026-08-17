@@ -11,6 +11,14 @@
 
     <artifactId>sb-advanced-data-mongodb-assignment</artifactId>
 
+    <properties>
+        <!-- Die Tests sind Aufgabenstellung, nicht Regression. Im
+             Gesamtbuild werden sie übersprungen; die Absicherung
+             übernimmt solutions/sb-advanced-data-mongodb-solution. Zum Prüfen
+             des roten Ausgangszustands: -DskipAssignmentTests=false -->
+        <skipAssignmentTests>true</skipAssignmentTests>
+    </properties>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -101,6 +109,26 @@
                     <compilerArgs>
                         <arg>-parameters</arg>
                     </compilerArgs>
+                </configuration>
+                <executions>
+                    <!-- Aufgabe 3 lässt den Testcode gegen ein Person-Modell
+                         kompilieren, das erst die Übung selbst schafft
+                         (Phonenumber). Deshalb hängt auch das Kompilieren
+                         der Tests an skipAssignmentTests, nicht nur ihre
+                         Ausführung. -->
+                    <execution>
+                        <id>default-testCompile</id>
+                        <configuration>
+                            <skip>${skipAssignmentTests}</skip>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <skipTests>${skipAssignmentTests}</skipTests>
                 </configuration>
             </plugin>
             <plugin>
