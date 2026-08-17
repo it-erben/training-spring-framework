@@ -31,7 +31,7 @@ class BookRepositoryTest {
     }
 
     @Test
-    @DisplayName("Derived Query sucht Titelfragmente unabhaengig von Gross-/Kleinschreibung")
+    @DisplayName("Derived Query sucht Titelfragmente unabhängig von Groß-/Kleinschreibung")
     void findsByTitleFragment() {
         assertThat(bookRepository.findByTitleContainingIgnoreCase("java"))
                 .extracting(Book::getTitle)
@@ -47,7 +47,7 @@ class BookRepositoryTest {
     }
 
     @Test
-    @DisplayName("JPQL-Query findet Buecher ueber den Autorennamen")
+    @DisplayName("JPQL-Query findet Bücher über den Autorennamen")
     void findsByAuthorName() {
         assertThat(bookRepository.findByAuthorName("Joshua Bloch"))
                 .extracting(Book::getTitle)

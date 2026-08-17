@@ -11,7 +11,7 @@
 
     <artifactId>sb-basics-testing-assignment</artifactId>
 
-    <!-- Anders als in den bisherigen Uebungen gibt es hier keinen
+    <!-- Anders als in den bisherigen Übungen gibt es hier keinen
          Surefire-Skip: src/test/java ist leer, die Tests schreibt ihr
          selbst — und sie sollen bei jedem Build mitlaufen. -->
 
@@ -41,19 +41,19 @@
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
 
-        <!-- In-Memory-Datenbank, nur zur Laufzeit noetig — im Integrationstest
-             faehrt sie mit der ganzen Anwendung hoch. -->
+        <!-- In-Memory-Datenbank, nur zur Laufzeit nötig — im Integrationstest
+             fährt sie mit der ganzen Anwendung hoch. -->
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <scope>runtime</scope>
         </dependency>
 
-        <!-- Alle Test-Abhaengigkeiten liegen schon bereit, damit ihr euch
-             aufs Testen konzentrieren koennt statt auf die POM. -->
+        <!-- Alle Test-Abhängigkeiten liegen schon bereit, damit ihr euch
+             aufs Testen konzentrieren könnt statt auf die POM. -->
 
         <!-- JUnit 5, Mockito, AssertJ und der Spring-Test-Support —
-             die Basis fuer alle drei Testarten. -->
+             die Basis für alle drei Testarten. -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -68,7 +68,7 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- TestRestTemplate fuer den Integrationstest: Der Client selbst
+        <!-- TestRestTemplate für den Integrationstest: Der Client selbst
              steckt im restclient-test-Starter, seine Basis (RestTemplateBuilder)
              im restclient-Starter — beide nur im Test-Scope. -->
         <dependency>
@@ -91,9 +91,9 @@
                 <version>${maven-compiler-plugin.version}</version>
                 <configuration>
                     <compilerArgs>
-                        <!-- Erhaelt Parameternamen im Bytecode — noetig, damit
+                        <!-- Erhält Parameternamen im Bytecode — nötig, damit
                              Spring @PathVariable ohne explizites Namensattribut
-                             aufloesen kann. -->
+                             auflösen kann. -->
                         <arg>-parameters</arg>
                     </compilerArgs>
                 </configuration>

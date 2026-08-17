@@ -17,8 +17,8 @@ import java.util.List;
 
 /**
  * REST-Schnittstelle des Buchkatalogs. {@code @RestController} bedeutet:
- * Rueckgabewerte werden direkt in den Response-Body serialisiert (JSON via
- * Jackson), kein View-Rendering. Der Controller uebersetzt nur zwischen
+ * Rückgabewerte werden direkt in den Response-Body serialisiert (JSON via
+ * Jackson), kein View-Rendering. Der Controller übersetzt nur zwischen
  * HTTP und Fachlogik — die eigentliche Arbeit macht der {@link BookService}.
  */
 @RestController
@@ -31,7 +31,7 @@ public class BookController {
         this.bookService = bookService;
     }
 
-    /** {@code GET /api/books} — 200 mit allen Buechern inklusive Bruttopreis. */
+    /** {@code GET /api/books} — 200 mit allen Büchern inklusive Bruttopreis. */
     @GetMapping
     public List<BookResponse> list() {
         return bookService.findAll().stream()
@@ -42,7 +42,7 @@ public class BookController {
     /**
      * {@code GET /api/books/{isbn}} — 200 mit dem Buch. Bei unbekannter ISBN
      * wirft der Service eine {@link BookNotFoundException}, die der
-     * {@link RestExceptionHandler} in 404 uebersetzt.
+     * {@link RestExceptionHandler} in 404 übersetzt.
      */
     @GetMapping("/{isbn}")
     public BookResponse get(@PathVariable String isbn) {
@@ -51,8 +51,8 @@ public class BookController {
 
     /**
      * {@code POST /api/books} — 201 mit Location-Header auf die neue
-     * Ressource. {@code @Valid} loest die Bean-Validation-Pruefung des
-     * {@link BookRequest} aus; schlaegt sie fehl, kommt es gar nicht erst
+     * Ressource. {@code @Valid} löst die Bean-Validation-Prüfung des
+     * {@link BookRequest} aus; schlägt sie fehl, kommt es gar nicht erst
      * bis in diese Methode (400).
      */
     @PostMapping
@@ -65,7 +65,7 @@ public class BookController {
 
     /**
      * {@code DELETE /api/books/{isbn}} — 204 ohne Body. Bei unbekannter ISBN
-     * wieder 404 ueber den Exception-Handler.
+     * wieder 404 über den Exception-Handler.
      */
     @DeleteMapping("/{isbn}")
     @ResponseStatus(HttpStatus.NO_CONTENT)

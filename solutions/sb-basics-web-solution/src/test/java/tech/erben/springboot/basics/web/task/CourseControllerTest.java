@@ -32,10 +32,10 @@ class CourseControllerTest {
     }
 
     @Test
-    @DisplayName("Aufgabe 2: Unbekannter Kurscode liefert 404 mit Fehlerkoerper")
+    @DisplayName("Aufgabe 2: Unbekannter Kurscode liefert 404 mit Fehlerkörper")
     void unknownCodeReturnsNotFound() throws Exception {
-        // Der Status allein reicht nicht: Eine 404 liefert Spring auch fuer
-        // eine gar nicht existierende Route. Erst der JSON-Koerper mit dem
+        // Der Status allein reicht nicht: Eine 404 liefert Spring auch für
+        // eine gar nicht existierende Route. Erst der JSON-Körper mit dem
         // error-Feld beweist, dass der RestExceptionHandler die Antwort
         // erzeugt hat.
         mockMvc.perform(get("/api/courses/GIBT-ES-NICHT"))
@@ -63,8 +63,8 @@ class CourseControllerTest {
     @Test
     @DisplayName("Aufgabe 3: DELETE liefert 204, ein zweiter Aufruf 404")
     void deleteRemovesCourse() throws Exception {
-        // Eigenen Kurs anlegen, damit der Test unabhaengig von den
-        // Seed-Daten und der Ausfuehrungsreihenfolge bleibt.
+        // Eigenen Kurs anlegen, damit der Test unabhängig von den
+        // Seed-Daten und der Ausführungsreihenfolge bleibt.
         mockMvc.perform(post("/api/courses")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""

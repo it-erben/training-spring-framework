@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * Die eigentliche Pointe von {@code @Profile}: Es geht nicht nur um
  * andere Property-Werte, sondern darum, ob der Container eine Bean
- * ueberhaupt anlegt. Beide Faelle nebeneinander — derselbe Code, nur das
+ * überhaupt anlegt. Beide Fälle nebeneinander — derselbe Code, nur das
  * aktive Profil entscheidet.
  */
 @DisplayName("DevDataInitializer existiert nur im Profil dev")

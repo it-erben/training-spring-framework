@@ -10,10 +10,10 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * Loesung Aufgaben 2 und 4: Zentrale Fehlerbehandlung fuer alle Controller.
- * Ohne diese Klasse wuerde eine {@link CourseNotFoundException} als 500
+ * Lösung Aufgaben 2 und 4: Zentrale Fehlerbehandlung für alle Controller.
+ * Ohne diese Klasse würde eine {@link CourseNotFoundException} als 500
  * beim Client ankommen — hier wird sie in den fachlich richtigen Status
- * 404 uebersetzt.
+ * 404 übersetzt.
  */
 @RestControllerAdvice
 public class RestExceptionHandler {
@@ -26,7 +26,7 @@ public class RestExceptionHandler {
     }
 
     /**
-     * Aufgabe 4: Fehlgeschlagene Bean-Validation → 400. Den Status wuerde
+     * Aufgabe 4: Fehlgeschlagene Bean-Validation → 400. Den Status würde
      * Spring auch ohne diesen Handler liefern — der Mehrwert ist der
      * lesbare Body: eine Map von Feldname auf Fehlermeldung statt einer
      * generischen Fehlerseite.

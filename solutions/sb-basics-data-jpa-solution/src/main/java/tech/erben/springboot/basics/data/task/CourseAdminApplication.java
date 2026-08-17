@@ -5,8 +5,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
  * Einstiegspunkt der Kursverwaltung. Wie in der Demo gibt es keinen
- * Web-Server: Die Anwendung startet, faehrt den Persistenz-Stack hoch und
- * dann wieder herunter. Gearbeitet wird in dieser Uebung ueber die Tests —
+ * Web-Server: Die Anwendung startet, fährt den Persistenz-Stack hoch und
+ * dann wieder herunter. Gearbeitet wird in dieser Übung über die Tests —
  * {@code CourseRepositoryTest} misst euren Fortschritt.
  */
 @SpringBootApplication

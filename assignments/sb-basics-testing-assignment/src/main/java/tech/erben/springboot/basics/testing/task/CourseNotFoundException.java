@@ -1,8 +1,8 @@
 package tech.erben.springboot.basics.testing.task;
 
 /**
- * Fachliche Ausnahme fuer einen unbekannten Kurscode. Der
- * {@link RestExceptionHandler} uebersetzt sie in 404.
+ * Exception für einen unbekannten Kurscode. Der
+ * {@link RestExceptionHandler} übersetzt sie in 404.
  */
 public class CourseNotFoundException extends RuntimeException {
 

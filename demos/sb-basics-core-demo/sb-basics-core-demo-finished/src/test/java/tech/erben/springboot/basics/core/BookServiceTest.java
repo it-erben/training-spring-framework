@@ -16,7 +16,7 @@ class BookServiceTest {
     private BookService bookService;
 
     @Test
-    @DisplayName("Der Katalog enthaelt die drei Beispielbuecher")
+    @DisplayName("Der Katalog enthält die drei Beispielbücher")
     void catalogContainsThreeBooks() {
         assertThat(bookService.findAll()).hasSize(3);
     }

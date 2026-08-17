@@ -9,8 +9,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * In-Memory-Verwaltung des Kurskatalogs — fertig, hier muesst ihr nichts
- * aendern. Die Fachlogik weiss nichts von HTTP, JSON oder Statuscodes:
+ * In-Memory-Verwaltung des Kurskatalogs — fertig, hier müsst ihr nichts
+ * ändern. Die Fachlogik weiß nichts von HTTP, JSON oder Statuscodes:
  * Sie arbeitet nur mit {@link Course} und wirft bei unbekanntem Kurscode
  * eine {@link CourseNotFoundException}.
  */
@@ -18,8 +18,8 @@ import java.util.Map;
 public class CourseService {
 
     /**
-     * Eine synchronisierte {@link LinkedHashMap} reicht fuer die Uebung:
-     * Sie behaelt die Einfuegereihenfolge, damit die Ausgabe von Aufruf
+     * Eine synchronisierte {@link LinkedHashMap} reicht für die Übung:
+     * Sie behält die Einfügereihenfolge, damit die Ausgabe von Aufruf
      * zu Aufruf stabil bleibt.
      */
     private final Map<String, Course> courses =
@@ -49,7 +49,7 @@ public class CourseService {
         return course;
     }
 
-    /** Ersetzt einen vorhandenen Kurs — gedacht fuer die Bonusaufgabe (PUT). */
+    /** Ersetzt einen vorhandenen Kurs — gedacht für die Bonusaufgabe (PUT). */
     public Course update(String code, Course course) {
         if (!courses.containsKey(code)) {
             throw new CourseNotFoundException(code);

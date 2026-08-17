@@ -6,9 +6,9 @@ import org.springframework.stereotype.Component;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Loesung der Bonusaufgabe: Mit {@code @Scope("prototype")} erzeugt der
- * Container bei jeder Anfrage eine neue Instanz — der statische Zaehler
- * macht das ueber {@link #instanceNumber()} sichtbar.
+ * Lösung der Bonusaufgabe: Mit {@code @Scope("prototype")} erzeugt der
+ * Container bei jeder Anfrage eine neue Instanz — der statische Zähler
+ * macht das über {@link #instanceNumber()} sichtbar.
  */
 @Component
 @Scope("prototype")

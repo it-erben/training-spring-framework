@@ -5,9 +5,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
  * Einstiegspunkt der Kursverwaltung. {@code @SpringBootApplication}
- * aktiviert das Component-Scanning ab diesem Package — Beans entstehen
+ * aktiviert das Component-Scanning ab diesem Package. Beans entstehen
  * daraus aber erst, wenn die Klassen auch als Beans deklariert sind.
- * Genau das ist eure Aufgabe.
+ * Das ist eure Aufgabe.
  */
 @SpringBootApplication
 public class CourseAdminApplication {

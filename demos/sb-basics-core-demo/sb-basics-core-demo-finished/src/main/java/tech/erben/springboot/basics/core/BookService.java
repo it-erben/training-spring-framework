@@ -9,13 +9,13 @@ import java.util.List;
 /**
  * Fachlogik der Buchhandlung. Eine einzige Konstruktor-Signatur zeigt beide
  * Wege, die Mehrdeutigkeit zwischen den zwei {@link PriceCalculator}-Beans
- * aufzuloesen, nebeneinander:
+ * aufzulösen, nebeneinander:
  *
  * <ul>
- *   <li>{@code defaultCalculator} traegt keinen Qualifier — durch
+ *   <li>{@code defaultCalculator} trägt keinen Qualifier — durch
  *       {@code @Primary} injiziert der Container den
  *       {@link GrossPriceCalculator}.</li>
- *   <li>{@code netCalculator} waehlt per {@code @Qualifier} explizit den
+ *   <li>{@code netCalculator} wählt per {@code @Qualifier} explizit den
  *       {@link NetPriceCalculator}.</li>
  * </ul>
  */

@@ -38,7 +38,7 @@ class BookControllerTest {
     }
 
     @Test
-    @DisplayName("POST mit gueltigem Body liefert 201 und Location")
+    @DisplayName("POST mit gültigem Body liefert 201 und Location")
     void createReturnsCreated() throws Exception {
         mockMvc.perform(post("/api/books")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -73,7 +73,7 @@ class BookControllerTest {
                 .andExpect(jsonPath("$.title")
                         .value("Spring Boot 3 und Spring Framework 6"))
                 .andExpect(jsonPath("$.netPrice").value(49.90))
-                // 49.90 * 1.19 = 59.381, kaufmaennisch gerundet 59.38
+                // 49.90 * 1.19 = 59.381, kaufmännisch gerundet 59.38
                 .andExpect(jsonPath("$.grossPrice").value(59.38));
     }
 
@@ -94,8 +94,8 @@ class BookControllerTest {
     @Test
     @DisplayName("DELETE auf bekannte ISBN liefert 204, danach ist das Buch weg")
     void deleteRemovesBook() throws Exception {
-        // Eigenes Buch anlegen, damit der Test unabhaengig von den
-        // Seed-Daten und der Ausfuehrungsreihenfolge bleibt.
+        // Eigenes Buch anlegen, damit der Test unabhängig von den
+        // Seed-Daten und der Ausführungsreihenfolge bleibt.
         mockMvc.perform(post("/api/books")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""

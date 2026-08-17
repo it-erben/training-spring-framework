@@ -2,7 +2,7 @@ package tech.erben.springboot.basics.core.task;
 
 /**
  * Stellt das {@link TrainerDirectory} als Bean bereit. Die Methode ist
- * fertig geschrieben — dem Container fehlen aber noch zwei Annotationen,
+ * fertig geschrieben, dem Container fehlen aber noch zwei Annotationen,
  * damit er sie als Bean-Fabrik erkennt.
  */
 // TODO Aufgabe 4: Klasse als Konfigurationsklasse deklarieren

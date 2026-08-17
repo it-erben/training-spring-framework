@@ -5,8 +5,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
  * Einstiegspunkt der Data-Demo. Anders als in Modul 02 gibt es keinen
- * Web-Server: Die Anwendung startet, der {@link SeedDataRunner} laeuft
- * einmal durch, danach faehrt der Kontext wieder herunter. Alles Sichtbare
+ * Web-Server: Die Anwendung startet, der {@link SeedDataRunner} läuft
+ * einmal durch, danach fährt der Kontext wieder herunter. Alles Sichtbare
  * passiert im Log — {@code spring.jpa.show-sql=true} zeigt jedes
  * SQL-Statement, das Hibernate erzeugt.
  */

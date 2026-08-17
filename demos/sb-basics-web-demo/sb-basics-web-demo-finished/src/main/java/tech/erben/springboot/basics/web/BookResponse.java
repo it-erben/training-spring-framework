@@ -4,9 +4,9 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 /**
- * Ausgabe-DTO fuer die REST-Schnittstelle. Zusaetzlich zum Domaenenmodell
- * enthaelt es den berechneten Bruttopreis (19 % Mehrwertsteuer) — ein
- * typischer Grund, nach aussen ein eigenes DTO statt der internen Klasse
+ * Ausgabe-DTO für die REST-Schnittstelle. Zusätzlich zum Domänenmodell
+ * enthält es den berechneten Bruttopreis (19 % Mehrwertsteuer) — ein
+ * typischer Grund, nach außen ein eigenes DTO statt der internen Klasse
  * zu verwenden.
  */
 public record BookResponse(String isbn, String title,

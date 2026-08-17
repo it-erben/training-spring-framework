@@ -24,13 +24,13 @@
 
     <dependencies>
         <!-- Spring Data JPA, Hibernate und die Transaktionsverwaltung —
-             der komplette Persistenz-Stack ueber eine einzige Abhaengigkeit. -->
+             der komplette Persistenz-Stack über eine einzige Abhängigkeit. -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
 
-        <!-- In-Memory-Datenbank, nur zur Laufzeit noetig: Boot findet den
+        <!-- In-Memory-Datenbank, nur zur Laufzeit nötig: Boot findet den
              Treiber auf dem Klassenpfad und konfiguriert die DataSource. -->
         <dependency>
             <groupId>com.h2database</groupId>
@@ -57,7 +57,7 @@
         <plugins>
             <!-- Ohne spring-boot-starter-parent muss das repackage-Goal
                  explizit gebunden werden — erst dadurch wird aus dem normalen
-                 Jar ein ausfuehrbares Fat-JAR. -->
+                 Jar ein ausführbares Fat-JAR. -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>

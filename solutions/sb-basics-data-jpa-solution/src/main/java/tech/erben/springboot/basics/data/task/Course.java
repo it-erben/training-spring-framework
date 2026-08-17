@@ -9,11 +9,11 @@ import jakarta.persistence.ManyToOne;
 import java.math.BigDecimal;
 
 /**
- * Loesung zu Aufgabe 1: {@code @Entity} macht die Klasse zur Tabelle
- * {@code course}, {@code @Id} mit {@code @GeneratedValue} ueberlaesst die
- * Schluesselvergabe der Datenbank, {@code @Column(unique = true)} legt
+ * Lösung zu Aufgabe 1: {@code @Entity} macht die Klasse zur Tabelle
+ * {@code course}, {@code @Id} mit {@code @GeneratedValue} überlässt die
+ * Schlüsselvergabe der Datenbank, {@code @Column(unique = true)} legt
  * einen Unique-Constraint auf den Kurscode, und {@code @ManyToOne} macht
- * aus der Objektreferenz die Fremdschluessel-Spalte {@code trainer_id}.
+ * aus der Objektreferenz die Fremdschlüssel-Spalte {@code trainer_id}.
  */
 @Entity
 public class Course {
@@ -32,7 +32,7 @@ public class Course {
     @ManyToOne
     private Trainer trainer;
 
-    /** Von JPA gefordert — Hibernate instanziiert Entities ueber diesen Konstruktor. */
+    /** Von JPA gefordert — Hibernate instanziiert Entities über diesen Konstruktor. */
     protected Course() {
     }
 

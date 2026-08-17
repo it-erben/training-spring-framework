@@ -13,8 +13,8 @@
 
     <properties>
         <!-- Die Tests sind Aufgabenstellung, nicht Regression. Im
-             Gesamtbuild werden sie uebersprungen; die Absicherung
-             uebernimmt solutions/sb-basics-data-jpa-solution. Zum Pruefen
+             Gesamtbuild werden sie übersprungen; die Absicherung
+             übernimmt solutions/sb-basics-data-jpa-solution. Zum Prüfen
              des roten Ausgangszustands: -DskipAssignmentTests=false -->
         <skipAssignmentTests>true</skipAssignmentTests>
     </properties>
@@ -33,13 +33,13 @@
 
     <dependencies>
         <!-- Spring Data JPA, Hibernate und die Transaktionsverwaltung —
-             der komplette Persistenz-Stack ueber eine einzige Abhaengigkeit. -->
+             der komplette Persistenz-Stack über eine einzige Abhängigkeit. -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
 
-        <!-- In-Memory-Datenbank, nur zur Laufzeit noetig: Boot findet den
+        <!-- In-Memory-Datenbank, nur zur Laufzeit nötig: Boot findet den
              Treiber auf dem Klassenpfad und konfiguriert die DataSource. -->
         <dependency>
             <groupId>com.h2database</groupId>

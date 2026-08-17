@@ -8,9 +8,9 @@ import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
 
 /**
- * Loesung Aufgabe 3 und 4: Eingabe-DTO fuer {@code POST /api/courses}.
- * Die Bean-Validation-Annotationen beschreiben, was ein gueltiger Request
- * ist — geprueft werden sie erst, wenn der Controller-Parameter mit
+ * Lösung Aufgabe 3 und 4: Eingabe-DTO für {@code POST /api/courses}.
+ * Die Bean-Validation-Annotationen beschreiben, was ein gültiger Request
+ * ist — geprüft werden sie erst, wenn der Controller-Parameter mit
  * {@code @Valid} markiert ist.
  */
 public record CourseRequest(
@@ -19,7 +19,7 @@ public record CourseRequest(
         @Positive int seats,
         @NotNull @Positive BigDecimal netFee) {
 
-    /** Uebersetzt das Eingabe-DTO in das interne Domaenenmodell. */
+    /** Übersetzt das Eingabe-DTO in das interne Domänenmodell. */
     public Course toCourse() {
         return new Course(code, title, seats, netFee);
     }

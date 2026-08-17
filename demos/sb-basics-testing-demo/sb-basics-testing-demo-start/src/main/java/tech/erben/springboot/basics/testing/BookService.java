@@ -6,16 +6,16 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 /**
- * Fachlogik der Buchhandlung. Das interessanteste Stueck ist die
- * Rabattregel in {@link #totalFor(String, int)}: ab fuenf Exemplaren gibt
- * es zehn Prozent Nachlass. Genau solche Regeln mit Grenzfaellen (vier
- * Exemplare? fuenf?) sind der klassische Fall fuer schnelle Unit-Tests
+ * Fachlogik der Buchhandlung. Das interessanteste Stück ist die
+ * Rabattregel in {@link #totalFor(String, int)}: ab fünf Exemplaren gibt
+ * es zehn Prozent Nachlass. Genau solche Regeln mit Grenzfällen (vier
+ * Exemplare? fünf?) sind der klassische Fall für schnelle Unit-Tests
  * ohne Spring-Kontext.
  */
 @Service
 public class BookService {
 
-    /** Ab dieser Stueckzahl greift der Mengenrabatt. */
+    /** Ab dieser Stückzahl greift der Mengenrabatt. */
     private static final int DISCOUNT_THRESHOLD = 5;
 
     /** Zehn Prozent Nachlass — es bleiben 90 Prozent des Preises. */
@@ -37,9 +37,9 @@ public class BookService {
     }
 
     /**
-     * Gesamtpreis fuer {@code quantity} Exemplare des Buchs zur ISBN.
+     * Gesamtpreis für {@code quantity} Exemplare des Buchs zur ISBN.
      * Ab {@link #DISCOUNT_THRESHOLD} Exemplaren wird der Mengenrabatt
-     * abgezogen, das Ergebnis ist kaufmaennisch auf zwei Nachkommastellen
+     * abgezogen, das Ergebnis ist kaufmännisch auf zwei Nachkommastellen
      * gerundet.
      */
     public BigDecimal totalFor(String isbn, int quantity) {

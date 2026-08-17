@@ -13,8 +13,8 @@
 
     <properties>
         <!-- Die Tests sind Aufgabenstellung, nicht Regression. Im
-             Gesamtbuild werden sie uebersprungen; die Absicherung
-             uebernimmt solutions/sb-basics-core-solution. Zum Pruefen
+             Gesamtbuild werden sie übersprungen; die Absicherung
+             übernimmt solutions/sb-basics-core-solution. Zum Prüfen
              des roten Ausgangszustands: -DskipAssignmentTests=false -->
         <skipAssignmentTests>true</skipAssignmentTests>
     </properties>

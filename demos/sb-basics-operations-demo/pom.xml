@@ -30,7 +30,7 @@
 
         <!-- Der Actuator bringt die Betriebs-Endpoints mit: health, info,
              metrics und loggers kommen ohne eine Zeile eigenen Code —
-             welche davon ueber HTTP sichtbar sind, steuert
+             welche davon über HTTP sichtbar sind, steuert
              application.properties. -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -51,7 +51,7 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- TestRestTemplate fuer die Tests gegen den echten Server: Der
+        <!-- TestRestTemplate für die Tests gegen den echten Server: Der
              Client selbst steckt im restclient-test-Starter, seine Basis
              (RestTemplateBuilder) im restclient-Starter — beide nur im
              Test-Scope. -->
@@ -81,7 +81,7 @@
             </plugin>
             <!-- Ohne spring-boot-starter-parent muss das repackage-Goal
                  explizit gebunden werden — erst dadurch wird aus dem
-                 normalen Jar ein ausfuehrbares Fat-JAR, das das Dockerfile
+                 normalen Jar ein ausführbares Fat-JAR, das das Dockerfile
                  dann einpackt. -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>

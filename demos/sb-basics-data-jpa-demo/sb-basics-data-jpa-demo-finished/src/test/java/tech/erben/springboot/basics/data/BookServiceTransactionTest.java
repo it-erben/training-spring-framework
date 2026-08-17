@@ -16,15 +16,15 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Bewusst KEIN {@code @Transactional} am Test: Der Test soll den echten
- * Commit bzw. Rollback der Service-Transaktion von aussen beobachten,
+ * Commit bzw. Rollback der Service-Transaktion von außen beobachten,
  * nicht selbst Teil der Transaktion sein.
  *
  * <p>Die Hibernate-Statistiken sind aktiviert, damit der Rollback-Test
- * nachweisen kann, dass die UPDATE-Statements tatsaechlich ausgefuehrt
- * wurden, bevor sie zurueckgerollt werden. Ohne diesen Zaehler waere der
+ * nachweisen kann, dass die UPDATE-Statements tatsächlich ausgeführt
+ * wurden, bevor sie zurückgerollt werden. Ohne diesen Zähler wäre der
  * Test wertlos: Fehlt {@code @Transactional} am Service, wird nie ein
- * UPDATE abgesetzt (die Entities sind detached) — die Preise waeren
- * ebenfalls "unveraendert", aber aus dem falschen Grund.
+ * UPDATE abgesetzt (die Entities sind detached) — die Preise wären
+ * ebenfalls "unverändert", aber aus dem falschen Grund.
  */
 @SpringBootTest(properties = "spring.jpa.properties.hibernate.generate_statistics=true")
 class BookServiceTransactionTest {
@@ -68,7 +68,7 @@ class BookServiceTransactionTest {
     }
 
     @Test
-    @DisplayName("raisePricesAndFail fuehrt die UPDATEs aus, wirft IllegalStateException und rollt zurueck")
+    @DisplayName("raisePricesAndFail führt die UPDATEs aus, wirft IllegalStateException und rollt zurück")
     void rollsBackOnFailure() {
         long updatesBefore = statistics().getEntityUpdateCount();
 
@@ -76,10 +76,10 @@ class BookServiceTransactionTest {
                 .isInstanceOf(IllegalStateException.class);
 
         // Erst der Nachweis, dass wirklich geschrieben wurde (das flush()
-        // hat beide UPDATEs ausgefuehrt) — sonst waeren die "unveraenderten"
-        // Preise kein Beleg fuer einen Rollback:
+        // hat beide UPDATEs ausgeführt) — sonst wären die "unveränderten"
+        // Preise kein Beleg für einen Rollback:
         assertThat(statistics().getEntityUpdateCount() - updatesBefore)
-                .as("Anzahl der vor dem Rollback ausgefuehrten Entity-Updates")
+                .as("Anzahl der vor dem Rollback ausgeführten Entity-Updates")
                 .isEqualTo(2);
 
         assertThat(priceOf("978-0-13-468599-1")).isEqualByComparingTo("44.99");

@@ -2,7 +2,7 @@ package tech.erben.springboot.basics.web;
 
 /**
  * Fachliche Ausnahme: Zu einer ISBN gibt es kein Buch. Der Service kennt
- * kein HTTP — erst der {@link RestExceptionHandler} uebersetzt diese
+ * kein HTTP — erst der {@link RestExceptionHandler} übersetzt diese
  * Ausnahme in einen 404-Status.
  */
 public class BookNotFoundException extends RuntimeException {

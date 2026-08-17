@@ -19,7 +19,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Advice-Klassen und die JSON-Serialisierung. Kein Service, kein
  * Repository, keine Datenbank: Der {@link BookService} wird per
  * {@code @MockitoBean} ersetzt (der Nachfolger von {@code @MockBean},
- * das es in Spring Boot 4 nicht mehr gibt). Requests laufen ueber
+ * das es in Spring Boot 4 nicht mehr gibt). Requests laufen über
  * {@link MockMvc} durch den echten {@code DispatcherServlet}-Stack,
  * aber ohne HTTP-Server.
  */

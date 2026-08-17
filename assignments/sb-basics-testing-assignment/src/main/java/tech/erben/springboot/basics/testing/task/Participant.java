@@ -7,7 +7,7 @@ import jakarta.persistence.ManyToOne;
 
 /**
  * Ein angemeldeter Teilnehmer. {@code @ManyToOne} macht aus der
- * Objektreferenz die Fremdschluessel-Spalte {@code course_id} — viele
+ * Objektreferenz die Fremdschlüssel-Spalte {@code course_id}: viele
  * Teilnehmer, ein Kurs.
  */
 @Entity
@@ -22,7 +22,7 @@ public class Participant {
     @ManyToOne
     private Course course;
 
-    /** Von JPA gefordert — Hibernate instanziiert Entities ueber diesen Konstruktor. */
+    /** Von JPA gefordert — Hibernate instanziiert Entities über diesen Konstruktor. */
     protected Participant() {
     }
 

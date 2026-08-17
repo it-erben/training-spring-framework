@@ -7,10 +7,10 @@ import java.math.BigDecimal;
 import java.util.List;
 
 /**
- * Laeuft einmal nach dem Start des Kontexts: legt zwei Autoren und fuenf
- * Buecher an und fuehrt danach die Abfragen und die Transaktions-Demo aus
+ * Läuft einmal nach dem Start des Kontexts: legt zwei Autoren und fünf
+ * Bücher an und führt danach die Abfragen und die Transaktions-Demo aus
  * dem Live-Ablauf vor (siehe README). Zwischen den {@code >>>}-Zeilen
- * stehen im Log die SQL-Statements, die Hibernate dafuer erzeugt.
+ * stehen im Log die SQL-Statements, die Hibernate dafür erzeugt.
  */
 @Component
 public class SeedDataRunner implements CommandLineRunner {
@@ -30,7 +30,7 @@ public class SeedDataRunner implements CommandLineRunner {
         demonstrateTransactions();
     }
 
-    /** Zwei Autoren, fuenf Buecher — die Autoren speichert das Cascade mit. */
+    /** Zwei Autoren, fünf Bücher — die Autoren speichert das Cascade mit. */
     private void seed() {
         Author bloch = new Author("Joshua Bloch");
         Author fowler = new Author("Martin Fowler");
@@ -41,7 +41,7 @@ public class SeedDataRunner implements CommandLineRunner {
                 new Book("978-0-321-12742-6", "Patterns of Enterprise Application Architecture",
                         new BigDecimal("54.95"), fowler),
                 new Book("978-0-321-19368-1", "UML Distilled", new BigDecimal("39.95"), fowler)));
-        System.out.println(">>> Seed: " + bookRepository.count() + " Buecher angelegt");
+        System.out.println(">>> Seed: " + bookRepository.count() + " Bücher angelegt");
     }
 
     private void demonstrateQueries() {
@@ -65,7 +65,7 @@ public class SeedDataRunner implements CommandLineRunner {
         } catch (IllegalStateException e) {
             System.out.println(">>> IllegalStateException gefangen: " + e.getMessage());
         }
-        System.out.println(">>> Preise nach raisePricesAndFail(2.00) — unveraendert dank Rollback: "
+        System.out.println(">>> Preise nach raisePricesAndFail(2.00) — unverändert dank Rollback: "
                 + prices());
     }
 

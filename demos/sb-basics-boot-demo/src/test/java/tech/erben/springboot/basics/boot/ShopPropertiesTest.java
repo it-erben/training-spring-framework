@@ -10,7 +10,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @ActiveProfiles("dev")
-@DisplayName("Profil dev ueberschreibt die Basis-Properties")
+@DisplayName("Profil dev überschreibt die Basis-Properties")
 class ShopPropertiesTest {
 
     @Autowired

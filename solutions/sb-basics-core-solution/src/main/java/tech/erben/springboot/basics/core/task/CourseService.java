@@ -9,13 +9,13 @@ import java.util.List;
 /**
  * Fachlogik der Kursverwaltung. Der einzige Konstruktor zeigt beide Wege,
  * die Mehrdeutigkeit zwischen den zwei {@link FeeCalculator}-Beans
- * aufzuloesen, nebeneinander:
+ * aufzulösen, nebeneinander:
  *
  * <ul>
- *   <li>{@code defaultCalculator} traegt keinen Qualifier — durch
+ *   <li>{@code defaultCalculator} trägt keinen Qualifier — durch
  *       {@code @Primary} injiziert der Container den
  *       {@link GrossFeeCalculator}.</li>
- *   <li>{@code netCalculator} waehlt per {@code @Qualifier} explizit den
+ *   <li>{@code netCalculator} wählt per {@code @Qualifier} explizit den
  *       {@link NetFeeCalculator}.</li>
  * </ul>
  */
@@ -38,12 +38,12 @@ public class CourseService {
         return courseCatalog.findAll();
     }
 
-    /** Bruttogebuehr — berechnet vom {@code @Primary}-Kalkulator. */
+    /** Bruttogebühr — berechnet vom {@code @Primary}-Kalkulator. */
     public BigDecimal feeFor(Course course) {
         return defaultCalculator.calculate(course);
     }
 
-    /** Nettogebuehr — berechnet vom explizit gewaehlten Kalkulator. */
+    /** Nettogebühr — berechnet vom explizit gewählten Kalkulator. */
     public BigDecimal netFeeFor(Course course) {
         return netCalculator.calculate(course);
     }

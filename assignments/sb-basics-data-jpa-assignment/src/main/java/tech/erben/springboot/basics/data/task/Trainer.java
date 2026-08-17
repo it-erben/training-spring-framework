@@ -5,10 +5,10 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 
 /**
- * JPA-Entity fuer einen Trainer — fertig gemappt, als Vorlage fuer
+ * JPA-Entity für einen Trainer. Bereits fertig gemappt, als Vorlage für
  * Aufgabe 1: {@code @Entity} macht die Klasse zur Tabelle, {@code @Id}
- * mit {@code @GeneratedValue} den Primaerschluessel zur Sache der
- * Datenbank. Hier aendert ihr nichts.
+ * mit {@code @GeneratedValue} den Primärschlüssel zur Sache der
+ * Datenbank. Hier ändert ihr nichts.
  */
 @Entity
 public class Trainer {
@@ -20,7 +20,7 @@ public class Trainer {
     private String name;
     private String email;
 
-    /** Von JPA gefordert — Hibernate instanziiert Entities ueber diesen Konstruktor. */
+    /** Von JPA gefordert. Hibernate instanziiert Entities über diesen Konstruktor. */
     protected Trainer() {
     }
 

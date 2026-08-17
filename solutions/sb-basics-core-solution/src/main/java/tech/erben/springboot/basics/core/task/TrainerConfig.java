@@ -5,8 +5,8 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * Stellt das {@link TrainerDirectory} als Bean bereit. Die Klasse steht
- * stellvertretend fuer eine fremde Bibliotheksklasse und laesst sich nicht
- * annotieren — die {@code @Bean}-Methode uebernimmt stattdessen die
+ * stellvertretend für eine fremde Bibliotheksklasse und lässt sich nicht
+ * annotieren — die {@code @Bean}-Methode übernimmt stattdessen die
  * Registrierung im Container.
  */
 @Configuration

@@ -3,7 +3,7 @@ package tech.erben.springboot.basics.web.task;
 /**
  * Fachliche Ausnahme: Zu einem Kurscode gibt es keinen Kurs. Der Service
  * kennt kein HTTP — erst euer {@code RestExceptionHandler} (Aufgabe 2)
- * uebersetzt diese Ausnahme in einen 404-Status. Ohne ihn wird daraus
+ * übersetzt diese Ausnahme in einen 404-Status. Ohne ihn wird daraus
  * ein 500.
  */
 public class CourseNotFoundException extends RuntimeException {

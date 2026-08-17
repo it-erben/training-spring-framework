@@ -10,12 +10,12 @@ import jakarta.validation.constraints.Positive;
 import java.math.BigDecimal;
 
 /**
- * JPA-Entity fuer ein Buch — dasselbe Modell wie in Modul 03, bewusst
+ * JPA-Entity für ein Buch — dasselbe Modell wie in Modul 03, bewusst
  * kompakt: keine Beziehungen, nur der (implizite) parameterlose
- * Konstruktor plus Getter und Setter. So koennen auch die Tests ihre
+ * Konstruktor plus Getter und Setter. So können auch die Tests ihre
  * Objekte bequem aufbauen. Die Bean-Validation-Annotationen stehen direkt
  * am Modell, weil der Controller die Entity ohne eigenes DTO
- * entgegennimmt — in einer echten Anwendung waeren getrennte DTOs wie in
+ * entgegennimmt — in einer echten Anwendung wären getrennte DTOs wie in
  * Modul 02 die bessere Wahl, hier liegt der Fokus auf den Tests.
  */
 @Entity

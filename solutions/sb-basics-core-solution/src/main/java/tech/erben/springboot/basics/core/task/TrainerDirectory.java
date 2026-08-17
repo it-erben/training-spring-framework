@@ -5,13 +5,13 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * Trainerverzeichnis — steht hier stellvertretend fuer eine Klasse aus
- * einer fremden Bibliothek: Ihr koennt (bzw. duerft) den Quelltext nicht
+ * Trainerverzeichnis — steht hier stellvertretend für eine Klasse aus
+ * einer fremden Bibliothek: Ihr könnt (bzw. dürft) den Quelltext nicht
  * anfassen und daher auch keine Stereotyp-Annotation anbringen. Solche
- * Klassen werden ueber eine {@code @Bean}-Methode in einer
+ * Klassen werden über eine {@code @Bean}-Methode in einer
  * {@code @Configuration}-Klasse registriert — siehe {@link TrainerConfig}.
  *
- * <p><strong>Diese Klasse nicht veraendern.</strong></p>
+ * <p><strong>Diese Klasse nicht verändern.</strong></p>
  */
 public class TrainerDirectory {
 

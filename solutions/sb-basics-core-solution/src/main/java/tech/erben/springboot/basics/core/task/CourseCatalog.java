@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Zugriff auf den Kurskatalog. Der {@link CourseService} haengt nur von
+ * Zugriff auf den Kurskatalog. Der {@link CourseService} hängt nur von
  * diesem Interface ab — welche Implementierung der Container injiziert,
  * ist ihm egal.
  */

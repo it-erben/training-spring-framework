@@ -14,7 +14,7 @@ import java.net.URI;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Loesung zu Aufgabe 3: Integrationstest. {@code RANDOM_PORT} startet die
+ * Lösung zu Aufgabe 3: Integrationstest. {@code RANDOM_PORT} startet die
  * komplette Anwendung mit echtem Tomcat und In-Memory-H2, das
  * {@link TestRestTemplate} schickt echte HTTP-Requests dagegen. Hier ist
  * nichts gemockt — der Kurs {@code SPRING-COMPACT} aus dem Seed hat genau

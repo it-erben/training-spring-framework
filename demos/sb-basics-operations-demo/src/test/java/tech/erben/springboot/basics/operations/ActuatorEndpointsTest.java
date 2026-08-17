@@ -12,9 +12,9 @@ import org.springframework.http.ResponseEntity;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Prueft die Actuator-Endpoints gegen die komplette, auf einem
- * zufaelligen Port gestartete Anwendung — genau so, wie spaeter eine
- * Liveness-Probe oder ein Monitoring-System zugreifen wuerde.
+ * Prüft die Actuator-Endpoints gegen die komplette, auf einem
+ * zufälligen Port gestartete Anwendung — genau so, wie später eine
+ * Liveness-Probe oder ein Monitoring-System zugreifen würde.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureTestRestTemplate

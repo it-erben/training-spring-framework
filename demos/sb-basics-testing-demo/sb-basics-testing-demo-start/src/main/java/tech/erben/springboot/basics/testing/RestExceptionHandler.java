@@ -10,10 +10,10 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * Zentrale Fehlerbehandlung wie in Modul 02: uebersetzt fachliche
- * Ausnahmen in die passenden Statuscodes. Im Slice-Test laedt
+ * Zentrale Fehlerbehandlung wie in Modul 02: übersetzt fachliche
+ * Ausnahmen in die passenden Statuscodes. Im Slice-Test lädt
  * {@code @WebMvcTest} diese Advice-Klasse automatisch mit — deshalb
- * laesst sich der 404-Fall dort ohne komplette Anwendung pruefen.
+ * lässt sich der 404-Fall dort ohne komplette Anwendung prüfen.
  */
 @RestControllerAdvice
 public class RestExceptionHandler {

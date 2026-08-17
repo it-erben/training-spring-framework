@@ -24,7 +24,7 @@
 
     <dependencies>
         <!-- Spring MVC, Jackson und der eingebettete Tomcat — der komplette
-             Web-Stack ueber eine einzige Abhaengigkeit. -->
+             Web-Stack über eine einzige Abhängigkeit. -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -47,16 +47,16 @@
                 <version>${maven-compiler-plugin.version}</version>
                 <configuration>
                     <compilerArgs>
-                        <!-- Erhaelt Parameternamen im Bytecode — noetig, damit
+                        <!-- Erhält Parameternamen im Bytecode — nötig, damit
                              Spring @PathVariable ohne explizites Namensattribut
-                             aufloesen kann. -->
+                             auflösen kann. -->
                         <arg>-parameters</arg>
                     </compilerArgs>
                 </configuration>
             </plugin>
             <!-- Ohne spring-boot-starter-parent muss das repackage-Goal
                  explizit gebunden werden — erst dadurch wird aus dem normalen
-                 Jar ein ausfuehrbares Fat-JAR. -->
+                 Jar ein ausführbares Fat-JAR. -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>

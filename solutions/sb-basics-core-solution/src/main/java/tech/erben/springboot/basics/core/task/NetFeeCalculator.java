@@ -5,8 +5,8 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 
 /**
- * Gibt die Nettogebuehr unveraendert zurueck. Der Bean-Name
- * {@code netFeeCalculator} dient als Ziel fuer {@code @Qualifier}.
+ * Gibt die Nettogebühr unverändert zurück. Der Bean-Name
+ * {@code netFeeCalculator} dient als Ziel für {@code @Qualifier}.
  */
 @Component("netFeeCalculator")
 public class NetFeeCalculator implements FeeCalculator {

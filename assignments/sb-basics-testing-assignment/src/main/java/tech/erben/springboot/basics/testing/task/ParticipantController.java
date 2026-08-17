@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.RestController;
 import java.net.URI;
 
 /**
- * REST-Schnittstelle der Anmeldung — die Konventionen aus Modul 02. Der
- * Controller uebersetzt nur zwischen HTTP und Fachlogik; genau deshalb
- * laesst er sich im Slice-Test isoliert pruefen, indem der
+ * REST-Schnittstelle der Anmeldung mit den Konventionen aus Modul 02. Der
+ * Controller übersetzt nur zwischen HTTP und Fachlogik. Deshalb
+ * lässt er sich im Slice-Test isoliert prüfen, indem der
  * {@link ParticipantService} durch ein Mock ersetzt wird.
  */
 @RestController
@@ -29,7 +29,7 @@ public class ParticipantController {
     /**
      * {@code POST /api/courses/{code}/participants} — 201 mit
      * Location-Header, wenn die Anmeldung geklappt hat, 409 (Conflict),
-     * wenn der Kurs voll ist. Unbekannter Code → 404 ueber den
+     * wenn der Kurs voll ist. Unbekannter Code → 404 über den
      * {@link RestExceptionHandler}.
      */
     @PostMapping("/{code}/participants")

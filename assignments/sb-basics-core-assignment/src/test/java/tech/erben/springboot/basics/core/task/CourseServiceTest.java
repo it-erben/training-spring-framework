@@ -19,7 +19,7 @@ class CourseServiceTest {
     private TrainerDirectory trainerDirectory;
 
     @Test
-    @DisplayName("Aufgabe 1: Der Katalog ist als Bean verdrahtet")
+    @DisplayName("Aufgabe 1: Der Katalog wird als Bean injiziert")
     void catalogIsWired() {
         assertThat(courseService.findAll()).hasSize(4);
     }

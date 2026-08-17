@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.Map;
 
 /**
- * Zentrale Fehlerbehandlung wie in Modul 02: Ohne diese Klasse kaeme
+ * Zentrale Fehlerbehandlung wie in Modul 02: Ohne diese Klasse käme
  * eine {@link CourseNotFoundException} als 500 beim Client an — hier
- * wird sie in den fachlich richtigen Status 404 uebersetzt.
+ * wird sie in den fachlich richtigen Status 404 übersetzt.
  */
 @RestControllerAdvice
 public class RestExceptionHandler {

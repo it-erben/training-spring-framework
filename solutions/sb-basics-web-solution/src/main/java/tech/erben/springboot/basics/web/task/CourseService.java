@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * In-Memory-Verwaltung des Kurskatalogs. Die Fachlogik weiss nichts von
+ * In-Memory-Verwaltung des Kurskatalogs. Die Fachlogik weiß nichts von
  * HTTP, JSON oder Statuscodes: Sie arbeitet nur mit {@link Course} und
  * wirft bei unbekanntem Kurscode eine {@link CourseNotFoundException}.
  */
@@ -17,8 +17,8 @@ import java.util.Map;
 public class CourseService {
 
     /**
-     * Eine synchronisierte {@link LinkedHashMap} reicht fuer die Uebung:
-     * Sie behaelt die Einfuegereihenfolge, damit die Ausgabe von Aufruf
+     * Eine synchronisierte {@link LinkedHashMap} reicht für die Übung:
+     * Sie behält die Einfügereihenfolge, damit die Ausgabe von Aufruf
      * zu Aufruf stabil bleibt.
      */
     private final Map<String, Course> courses =

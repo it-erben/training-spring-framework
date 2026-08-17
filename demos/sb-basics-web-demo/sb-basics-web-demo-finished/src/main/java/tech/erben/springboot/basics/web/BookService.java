@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * In-Memory-Verwaltung des Buchkatalogs. Die Fachlogik weiss nichts von
+ * In-Memory-Verwaltung des Buchkatalogs. Die Fachlogik weiß nichts von
  * HTTP, JSON oder Statuscodes — sie arbeitet nur mit {@link Book} und
  * wirft bei unbekannter ISBN eine {@link BookNotFoundException}.
  */
@@ -17,8 +17,8 @@ import java.util.Map;
 public class BookService {
 
     /**
-     * Eine synchronisierte {@link LinkedHashMap} reicht fuer die Demo: Sie
-     * behaelt die Einfuegereihenfolge, damit die Ausgabe von Aufruf zu
+     * Eine synchronisierte {@link LinkedHashMap} reicht für die Demo: Sie
+     * behält die Einfügereihenfolge, damit die Ausgabe von Aufruf zu
      * Aufruf stabil bleibt.
      */
     private final Map<String, Book> books =

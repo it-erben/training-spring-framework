@@ -10,9 +10,9 @@ import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
  * {@code @EnableAutoConfiguration} (Spring Boot konfiguriert anhand des
  * Classpaths z.&nbsp;B. den eingebetteten Tomcat) und
  * {@code @ComponentScan} ab diesem Package.
- * {@code @ConfigurationPropertiesScan} registriert zusaetzlich alle
+ * {@code @ConfigurationPropertiesScan} registriert zusätzlich alle
  * {@code @ConfigurationProperties}-Typen wie {@link ShopProperties} —
- * noetig, weil Records keine Stereotyp-Annotation tragen.
+ * nötig, weil Records keine Stereotyp-Annotation tragen.
  */
 @SpringBootApplication
 @ConfigurationPropertiesScan

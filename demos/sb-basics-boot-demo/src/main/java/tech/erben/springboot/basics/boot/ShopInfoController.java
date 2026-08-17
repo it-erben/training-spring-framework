@@ -7,9 +7,9 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 /**
- * Macht die wirksame Konfiguration von aussen sichtbar: {@code GET /info}
+ * Macht die wirksame Konfiguration von außen sichtbar: {@code GET /info}
  * liefert die gebundenen {@link ShopProperties} und die aktiven Profile.
- * So laesst sich in der Demo direkt beobachten, welche Property-Quelle
+ * So lässt sich in der Demo direkt beobachten, welche Property-Quelle
  * gewonnen hat — Datei, Profil-Datei oder Kommandozeile.
  */
 @RestController

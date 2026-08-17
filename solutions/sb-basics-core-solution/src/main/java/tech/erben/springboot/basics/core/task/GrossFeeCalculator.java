@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 /**
- * Schlaegt 19 % Mehrwertsteuer auf die Nettogebuehr auf. {@code @Primary}
+ * Schlägt 19 % Mehrwertsteuer auf die Nettogebühr auf. {@code @Primary}
  * macht diese Bean zum Standard, wenn ein {@link FeeCalculator} ohne
  * {@code @Qualifier} injiziert wird.
  */

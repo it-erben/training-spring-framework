@@ -15,8 +15,8 @@ import java.net.URI;
 
 /**
  * REST-Schnittstelle der Buchhandlung — der Vertrag aus Modul 02, auf das
- * Noetigste reduziert. Der Controller uebersetzt nur zwischen HTTP und
- * Fachlogik; genau deshalb laesst er sich im Slice-Test isoliert pruefen,
+ * Nötigste reduziert. Der Controller übersetzt nur zwischen HTTP und
+ * Fachlogik; genau deshalb lässt er sich im Slice-Test isoliert prüfen,
  * indem der {@link BookService} durch ein Mock ersetzt wird.
  */
 @RestController
@@ -32,7 +32,7 @@ public class BookController {
     /**
      * {@code GET /api/books/{isbn}} — 200 mit dem Buch. Bei unbekannter
      * ISBN wirft der Service eine {@link BookNotFoundException}, die der
-     * {@link RestExceptionHandler} in 404 uebersetzt.
+     * {@link RestExceptionHandler} in 404 übersetzt.
      */
     @GetMapping("/{isbn}")
     public Book get(@PathVariable String isbn) {
@@ -41,7 +41,7 @@ public class BookController {
 
     /**
      * {@code GET /api/books/{isbn}/total?quantity=n} — der Gesamtpreis
-     * fuer n Exemplare inklusive Mengenrabatt, als nackte Zahl im Body.
+     * für n Exemplare inklusive Mengenrabatt, als nackte Zahl im Body.
      */
     @GetMapping("/{isbn}/total")
     public BigDecimal total(@PathVariable String isbn, @RequestParam int quantity) {
@@ -50,7 +50,7 @@ public class BookController {
 
     /**
      * {@code POST /api/books} — 201 mit Location-Header auf die neue
-     * Ressource. {@code @Valid} loest die Bean-Validation-Pruefung der
+     * Ressource. {@code @Valid} löst die Bean-Validation-Prüfung der
      * Annotationen am {@link Book}-Modell aus.
      */
     @PostMapping

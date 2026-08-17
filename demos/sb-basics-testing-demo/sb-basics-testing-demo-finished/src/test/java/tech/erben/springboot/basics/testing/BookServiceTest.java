@@ -17,12 +17,12 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
- * Unit-Test ohne Spring-Kontext: Die {@link MockitoExtension} erzeugt fuer
+ * Unit-Test ohne Spring-Kontext: Die {@link MockitoExtension} erzeugt für
  * jedes {@code @Mock}-Feld ein Mock-Objekt und injiziert es in das
- * {@code @InjectMocks}-Feld — hier laeuft kein Kontext hoch und keine
+ * {@code @InjectMocks}-Feld — hier läuft kein Kontext hoch und keine
  * Datenbank, deshalb sind diese Tests in Millisekunden fertig. Getestet
- * wird die Rabattregel genau an ihrer Grenze: vier Exemplare ohne, fuenf
- * mit Rabatt — nur so faellt auf, wenn aus {@code >=} ein {@code >} wird.
+ * wird die Rabattregel genau an ihrer Grenze: vier Exemplare ohne, fünf
+ * mit Rabatt — nur so fällt auf, wenn aus {@code >=} ein {@code >} wird.
  */
 @ExtendWith(MockitoExtension.class)
 class BookServiceTest {
@@ -34,7 +34,7 @@ class BookServiceTest {
     private BookService bookService;
 
     @Test
-    @DisplayName("Ab fuenf Exemplaren gibt es zehn Prozent Rabatt")
+    @DisplayName("Ab fünf Exemplaren gibt es zehn Prozent Rabatt")
     void appliesBulkDiscount() {
         Book book = new Book();
         book.setIsbn("978-0-13-468599-1");
@@ -47,7 +47,7 @@ class BookServiceTest {
     }
 
     @Test
-    @DisplayName("Unter fuenf Exemplaren gibt es keinen Rabatt")
+    @DisplayName("Unter fünf Exemplaren gibt es keinen Rabatt")
     void appliesNoDiscountBelowThreshold() {
         Book book = new Book();
         book.setIsbn("978-0-13-468599-1");
@@ -57,9 +57,9 @@ class BookServiceTest {
         BigDecimal total = bookService.totalFor("978-0-13-468599-1", 4);
 
         assertThat(total).isEqualByComparingTo(new BigDecimal("400.00"));
-        // Das Stubbing oben arbeitet mit anyString() — wuerde der Service
-        // eine falsche ISBN ans Repository durchreichen, faende die
-        // Rueckgabewert-Pruefung das nicht. Erst dieses verify deckt es
+        // Das Stubbing oben arbeitet mit anyString() — würde der Service
+        // eine falsche ISBN ans Repository durchreichen, fände die
+        // Rückgabewert-Prüfung das nicht. Erst dieses verify deckt es
         // auf: genau ein Aufruf, und zwar mit der echten ISBN.
         verify(bookRepository, times(1)).findByIsbn("978-0-13-468599-1");
     }

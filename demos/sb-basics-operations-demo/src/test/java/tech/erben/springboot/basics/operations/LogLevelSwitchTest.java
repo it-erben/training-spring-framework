@@ -21,12 +21,12 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Die Demo-Pointe als Test: Das Log-Level fuer {@code tech.erben} wird
- * zur Laufzeit ueber {@code POST /actuator/loggers/tech.erben} von
+ * Die Demo-Pointe als Test: Das Log-Level für {@code tech.erben} wird
+ * zur Laufzeit über {@code POST /actuator/loggers/tech.erben} von
  * {@code INFO} auf {@code DEBUG} umgestellt — die {@code debug}-Zeilen
  * aus dem {@link OrderService} erscheinen erst nach dem Umschalten in
  * der Konsole, vorher nicht. {@link OutputCaptureExtension} schneidet
- * die Konsolenausgabe mit, damit der Test das tatsaechlich beweist.
+ * die Konsolenausgabe mit, damit der Test das tatsächlich beweist.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureTestRestTemplate
@@ -40,8 +40,8 @@ class LogLevelSwitchTest {
 
     @AfterEach
     void resetLogLevel() {
-        // Logger-Level sind JVM-weiter Zustand — zuruecksetzen, damit
-        // andere Tests nicht ploetzlich mit DEBUG laufen.
+        // Logger-Level sind JVM-weiter Zustand — zurücksetzen, damit
+        // andere Tests nicht plötzlich mit DEBUG laufen.
         postLogLevel("INFO");
     }
 
@@ -51,7 +51,7 @@ class LogLevelSwitchTest {
         restTemplate.getForEntity("/api/orders", String.class);
 
         String beforeSwitch = output.getOut();
-        assertThat(beforeSwitch).contains("Bestelluebersicht angefragt");
+        assertThat(beforeSwitch).contains("Bestellübersicht angefragt");
         assertThat(beforeSwitch).doesNotContain(DEBUG_LINE);
 
         ResponseEntity<Void> switched = postLogLevel("DEBUG");

@@ -1,5 +1,5 @@
--- Testdaten fuer BookRepositoryTest: zwei Autoren, drei Buecher.
--- Zwei Buecher von Joshua Bloch mit "Java" im Titel, davon eines unter 40 Euro.
+-- Testdaten für BookRepositoryTest: zwei Autoren, drei Bücher.
+-- Zwei Bücher von Joshua Bloch mit "Java" im Titel, davon eines unter 40 Euro.
 insert into author (id, name) values (1, 'Joshua Bloch');
 insert into author (id, name) values (2, 'Eric Evans');
 

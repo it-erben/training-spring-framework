@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 /**
- * Fachlogik mit Transaktionsgrenzen. {@code @Transactional} sorgt dafuer,
+ * Fachlogik mit Transaktionsgrenzen. {@code @Transactional} sorgt dafür,
  * dass jede Methode komplett oder gar nicht wirkt: Commit am normalen Ende,
  * Rollback bei einer RuntimeException.
  */
@@ -21,9 +21,9 @@ public class BookService {
     }
 
     /**
-     * Hebt alle Preise um den Faktor an. Auffaellig: nirgendwo ein
+     * Hebt alle Preise um den Faktor an. Auffällig: nirgendwo ein
      * {@code save()} — die geladenen Entities sind innerhalb der
-     * Transaktion "managed", Hibernate erkennt die Aenderung per Dirty
+     * Transaktion "managed", Hibernate erkennt die Änderung per Dirty
      * Checking und schreibt beim Commit die UPDATE-Statements selbst.
      */
     @Transactional
@@ -32,9 +32,9 @@ public class BookService {
     }
 
     /**
-     * Dieselbe Preisaenderung, aber danach fliegt absichtlich eine
+     * Dieselbe Preisänderung, aber danach fliegt absichtlich eine
      * {@link IllegalStateException} — die Rollback-Demo. Das {@code flush()}
-     * zwingt Hibernate, die UPDATE-Statements sofort auszufuehren: Sie
+     * zwingt Hibernate, die UPDATE-Statements sofort auszuführen: Sie
      * erscheinen im Log, und trotzdem steht nach dem Rollback wieder der
      * alte Preis in der Datenbank.
      */
@@ -43,7 +43,7 @@ public class BookService {
         applyFactor(factor);
         bookRepository.flush();
         throw new IllegalStateException(
-                "Absichtlicher Fehler nach der Preisaenderung — die Transaktion rollt zurueck");
+                "Absichtlicher Fehler nach der Preisänderung — die Transaktion rollt zurück");
     }
 
     private void applyFactor(BigDecimal factor) {

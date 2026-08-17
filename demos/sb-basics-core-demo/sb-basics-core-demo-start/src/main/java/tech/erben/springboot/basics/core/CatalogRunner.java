@@ -8,12 +8,12 @@ import java.time.LocalDate;
 
 /**
  * Soll nach dem Start des Containers den Katalog mit Brutto- und
- * Nettopreisen ausgeben. Solange die Klasse keine Bean ist, laeuft sie
+ * Nettopreisen ausgeben. Solange die Klasse keine Bean ist, läuft sie
  * nicht. Der {@link ObjectProvider} nutzt {@code getIfAvailable()}, damit
- * der Runner auch laeuft, solange {@link PrototypeCounter} noch keine
+ * der Runner auch läuft, solange {@link PrototypeCounter} noch keine
  * Bean ist.
  */
-// TODO: Modul 00 — Schritt 3: mit @Component als Bean deklarieren — erst dann laeuft der Runner beim Start
+// TODO: Modul 00 — Schritt 3: mit @Component als Bean deklarieren — erst dann läuft der Runner beim Start
 public class CatalogRunner implements CommandLineRunner {
 
     private final BookService bookService;

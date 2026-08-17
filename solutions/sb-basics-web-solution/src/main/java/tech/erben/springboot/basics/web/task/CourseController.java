@@ -17,8 +17,8 @@ import java.net.URI;
 import java.util.List;
 
 /**
- * Loesung Aufgaben 1-3: REST-Schnittstelle der Kursverwaltung. Der
- * Controller uebersetzt nur zwischen HTTP und Fachlogik — die eigentliche
+ * Lösung Aufgaben 1-3: REST-Schnittstelle der Kursverwaltung. Der
+ * Controller übersetzt nur zwischen HTTP und Fachlogik — die eigentliche
  * Arbeit macht der {@link CourseService}.
  */
 @RestController
@@ -31,7 +31,7 @@ public class CourseController {
         this.courseService = courseService;
     }
 
-    /** Aufgabe 1: {@code GET /api/courses} — 200 mit allen Kursen inklusive Bruttogebuehr. */
+    /** Aufgabe 1: {@code GET /api/courses} — 200 mit allen Kursen inklusive Bruttogebühr. */
     @GetMapping
     public List<CourseResponse> list() {
         return courseService.findAll().stream()
@@ -42,7 +42,7 @@ public class CourseController {
     /**
      * Aufgabe 2: {@code GET /api/courses/{code}} — 200 mit dem Kurs. Bei
      * unbekanntem Code wirft der Service eine {@link CourseNotFoundException},
-     * die der {@link RestExceptionHandler} in 404 uebersetzt.
+     * die der {@link RestExceptionHandler} in 404 übersetzt.
      */
     @GetMapping("/{code}")
     public CourseResponse get(@PathVariable String code) {
@@ -51,8 +51,8 @@ public class CourseController {
 
     /**
      * Aufgabe 3: {@code POST /api/courses} — 201 mit Location-Header auf die
-     * neue Ressource. {@code @Valid} loest die Bean-Validation-Pruefung des
-     * {@link CourseRequest} aus (Aufgabe 4); schlaegt sie fehl, kommt es gar
+     * neue Ressource. {@code @Valid} löst die Bean-Validation-Prüfung des
+     * {@link CourseRequest} aus (Aufgabe 4); schlägt sie fehl, kommt es gar
      * nicht erst bis in diese Methode (400).
      */
     @PostMapping
@@ -65,7 +65,7 @@ public class CourseController {
 
     /**
      * Aufgabe 3: {@code DELETE /api/courses/{code}} — 204 ohne Body. Bei
-     * unbekanntem Code wieder 404 ueber den Exception-Handler.
+     * unbekanntem Code wieder 404 über den Exception-Handler.
      */
     @DeleteMapping("/{code}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -75,8 +75,8 @@ public class CourseController {
 
     /**
      * Bonusaufgabe: {@code PUT /api/courses/{code}} — 200 mit dem
-     * aktualisierten Kurs. Der Code aus dem Pfad gewinnt gegenueber dem
-     * Body; unbekannter Code → 404 ueber den Exception-Handler.
+     * aktualisierten Kurs. Der Code aus dem Pfad gewinnt gegenüber dem
+     * Body; unbekannter Code → 404 über den Exception-Handler.
      */
     @PutMapping("/{code}")
     public CourseResponse update(@PathVariable String code,

@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 /**
- * Schlaegt 19 % Mehrwertsteuer auf den Nettopreis auf. Hier fehlen zwei
+ * Schlägt 19 % Mehrwertsteuer auf den Nettopreis auf. Hier fehlen zwei
  * Annotationen: die Bean-Deklaration und der Vorrang bei Mehrdeutigkeit.
  */
 // TODO: Modul 00 — Schritt 2: mit @Component("grossPriceCalculator") als Bean deklarieren

@@ -2,7 +2,7 @@ package tech.erben.springboot.basics.core;
 
 /**
  * Konfigurationswerte aus {@code application.properties}. Der Wert von
- * {@code shop.name} soll spaeter injiziert werden.
+ * {@code shop.name} soll später injiziert werden.
  */
 // TODO: Modul 00 — Schritt 3: mit @Component als Bean deklarieren
 public class ShopProperties {

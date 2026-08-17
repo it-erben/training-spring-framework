@@ -17,9 +17,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * Integrationstest: {@code RANDOM_PORT} startet die komplette Anwendung
  * mit echtem Tomcat und In-Memory-H2, das {@link TestRestTemplate} schickt
- * echte HTTP-Requests dagegen. Hier ist nichts gemockt — dafuer ist dieser
+ * echte HTTP-Requests dagegen. Hier ist nichts gemockt — dafür ist dieser
  * Test die mit Abstand langsamste der drei Testarten. Jeder Test benutzt
- * eine eigene ISBN, damit die Tests unabhaengig von ihrer Reihenfolge
+ * eine eigene ISBN, damit die Tests unabhängig von ihrer Reihenfolge
  * bleiben (der Kontext und damit die Datenbank wird zwischen den Tests
  * nicht neu gestartet).
  */
@@ -52,7 +52,7 @@ class BookstoreIntegrationTest {
         assertThat(fetched.getBody()).isNotNull();
         assertThat(fetched.getBody().getTitle()).isEqualTo("Refactoring");
         // Die Id vergibt erst die Datenbank — sie beweist, dass das Buch
-        // wirklich gespeichert wurde und nicht nur der Request zurueckkam.
+        // wirklich gespeichert wurde und nicht nur der Request zurückkam.
         assertThat(fetched.getBody().getId()).isNotNull();
     }
 

@@ -16,7 +16,7 @@ public class BookService {
 
     public BookService(BookRepository bookRepository,
                        PriceCalculator defaultCalculator,
-                       // TODO: Modul 00 — Schritt 4: @Qualifier("netPriceCalculator") an diesen Parameter — der unqualifizierte davor behaelt die @Primary-Bean
+                       // TODO: Modul 00 — Schritt 4: @Qualifier("netPriceCalculator") an diesen Parameter — der unqualifizierte davor behält die @Primary-Bean
                        PriceCalculator netCalculator) {
         this.bookRepository = bookRepository;
         this.defaultCalculator = defaultCalculator;
@@ -32,7 +32,7 @@ public class BookService {
         return defaultCalculator.calculate(book);
     }
 
-    /** Nettopreis — berechnet vom explizit gewaehlten Kalkulator. */
+    /** Nettopreis — berechnet vom explizit gewählten Kalkulator. */
     public BigDecimal netPriceFor(Book book) {
         return netCalculator.calculate(book);
     }

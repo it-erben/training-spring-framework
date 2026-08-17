@@ -36,14 +36,14 @@
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
 
-        <!-- Bean Validation fuer die Annotationen am Book-Modell. -->
+        <!-- Bean Validation für die Annotationen am Book-Modell. -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
 
-        <!-- In-Memory-Datenbank, nur zur Laufzeit noetig — im Integrationstest
-             faehrt sie mit der ganzen Anwendung hoch. -->
+        <!-- In-Memory-Datenbank, nur zur Laufzeit nötig — im Integrationstest
+             fährt sie mit der ganzen Anwendung hoch. -->
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
@@ -51,7 +51,7 @@
         </dependency>
 
         <!-- JUnit 5, Mockito, AssertJ und der Spring-Test-Support —
-             die Basis fuer alle drei Testarten. -->
+             die Basis für alle drei Testarten. -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -66,7 +66,7 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- TestRestTemplate fuer den Integrationstest: Der Client selbst
+        <!-- TestRestTemplate für den Integrationstest: Der Client selbst
              steckt im restclient-test-Starter, seine Basis (RestTemplateBuilder)
              im restclient-Starter — beide nur im Test-Scope. -->
         <dependency>
@@ -89,16 +89,16 @@
                 <version>${maven-compiler-plugin.version}</version>
                 <configuration>
                     <compilerArgs>
-                        <!-- Erhaelt Parameternamen im Bytecode — noetig, damit
+                        <!-- Erhält Parameternamen im Bytecode — nötig, damit
                              Spring @PathVariable und @RequestParam ohne
-                             explizites Namensattribut aufloesen kann. -->
+                             explizites Namensattribut auflösen kann. -->
                         <arg>-parameters</arg>
                     </compilerArgs>
                 </configuration>
             </plugin>
             <!-- Ohne spring-boot-starter-parent muss das repackage-Goal
                  explizit gebunden werden — erst dadurch wird aus dem normalen
-                 Jar ein ausfuehrbares Fat-JAR. -->
+                 Jar ein ausführbares Fat-JAR. -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>

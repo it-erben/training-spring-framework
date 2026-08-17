@@ -6,9 +6,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 
 /**
- * Die Kurs-Entity aus Modul 03, reduziert auf das, was diese Uebung
+ * Die Kurs-Entity aus Modul 03, reduziert auf das, was diese Übung
  * braucht: {@code seats} legt fest, wie viele Anmeldungen der Kurs
- * maximal vertraegt.
+ * maximal verträgt.
  */
 @Entity
 public class Course {
@@ -23,7 +23,7 @@ public class Course {
     private String title;
     private int seats;
 
-    /** Von JPA gefordert — Hibernate instanziiert Entities ueber diesen Konstruktor. */
+    /** Von JPA gefordert, Hibernate instanziiert Entities über diesen Konstruktor. */
     protected Course() {
     }
 

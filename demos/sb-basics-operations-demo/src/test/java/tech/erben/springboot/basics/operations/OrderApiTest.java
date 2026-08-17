@@ -12,8 +12,8 @@ import org.springframework.http.ResponseEntity;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Der fachliche Endpoint der Demo: eine kleine Bestelluebersicht der
- * Buchhandlung, an der sich das Logging beobachten laesst.
+ * Der fachliche Endpoint der Demo: eine kleine Bestellübersicht der
+ * Buchhandlung, an der sich das Logging beobachten lässt.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureTestRestTemplate

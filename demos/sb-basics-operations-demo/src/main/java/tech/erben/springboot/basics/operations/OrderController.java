@@ -10,9 +10,9 @@ import java.util.List;
 
 /**
  * Ein bewusst schlichter Endpoint, der bei jedem Aufruf auf {@code info}
- * und {@code debug} loggt. So laesst sich am selben Request beobachten,
- * welche Zeilen das konfigurierte Log-Level durchlaesst — und was sich
- * aendert, sobald der Actuator das Level zur Laufzeit umstellt.
+ * und {@code debug} loggt. So lässt sich am selben Request beobachten,
+ * welche Zeilen das konfigurierte Log-Level durchlässt — und was sich
+ * ändert, sobald der Actuator das Level zur Laufzeit umstellt.
  */
 @RestController
 @RequestMapping("/api/orders")
@@ -28,7 +28,7 @@ public class OrderController {
 
     @GetMapping
     public List<OrderService.Order> orders() {
-        log.info("Bestelluebersicht angefragt");
+        log.info("Bestellübersicht angefragt");
         List<OrderService.Order> orders = orderService.findAll();
         log.debug("Liefere {} Bestellungen aus", orders.size());
         return orders;

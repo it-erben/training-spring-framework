@@ -11,7 +11,7 @@
     </parent>
 
     <!-- Statt spring-boot-starter-parent: BOM-Import. Das Dependency-
-         Management von Spring Boot (abgestimmte Versionen fuer alle
+         Management von Spring Boot (abgestimmte Versionen für alle
          Bibliotheken) kommt so in dieses Projekt, ohne dass Spring Boot
          der Maven-Parent sein muss. -->
     <dependencyManagement>
@@ -27,17 +27,17 @@
     </dependencyManagement>
 
     <dependencies>
-        <!-- Ein Starter buendelt alles fuer einen Anwendungsfall: Spring MVC,
-             Jackson und der eingebettete Tomcat kommen ueber diese eine
-             Abhaengigkeit — keine Versionen noetig, das regelt die BOM. -->
+        <!-- Ein Starter bündelt alles für einen Anwendungsfall: Spring MVC,
+             Jackson und der eingebettete Tomcat kommen über diese eine
+             Abhängigkeit — keine Versionen nötig, das regelt die BOM. -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
-        <!-- Erzeugt Metadaten fuer @ConfigurationProperties, damit die IDE
-             shop.name & Co. in application.properties vervollstaendigt.
-             Nur zur Build-Zeit noetig, landet nicht im Jar. -->
+        <!-- Erzeugt Metadaten für @ConfigurationProperties, damit die IDE
+             shop.name & Co. in application.properties vervollständigt.
+             Nur zur Build-Zeit nötig, landet nicht im Jar. -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
@@ -45,8 +45,8 @@
             <optional>true</optional>
         </dependency>
 
-        <!-- Automatischer Neustart bei Klassenaenderungen waehrend der
-             Entwicklung. optional: wird nicht an abhaengige Module vererbt;
+        <!-- Automatischer Neustart bei Klassenänderungen während der
+             Entwicklung. optional: wird nicht an abhängige Module vererbt;
              im Fat-JAR ist DevTools ohnehin deaktiviert. -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -61,12 +61,12 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- Web-Test-Support (u.a. TestRestTemplate) fuer den End-to-End-
+        <!-- Web-Test-Support (u.a. TestRestTemplate) für den End-to-End-
              Test gegen den echten eingebetteten Tomcat — seit Spring Boot 4
              ein eigener Starter neben spring-boot-starter-test. Das
-             TestRestTemplate braucht zusaetzlich den RestTemplateBuilder
+             TestRestTemplate braucht zusätzlich den RestTemplateBuilder
              aus dem restclient-Starter; test-Scope, damit die Anwendung
-             selbst bei genau einer Web-Abhaengigkeit bleibt. -->
+             selbst bei genau einer Web-Abhängigkeit bleibt. -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webmvc-test</artifactId>
@@ -93,7 +93,7 @@
             </plugin>
             <!-- Ohne spring-boot-starter-parent muss das repackage-Goal
                  explizit gebunden werden — erst dadurch wird aus dem
-                 normalen Jar ein ausfuehrbares Fat-JAR. -->
+                 normalen Jar ein ausführbares Fat-JAR. -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>

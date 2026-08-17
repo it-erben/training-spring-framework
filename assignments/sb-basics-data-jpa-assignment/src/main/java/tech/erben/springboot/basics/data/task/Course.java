@@ -4,28 +4,28 @@ import java.math.BigDecimal;
 
 /**
  * Ein Kurs aus dem Schulungskatalog. Felder, Konstruktoren und Getter sind
- * fertig — aber JPA kennt diese Klasse noch nicht: Es fehlt jede Annotation.
+ * fertig, aber JPA kennt diese Klasse noch nicht: Es fehlt jede Annotation.
  * Genau daran scheitert der Start des Spring-Kontexts
  * ({@code Not a managed type}), denn das {@link CourseRepository} verlangt
- * eine Entity. Aufgabe 1 macht aus der Klasse eine.
+ * eine Entity. Aufgabe 1 macht aus der Klasse eine solche Entity.
  */
-// TODO: Modul 03 — Aufgabe 1: Klasse mit @Entity als JPA-Entity markieren
+// TODO: Modul 03, Aufgabe 1: Klasse mit @Entity als JPA-Entity markieren
 public class Course {
 
-    // TODO: Modul 03 — Aufgabe 1: id mit @Id und @GeneratedValue zum Primaerschluessel machen
+    // TODO: Modul 03, Aufgabe 1: id mit @Id und @GeneratedValue zum Primärschlüssel machen
     private Long id;
 
-    // TODO: Modul 03 — Aufgabe 1: code mit @Column(unique = true) gegen Duplikate absichern
+    // TODO: Modul 03, Aufgabe 1: code mit @Column(unique = true) gegen Duplikate absichern
     private String code;
 
     private String title;
     private int seats;
     private BigDecimal netFee;
 
-    // TODO: Modul 03 — Aufgabe 1: trainer mit @ManyToOne als Beziehung mappen (daraus wird die Spalte trainer_id)
+    // TODO: Modul 03, Aufgabe 1: trainer mit @ManyToOne als Beziehung mappen (daraus wird die Spalte trainer_id)
     private Trainer trainer;
 
-    /** Von JPA gefordert — Hibernate instanziiert Entities ueber diesen Konstruktor. */
+    /** Von JPA gefordert — Hibernate instanziiert Entities über diesen Konstruktor. */
     protected Course() {
     }
 

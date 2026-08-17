@@ -8,7 +8,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * Zeigt den Unterschied zwischen Singleton- und Prototype-Scope: Bei
  * {@code @Scope("prototype")} erzeugt der Container bei jeder Anfrage eine
- * neue Instanz — der statische Zaehler macht das sichtbar.
+ * neue Instanz — der statische Zähler macht das sichtbar.
  */
 @Component
 @Scope("prototype")

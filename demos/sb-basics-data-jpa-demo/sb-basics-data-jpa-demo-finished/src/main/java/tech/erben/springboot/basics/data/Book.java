@@ -9,8 +9,8 @@ import jakarta.persistence.ManyToOne;
 import java.math.BigDecimal;
 
 /**
- * JPA-Entity fuer ein Buch. Anders als die Records aus Modul 02 braucht
- * eine Entity einen parameterlosen Konstruktor und veraenderbare Felder —
+ * JPA-Entity für ein Buch. Anders als die Records aus Modul 02 braucht
+ * eine Entity einen parameterlosen Konstruktor und veränderbare Felder —
  * Hibernate erzeugt Instanzen per Reflection und schreibt die Spaltenwerte
  * direkt hinein. Aus der Klasse entsteht per {@code ddl-auto=create-drop}
  * beim Start die Tabelle {@code book}.
@@ -27,16 +27,16 @@ public class Book {
     private BigDecimal netPrice;
 
     /**
-     * Viele Buecher gehoeren zu einem Autor — daraus entsteht die
-     * Fremdschluessel-Spalte {@code author_id}. Das Cascade sorgt dafuer,
+     * Viele Bücher gehören zu einem Autor — daraus entsteht die
+     * Fremdschlüssel-Spalte {@code author_id}. Das Cascade sorgt dafür,
      * dass ein noch nicht gespeicherter Autor beim Speichern des Buchs
-     * mitgespeichert wird (bequem fuer das Seeding im
+     * mitgespeichert wird (bequem für das Seeding im
      * {@link SeedDataRunner}).
      */
     @ManyToOne(cascade = CascadeType.PERSIST)
     private Author author;
 
-    /** Von JPA gefordert — Hibernate instanziiert Entities ueber diesen Konstruktor. */
+    /** Von JPA gefordert — Hibernate instanziiert Entities über diesen Konstruktor. */
     protected Book() {
     }
 

@@ -9,10 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * JPA-Entity fuer einen Autor. Die Gegenseite der Beziehung: {@code mappedBy}
- * sagt Hibernate, dass die Fremdschluessel-Spalte bereits durch
- * {@link Book#getAuthor()} definiert ist — sonst entstuende eine zweite,
- * ueberfluessige Verknuepfungstabelle.
+ * JPA-Entity für einen Autor. Die Gegenseite der Beziehung: {@code mappedBy}
+ * sagt Hibernate, dass die Fremdschlüssel-Spalte bereits durch
+ * {@link Book#getAuthor()} definiert ist — sonst entstünde eine zweite,
+ * überflüssige Verknüpfungstabelle.
  */
 @Entity
 public class Author {
@@ -26,7 +26,7 @@ public class Author {
     @OneToMany(mappedBy = "author")
     private List<Book> books = new ArrayList<>();
 
-    /** Von JPA gefordert — Hibernate instanziiert Entities ueber diesen Konstruktor. */
+    /** Von JPA gefordert — Hibernate instanziiert Entities über diesen Konstruktor. */
     protected Author() {
     }
 

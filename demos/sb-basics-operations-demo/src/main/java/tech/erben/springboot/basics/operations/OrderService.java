@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Erzeugt Beispielbestellungen der Buchhandlung. Die {@code debug}-Zeilen
  * hier sind der Kern der Demo: Bei dem konfigurierten Level {@code INFO}
- * bleiben sie unsichtbar — bis das Level zur Laufzeit ueber
+ * bleiben sie unsichtbar — bis das Level zur Laufzeit über
  * {@code POST /actuator/loggers/tech.erben} auf {@code DEBUG} umgestellt
  * wird. Kein Neustart, kein Deployment.
  */

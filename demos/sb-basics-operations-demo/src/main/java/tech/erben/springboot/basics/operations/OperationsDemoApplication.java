@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 /**
  * Einstiegspunkt der Betriebs-Demo. Die Anwendung selbst ist bewusst
  * klein — im Mittelpunkt stehen die Actuator-Endpoints und das, was
- * Spring Boot fuer den Betrieb mitbringt, ohne dass hier eine einzige
+ * Spring Boot für den Betrieb mitbringt, ohne dass hier eine einzige
  * Zeile Betriebscode steht.
  */
 @SpringBootApplication

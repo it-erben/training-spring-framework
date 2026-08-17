@@ -1,6 +1,6 @@
--- Testdaten fuer CourseRepositoryTest: zwei Trainer, vier Kurse.
--- Zwei Kurse mit "Spring" im Titel, zwei mit mehr als 10 Plaetzen,
--- zwei mit einer Netto-Gebuehr zwischen 1400 und 1700 Euro.
+-- Testdaten für CourseRepositoryTest: zwei Trainer, vier Kurse.
+-- Zwei Kurse mit "Spring" im Titel, zwei mit mehr als 10 Plätzen,
+-- zwei mit einer Netto-Gebühr zwischen 1400 und 1700 Euro.
 insert into trainer (id, name, email) values (1, 'Erika Muster', 'erika.muster@example.org');
 insert into trainer (id, name, email) values (2, 'Max Beispiel', 'max.beispiel@example.org');
 

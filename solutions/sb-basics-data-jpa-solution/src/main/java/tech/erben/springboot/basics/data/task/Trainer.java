@@ -5,8 +5,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 
 /**
- * JPA-Entity fuer einen Trainer — war bereits fertig gemappt und ist
- * unveraendert geblieben.
+ * JPA-Entity für einen Trainer — war bereits fertig gemappt und ist
+ * unverändert geblieben.
  */
 @Entity
 public class Trainer {
@@ -18,7 +18,7 @@ public class Trainer {
     private String name;
     private String email;
 
-    /** Von JPA gefordert — Hibernate instanziiert Entities ueber diesen Konstruktor. */
+    /** Von JPA gefordert — Hibernate instanziiert Entities über diesen Konstruktor. */
     protected Trainer() {
     }
 

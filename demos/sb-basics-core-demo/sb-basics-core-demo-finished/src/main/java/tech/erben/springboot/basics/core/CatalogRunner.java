@@ -8,11 +8,11 @@ import java.time.Clock;
 import java.time.LocalDate;
 
 /**
- * Laeuft nach dem Start des Containers und gibt den Katalog mit Brutto-
+ * Läuft nach dem Start des Containers und gibt den Katalog mit Brutto-
  * und Nettopreisen aus. Der {@link ObjectProvider} holt zwei
  * {@link PrototypeCounter}-Instanzen und macht so den Prototype-Scope
  * sichtbar — {@code getIfAvailable()} statt {@code getObject()}, damit der
- * Runner auch laeuft, solange {@link PrototypeCounter} in der Live-Demo
+ * Runner auch läuft, solange {@link PrototypeCounter} in der Live-Demo
  * noch keine Bean ist.
  */
 @Component

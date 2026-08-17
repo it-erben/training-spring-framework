@@ -16,12 +16,12 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
- * Loesung zu Aufgabe 1: Unit-Test ohne Spring-Kontext. Die
- * {@link MockitoExtension} erzeugt fuer jedes {@code @Mock}-Feld ein
+ * Lösung zu Aufgabe 1: Unit-Test ohne Spring-Kontext. Die
+ * {@link MockitoExtension} erzeugt für jedes {@code @Mock}-Feld ein
  * Mock-Objekt und injiziert beide in das {@code @InjectMocks}-Feld.
  * Getestet wird die Platz-Bedingung genau an ihrer Grenze: Bei zwei
- * Plaetzen entscheidet die zweite Anmeldung (eine vorhanden → letzter
- * freier Platz) gegen die dritte (zwei vorhanden → voll). Nur so faellt
+ * Plätzen entscheidet die zweite Anmeldung (eine vorhanden → letzter
+ * freier Platz) gegen die dritte (zwei vorhanden → voll). Nur so fällt
  * auf, wenn aus {@code <} ein {@code <=} wird.
  */
 @ExtendWith(MockitoExtension.class)
@@ -50,7 +50,7 @@ class ParticipantServiceTest {
     }
 
     @Test
-    @DisplayName("Ist der Kurs voll, kommt false zurueck und nichts wird gespeichert")
+    @DisplayName("Ist der Kurs voll, kommt false zurück und nichts wird gespeichert")
     void rejectsWhenCourseIsFull() {
         Course course = new Course("SPRING-ADV", "Spring Boot Advanced", 2);
         when(courseRepository.findByCode("SPRING-ADV")).thenReturn(Optional.of(course));
@@ -59,10 +59,10 @@ class ParticipantServiceTest {
         boolean registered = participantService.register("SPRING-ADV", "ben@example.com");
 
         assertThat(registered).isFalse();
-        // Der Rueckgabewert allein reicht nicht: Wuerde der Service trotz
-        // vollem Kurs speichern, faende die false-Pruefung das nicht.
+        // Der Rückgabewert allein reicht nicht: Würde der Service trotz
+        // vollem Kurs speichern, fände die false-Prüfung das nicht.
         // Erst dieses verify stellt sicher, dass wirklich nichts in der
-        // Datenbank landen wuerde.
+        // Datenbank landen würde.
         verify(participantRepository, never()).save(any(Participant.class));
     }
 }

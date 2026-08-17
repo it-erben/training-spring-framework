@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * In-Memory-Implementierung mit drei festen Buechern.
+ * In-Memory-Implementierung mit drei festen Büchern.
  */
 // TODO: Modul 00 — Schritt 1: mit @Repository als Bean deklarieren
 public class InMemoryBookRepository implements BookRepository {

@@ -13,7 +13,7 @@ import java.util.Optional;
  * Laufzeit ein Proxy-Objekt, das CRUD ({@code save}, {@code findAll},
  * {@code deleteAll}, ...) aus {@link JpaRepository} erbt und die Derived
  * Queries aus den Methodennamen ableitet. Wo der Name nicht mehr lesbar
- * waere, hilft {@link Query} mit JPQL.
+ * wäre, hilft {@link Query} mit JPQL.
  */
 public interface BookRepository extends JpaRepository<Book, Long> {
 
@@ -27,7 +27,7 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     List<Book> findByNetPriceLessThan(BigDecimal limit);
 
     /**
-     * JPQL statt Methodennamen-Magie: {@code b.author.name} navigiert ueber
+     * JPQL statt Methodennamen-Magie: {@code b.author.name} navigiert über
      * die Beziehung — Hibernate macht daraus einen Join auf {@code author}.
      */
     @Query("select b from Book b where b.author.name = :name")

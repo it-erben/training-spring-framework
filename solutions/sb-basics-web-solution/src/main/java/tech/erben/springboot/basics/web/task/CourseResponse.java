@@ -4,9 +4,9 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 /**
- * Loesung Aufgabe 1: Ausgabe-DTO der REST-Schnittstelle. Zusaetzlich zum
- * Domaenenmodell enthaelt es die berechnete Bruttogebuehr (19 %
- * Mehrwertsteuer) — ein typischer Grund, nach aussen ein eigenes DTO
+ * Lösung Aufgabe 1: Ausgabe-DTO der REST-Schnittstelle. Zusätzlich zum
+ * Domänenmodell enthält es die berechnete Bruttogebühr (19 %
+ * Mehrwertsteuer) — ein typischer Grund, nach außen ein eigenes DTO
  * statt der internen Klasse zu verwenden.
  */
 public record CourseResponse(String code, String title, int seats,

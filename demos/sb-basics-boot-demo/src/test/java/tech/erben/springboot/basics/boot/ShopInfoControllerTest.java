@@ -20,9 +20,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * End-to-End-Test gegen den echten Web-Stack: {@code RANDOM_PORT} startet
  * den eingebetteten Tomcat, den die AutoConfiguration allein aus der
- * Abhaengigkeit {@code spring-boot-starter-web} aufsetzt — genau das
+ * Abhängigkeit {@code spring-boot-starter-web} aufsetzt — genau das
  * belegt dieser Test nebenbei. Ohne aktives Profil muss {@code GET /info}
- * die unveraenderten Basis-Properties und eine leere Profil-Liste liefern.
+ * die unveränderten Basis-Properties und eine leere Profil-Liste liefern.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureTestRestTemplate

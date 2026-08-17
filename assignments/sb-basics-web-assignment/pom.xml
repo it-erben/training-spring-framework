@@ -13,8 +13,8 @@
 
     <properties>
         <!-- Die Tests sind Aufgabenstellung, nicht Regression. Im
-             Gesamtbuild werden sie uebersprungen; die Absicherung
-             uebernimmt solutions/sb-basics-web-solution. Zum Pruefen
+             Gesamtbuild werden sie übersprungen; die Absicherung
+             übernimmt solutions/sb-basics-web-solution. Zum Prüfen
              des roten Ausgangszustands: -DskipAssignmentTests=false -->
         <skipAssignmentTests>true</skipAssignmentTests>
     </properties>
@@ -33,7 +33,7 @@
 
     <dependencies>
         <!-- Spring MVC, Jackson und der eingebettete Tomcat — der komplette
-             Web-Stack ueber eine einzige Abhaengigkeit. -->
+             Web-Stack über eine einzige Abhängigkeit. -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -69,9 +69,9 @@
                 <version>${maven-compiler-plugin.version}</version>
                 <configuration>
                     <compilerArgs>
-                        <!-- Erhaelt Parameternamen im Bytecode — noetig, damit
+                        <!-- Erhält Parameternamen im Bytecode — nötig, damit
                              Spring @PathVariable ohne explizites Namensattribut
-                             aufloesen kann. -->
+                             auflösen kann. -->
                         <arg>-parameters</arg>
                     </compilerArgs>
                 </configuration>

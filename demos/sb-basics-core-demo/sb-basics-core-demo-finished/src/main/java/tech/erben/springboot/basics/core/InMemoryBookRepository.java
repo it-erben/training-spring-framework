@@ -7,9 +7,9 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * In-Memory-Implementierung mit drei festen Buechern. {@code @Repository}
+ * In-Memory-Implementierung mit drei festen Büchern. {@code @Repository}
  * macht die Klasse zur Bean — der Container instanziiert sie und injiziert
- * sie ueberall dort, wo ein {@link BookRepository} verlangt wird.
+ * sie überall dort, wo ein {@link BookRepository} verlangt wird.
  */
 @Repository
 public class InMemoryBookRepository implements BookRepository {

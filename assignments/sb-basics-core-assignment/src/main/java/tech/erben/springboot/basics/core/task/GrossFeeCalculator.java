@@ -4,9 +4,9 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 /**
- * Schlaegt 19 % Mehrwertsteuer auf die Nettogebuehr auf. Soll der Standard
+ * Schlägt 19 % Mehrwertsteuer auf die Nettogebühr auf. Soll der Standard
  * sein, wenn ein {@link FeeCalculator} ohne {@code @Qualifier} injiziert
- * wird — dafuer braucht es neben der Bean-Deklaration noch eine zweite
+ * wird, dafür braucht es neben der Bean-Deklaration noch eine zweite
  * Annotation.
  */
 // TODO Aufgabe 2: als Spring-Bean deklarieren und zum Standard-Kalkulator machen

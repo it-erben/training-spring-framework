@@ -14,12 +14,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- * Loesung zu Aufgabe 2: Slice-Test. {@code @WebMvcTest} startet nur die
+ * Lösung zu Aufgabe 2: Slice-Test. {@code @WebMvcTest} startet nur die
  * MVC-Schicht — Controller, Advice-Klassen und die JSON-Serialisierung.
  * Der {@link ParticipantService} wird per {@code @MockitoBean} ersetzt
  * (der Nachfolger von {@code @MockBean}, das es in Spring Boot 4 nicht
- * mehr gibt): Was das Mock zurueckgibt, entscheidet der Test — geprueft
- * wird nur noch die Uebersetzung in Statuscodes.
+ * mehr gibt): Was das Mock zurückgibt, entscheidet der Test — geprüft
+ * wird nur noch die Übersetzung in Statuscodes.
  */
 @WebMvcTest(ParticipantController.class)
 class ParticipantControllerWebMvcTest {

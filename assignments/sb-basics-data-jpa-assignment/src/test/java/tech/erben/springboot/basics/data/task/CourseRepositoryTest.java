@@ -11,8 +11,8 @@ import java.math.BigDecimal;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Misst den Fortschritt der Uebung. Achtung: Solange der Spring-Kontext
- * nicht hochkommt, fallen alle fuenf Tests gemeinsam durch — Details dazu
+ * Misst den Fortschritt der Übung. Achtung: Solange der Spring-Kontext
+ * nicht hochkommt, fallen alle fünf Tests gemeinsam durch — Details dazu
  * stehen in der README.
  */
 @DataJpaTest
@@ -23,7 +23,7 @@ class CourseRepositoryTest {
     private CourseRepository courseRepository;
 
     @Test
-    @DisplayName("Ohne Zutun: findByCode findet einen Kurs ueber den eindeutigen Code")
+    @DisplayName("Ohne Zutun: findByCode findet einen Kurs über den eindeutigen Code")
     void findsByCode() {
         assertThat(courseRepository.findByCode("SB-ADV"))
                 .hasValueSatisfying(course -> {
@@ -33,7 +33,7 @@ class CourseRepositoryTest {
     }
 
     @Test
-    @DisplayName("Ohne Zutun: findByTitleContainingIgnoreCase sucht Titelfragmente unabhaengig von Gross-/Kleinschreibung")
+    @DisplayName("Ohne Zutun: findByTitleContainingIgnoreCase sucht Titelfragmente unabhängig von Groß-/Kleinschreibung")
     void findsByTitleFragment() {
         assertThat(courseRepository.findByTitleContainingIgnoreCase("SPRING"))
                 .extracting(Course::getCode)
@@ -49,7 +49,7 @@ class CourseRepositoryTest {
     }
 
     @Test
-    @DisplayName("Aufgabe 2: findByFeeRange liefert genau die Kurse im Gebuehrenbereich (inklusive Grenzen)")
+    @DisplayName("Aufgabe 2: findByFeeRange liefert genau die Kurse im Gebührenbereich (inklusive Grenzen)")
     void findsByFeeRange() {
         assertThat(courseRepository.findByFeeRange(new BigDecimal("1450.00"), new BigDecimal("1700.00")))
                 .extracting(Course::getCode)
