@@ -24,7 +24,7 @@ public class ProductService {
         this.repository = repository;
         this.meterRegistry = meterRegistry;
         this.productsCreatedCounter = Counter
-                .builder("products.created")
+                .builder("products.creations")
                 .description("Number of successfully created products")
                 .register(meterRegistry);
         this.productsRejectedCounter = Counter

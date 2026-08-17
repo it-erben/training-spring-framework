@@ -11,7 +11,7 @@ Nachrichtenaustausch mit Spring Boot und RabbitMQ: Topic- und Fanout-Routing, De
 | Dead-Letter-Exchange `orders.dlx` | Beide Order-Queues lenken abgelehnte Nachrichten nach `orders.dlq` um |
 | Acknowledge | `orders.standard` läuft mit Auto-Ack, `orders.priority` über eine eigene Listener-Container-Factory mit `AcknowledgeMode.MANUAL` |
 | Publisher Confirms und Returns | Das `RabbitTemplate` loggt, was RabbitMQ ablehnt |
-| Nachrichtenformat | JSON über `Jackson2JsonMessageConverter`, Records werden automatisch serialisiert |
+| Nachrichtenformat | JSON über `JacksonJsonMessageConverter`, Records werden automatisch serialisiert |
 
 ## Wo im Code
 
@@ -30,7 +30,7 @@ Nachrichtenaustausch mit Spring Boot und RabbitMQ: Topic- und Fanout-Routing, De
 ## Starten
 
 ```bash
-cd sb-advanced-messaging-amqp
+cd sb-advanced-messaging-amqp-demo
 mvn spring-boot:run
 ```
 

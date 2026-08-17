@@ -1,6 +1,6 @@
 # OAuth2 Login Demo (GitHub)
 
-Schwestermodul zu `sb-advanced-security-basic`: Zeigt einen OAuth2 Login via GitHub (Authorization Code Flow) mit Spring Security.
+Schwestermodul zu `sb-advanced-security-basic-demo`: Zeigt einen OAuth2 Login via GitHub (Authorization Code Flow) mit Spring Security.
 
 ## Setup GitHub OAuth App
 
@@ -20,15 +20,15 @@ Schwestermodul zu `sb-advanced-security-basic`: Zeigt einen OAuth2 Login via Git
 ## Starten
 
 ```bash
-mvn -f ../pom.xml -pl sb-advanced-security-oauth2 -am spring-boot:run
+mvn -f ../pom.xml -pl sb-advanced-security-oauth2-demo -am spring-boot:run
 ```
 
 ## Was gezeigt wird
 
 - `/` (Thymeleaf-View): Login-Button (`/oauth2/authorization/github`), nach Login Anzeige der GitHub-Profile-Attribute, Logout-Link.
 - `/api/me`: Gibt den `OAuth2User` (Attribute, Principal-Name) plus Access-Token-Vorschau zurück.
-- Security: Alle Routen außer `"/", "/index.html", "/css/**", "/webjars/**"` sind geschützt; Login erfolgt via GitHub, Logout leitet zurück auf `/`.
+- Security: Alle Routen außer `"/", "/index", "/index.html", "/css/**", "/webjars/**"` sind geschützt; Login erfolgt via GitHub, Logout leitet zurück auf `/`.
 
 ## Optional: GitHub API call
 
-Mit dem Access Token kannst du z.B. `curl -H "Authorization: Bearer <token>" https://api.github.com/user/repos` testen. In der Anwendung ist das Token nur gekürzt sichtbar (`accessTokenPreview`), um es nicht versehentlich zu leaken.
+Mit dem Access Token lässt sich z.B. `curl -H "Authorization: Bearer <token>" https://api.github.com/user/repos` testen. In der Anwendung ist das Token nur gekürzt sichtbar (`accessTokenPreview`), um es nicht versehentlich zu leaken.

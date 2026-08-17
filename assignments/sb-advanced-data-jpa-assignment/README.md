@@ -11,27 +11,37 @@ und Modifying Queries.
    * Füge ein Feld `PublisherInfo publisherInfo` hinzu (`@Embedded`).
    * Füge Auditing-Felder hinzu: `createdAt` und `updatedAt` (`LocalDateTime`)
    und annotiere sie mit den richtigen Annotationen (`@CreatedDate`,
-   `@LastModifiedDate` )
-   * Vergiss nicht `@EntityListeners(AuditingEntityListener.class)` an der
-   Entity und `@EnableJpaAuditing` an der Applikation!
+   `@LastModifiedDate`)
+   * Annotiere die Entity mit `@EntityListeners(AuditingEntityListener.class)`.
+   `@EnableJpaAuditing` steht bereits an `LibraryApplication`.
 
 ## Aufgabe 2: One-to-Many Beziehung & EntityGraph
 
-1. Erstelle eine Entity `Review` mit `String comment`, `int rating` (1-5) und
-   einer `id`.
-2. Füge der `Book`-Entity eine Liste von Reviews hinzu (`@OneToMany`).
-3. Erstelle im `BookRepository` eine Methode
-   `findWithReviewsByTitle(String title)`, die mittels `@EntityGraph` die
-   Reviews sofort mitlädt (Eager Fetching).
+1. Erstelle eine Entity `Review` mit `String comment`, `int rating` (1-5, nur
+   dokumentarisch — keine Bean-Validation-Abhängigkeit im Modul) und einer
+   `id` (`@Id`/`@GeneratedValue`, analog zu `Book`).
+2. Füge der `Book`-Entity eine Liste von Reviews hinzu (`@OneToMany`,
+   unidirektional genügt, z. B. mit `@JoinColumn`). Kaskadiert Persist/Merge
+   (`CascadeType.ALL`) — sonst scheitert das Speichern eines Books mit
+   Reviews an einer transienten Entity-Referenz.
+3. Erstelle im `BookRepository` die Methode
+   `List<Book> findWithReviewsByTitle(String title)`, die mittels
+   `@EntityGraph(attributePaths = "reviews")` die Reviews sofort mitlädt
+   (Eager Fetching).
 
 ## Aufgabe 3: Projections & DTOs
 
 1. **Interface Projection**: Wir wollen manchmal nur den Buchtitel und die ISBN
-   sehen. Erstelle ein Interface `BookIdentity` mit entsprechenden
-   Getter-Methoden. Füge eine Query-Methode im Repository hinzu.
-2. **DTO mit JPQL**: Erstelle eine Klasse `BookAuthorDTO` (Felder: `title`,
-   `authorName`). Schreibe eine JPQL-Query im Repository, die dieses DTO direkt
-   befüllt (`SELECT new ...`).
+   sehen. Erstelle ein Interface `BookIdentity` mit `getTitle()` und
+   `getIsbn()`. Ergänze im Repository die Methode
+   `List<BookIdentity> findAllBy()` (Spring-Data-Konvention für "alle
+   Datensätze, aber projiziert" — kein Filterkriterium im Methodennamen).
+2. **DTO mit JPQL**: Erstelle eine Klasse `BookAuthorDTO` (keine Record-Klasse;
+   Felder `title`, `authorName` mit Gettern). Schreibe im Repository die
+   Methode `List<BookAuthorDTO> findAllBookAuthorDTOs()` mit einer
+   JPQL-Konstruktor-Query (`SELECT new ...`), die dieses DTO direkt befüllt.
+   Die Query braucht den vollqualifizierten Klassennamen des DTOs
+   (`tech.erben.springboot.datajpa.task.BookAuthorDTO`).
 
 ## Aufgabe 4: Runner Implementation
 

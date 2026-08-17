@@ -31,7 +31,7 @@ Alle Klassen liegen in `src/main/java` unter
 | `CourseAdminApplication` | Fertig - Einstiegspunkt mit `@SpringBootApplication`               |
 | `Course`, `Trainer`      | Fertig - Records für die Fachdaten                                 |
 | `CourseCatalog`          | Fertig - Interface für den Katalogzugriff                          |
-| `InMemoryCourseCatalog`  | Logik fertig, **Bean-Deklaration fehlt**                           |
+| `InMemoryCourseCatalog`  | Logik fertig, **Bean-Deklaration fehlt** (`@Repository`)           |
 | `FeeCalculator`          | Fertig - Interface für die Gebührenberechnung                      |
 | `GrossFeeCalculator`     | Logik fertig, **Bean-Deklaration und Standard-Markierung fehlen**  |
 | `NetFeeCalculator`       | Logik fertig, **Bean-Deklaration fehlt**                           |
@@ -52,8 +52,7 @@ der Fehlermeldung: Die `NoSuchBeanDefinitionException` nennt immer die
 ## Aufgaben
 
 1. **Katalog und Service als Beans aufsetzen** (Test: *Aufgabe 1*)
-    - Bitte deklariert `InMemoryCourseCatalog` mit einer passenden
-      Stereotyp-Annotation als Bean.
+    - Bitte deklariert `InMemoryCourseCatalog` mit `@Repository` als Bean.
     - Bitte deklariert außerdem `CourseService` als Bean und schreibt den
       Konstruktor, der alle drei Abhängigkeiten entgegennimmt und den Feldern
       zuweist.
@@ -65,8 +64,8 @@ der Fehlermeldung: Die `NoSuchBeanDefinitionException` nennt immer die
       weitere Angabe injected wird.
 3. **Netto-Rechner gezielt auswählen** (Test: *Aufgabe 3*)
     - Deklariert `NetFeeCalculator` als Bean mit dem Namen `netFeeCalculator`.
-    - Wählt diese Bean im Konstruktor des `CourseService` per `@Qualifier` für
-      das Feld `netCalculator` aus.
+    - Wählt diese Bean im Konstruktor des `CourseService` per
+      `@Qualifier("netFeeCalculator")` für das Feld `netCalculator` aus.
 4. **Fremdklasse per `@Bean`-Methode bereitstellen** (Test: *Aufgabe 4*)
     - `TrainerDirectory` steht stellvertretend für eine Klasse aus einer fremden
       Bibliothek - ihr dürft sie nicht verändern und könnt sie daher nicht
@@ -82,7 +81,8 @@ mvn test -DskipAssignmentTests=false
 
 ## Bonusaufgabe (optional)
 
-- Deklariert `RegistrationCounter` als Bean mit `@Scope("prototype")`.
+- Deklariert `RegistrationCounter` als Bean (`@Component`) mit
+  `@Scope("prototype")`.
 - Weist nach, dass der Container pro Anfrage eine neue Instanz erzeugt: Holt
   euch im Test (oder über einen `CommandLineRunner`) zweimal eine Instanz, z.B.
   per `ObjectProvider<RegistrationCounter>` und vergleicht die

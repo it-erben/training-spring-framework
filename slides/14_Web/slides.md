@@ -825,8 +825,8 @@ Java 21+ bietet auch **Structured Concurrency** für parallele Tasks:
 
 ```java
 try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
-    Supplier<User> userTask = scope.fork(() -> userService.getUser(id));
-    Supplier<List<Order>> ordersTask = scope.fork(() -> orderService.getOrders(id));
+    StructuredTaskScope.Subtask<User> userTask = scope.fork(() -> userService.getUser(id));
+    StructuredTaskScope.Subtask<List<Order>> ordersTask = scope.fork(() -> orderService.getOrders(id));
 
     scope.join();           // Warte auf alle
     scope.throwIfFailed();  // Exception bei Fehler

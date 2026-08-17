@@ -43,7 +43,7 @@ section {
 2. **`Authentication`**: Repräsentiert den aktuell eingeloggten Benutzer.
     * Enthält `principal` (User-Details), `credentials` (Passwort), `authorities` (Rollen/Berechtigungen).
 3. **`AuthenticationManager`**: Schnittstelle zur Authentifizierung eines `Authentication`-Objekts.
-4. **`AuthenticationProvider`**: Implementierung des `AuthenticationManager`, der die eigentliche Logik zur Überprüfung der Anmeldedaten enthält (z.B. `DaoAuthenticationProvider` für Datenbank-User).
+4. **`AuthenticationProvider`**: Eigenständige Schnittstelle, an die der `AuthenticationManager` (i.d.R. `ProviderManager`) delegiert; enthält die eigentliche Logik zur Überprüfung der Anmeldedaten (z.B. `DaoAuthenticationProvider` für Datenbank-User).
 5. **`UserDetailsService`**: Lädt user-spezifische Daten (Username, Passwort, Rollen) zur Authentifizierung.
 
 ---
@@ -696,9 +696,15 @@ public RestClient mtlsRestClient() throws Exception {
     KeyStore trustStore = KeyStore.getInstance("PKCS12");
     trustStore.load(new FileInputStream("truststore.p12"), "changeit".toCharArray());
 
-    SSLContext sslContext = SSLContextBuilder.create()
-        .loadKeyMaterial(keyStore, "changeit".toCharArray())
-        .loadTrustMaterial(trustStore, null)
+    KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+    keyManagerFactory.init(keyStore, "changeit".toCharArray());
+
+    TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+    trustManagerFactory.init(trustStore);
+
+    SslContext sslContext = SslContextBuilder.forClient()
+        .keyManager(keyManagerFactory)
+        .trustManager(trustManagerFactory)
         .build();
 
     HttpClient httpClient = HttpClient.create()

@@ -840,7 +840,7 @@ public class OutboxEvent {
 public class OrderService {
 
     @Transactional
-    public Order createOrder(Order order) {
+    public Order createOrder(Order order) throws JsonProcessingException {
         // 1. Business-Daten speichern
         Order saved = orderRepository.save(order);
 

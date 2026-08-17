@@ -51,7 +51,7 @@ public class Order {
     @Id
     @GeneratedValue
     private Long id;
-    private final String product;
+    private String product;
 
     public Order(String product) {
         this.product = product;
@@ -70,15 +70,15 @@ public class Customer {
     @Id
     @GeneratedValue
     private Long id;
-    private final String firstName;
-    private final String lastName;
+    private String firstName;
+    private String lastName;
 
     @Embedded
-    private final Address address;
+    private Address address;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id")
-    private final List<Order> orders = new ArrayList<>();
+    private List<Order> orders = new ArrayList<>();
 
     @CreatedDate
     private LocalDateTime createdDate;

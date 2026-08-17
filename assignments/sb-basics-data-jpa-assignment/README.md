@@ -73,11 +73,13 @@ abgeleiteten Methoden sind sofort grün.
     - Lasst die Tests laufen und lest die Fehlermeldung: Sie sollte jetzt
       `feeRange` statt `Not a managed type` nennen. Das ist Aufgabe 2.
 2. **`findByFeeRange` eine Query mitgeben** (Test: *Aufgabe 2*)
-    - Annotiert die Methode mit `@Query` und schreibt JPQL, das alle Kurse
-      liefert, deren `netFee` zwischen `min` und `max` liegt (inklusive der
-      Grenzen: dafür nutzt man `between`).
-    - Bindet die beiden Argumente mit `@Param` an die benannten Parameter der
-      Query.
+    - Annotiert die Methode mit `@Query`
+      (`org.springframework.data.jpa.repository.Query`) und schreibt JPQL, das
+      alle Kurse liefert, deren `netFee` zwischen `min` und `max` liegt
+      (inklusive der Grenzen: dafür nutzt man `between`).
+    - Bindet die beiden Argumente mit `@Param`
+      (`org.springframework.data.repository.query.Param`) an die benannten
+      Parameter der Query.
     - Sobald eine `@Query` an der Methode steht, ist der Name nur noch ein Name.
       Spring Data versucht keine Ableitung mehr.
 3. **`findSummaries` als Konstruktor-Projektion schreiben** (Test: *Aufgabe 3*)

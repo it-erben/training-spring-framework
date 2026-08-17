@@ -98,8 +98,8 @@ Woher weiß Hibernate, wie die Tabelle aussieht? Das wird per **Konvention** abg
 
 ```text
 Hibernate: create sequence book_seq start with 1 increment by 50
-Hibernate: create table book (net_price numeric(38,2), id bigint not null,
-    author_id bigint, isbn varchar(255), title varchar(255), primary key (id))
+Hibernate: create table book (net_price numeric(38,2), author_id bigint,
+    id bigint not null, isbn varchar(255), title varchar(255), primary key (id))
 ```
 
 * Klasse `Book` → Tabelle `book`, Feld `netPrice` → Spalte `net_price`. camelCase wird zu snake_case.

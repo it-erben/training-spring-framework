@@ -240,7 +240,7 @@ public class FeatureToggleEndpoint {
         return Map.of("featureEnabled", featureEnabled);
     }
 
-    @WriteOperation // POST /actuator/featureToggle (mit Body)
+    @WriteOperation // POST /actuator/featureToggle/{featureName}
     public Map<String, Object> setFeatureStatus(@Selector String featureName, boolean enabled) {
         if ("myAdvancedFeature".equals(featureName)) {
             this.featureEnabled = enabled;
@@ -528,9 +528,9 @@ Metrik (hohe Latenz) → Exemplar (traceId) → Trace → Root Cause
 public class ExemplarConfig {
 
     @Bean
-    public DefaultExemplarSampler exemplarSampler(SpanContextSupplier supplier) {
+    public SpanContext spanContext() {
         // Nur bei aktiven Traces Exemplars erzeugen
-        return new DefaultExemplarSampler(supplier);
+        return new MySpanContext();
     }
 }
 ```

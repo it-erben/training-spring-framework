@@ -41,8 +41,14 @@ Mutationsprobe am Ende):
 | `CourseNotFoundException`, `RestExceptionHandler` | Unbekannter Kurscode → `404`                                                                                                         |
 
 Auch die POM ist fertig: Alle Test-Abhängigkeiten (`spring-boot-starter-test`,
-`spring-boot-starter-webmvc-test`, `spring-boot-starter-restclient` und
-`-restclient-test`) liegen schon bereit. Ihr konzentriert euch aufs Testen.
+`spring-boot-starter-webmvc-test` und `spring-boot-starter-restclient`) liegen
+schon bereit. Ihr konzentriert euch aufs Testen.
+
+Legt eure Testklassen unter
+`src/test/java/tech/erben/springboot/basics/testing/task` an — dasselbe
+Package wie die jeweilige Produktivklasse. Namenskonvention:
+`ParticipantServiceTest`, `ParticipantControllerWebMvcTest`,
+`ParticipantRegistrationIntegrationTest`.
 
 ## Aufgaben
 
@@ -60,8 +66,11 @@ Auch die POM ist fertig: Alle Test-Abhängigkeiten (`spring-boot-starter-test`,
       halb leere Kurs, sondern der letzte freie Platz gegen den vollen Kurs.
 2. **`@WebMvcTest` für `ParticipantController`** (Vorbild:
    `BookControllerWebMvcTest`)
-    - Startet mit `@WebMvcTest(ParticipantController.class)` nur die MVC-Schicht
-      und ersetzt den `ParticipantService` per `@MockitoBean`.
+    - Startet mit `@WebMvcTest(ParticipantController.class)`
+      (`org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest` — seit
+      Spring Boot 4 ein anderes Package als in Spring Boot 3) nur die
+      MVC-Schicht und ersetzt den `ParticipantService` per `@MockitoBean`
+      (`org.springframework.test.context.bean.override.mockito.MockitoBean`).
     - Testfall 1: Das Mock meldet Erfolg (`true`) - der `POST` liefert `201` und
       den Location-Header.
     - Testfall 2: Das Mock meldet ausgebucht (`false`) - der `POST` liefert
@@ -70,13 +79,23 @@ Auch die POM ist fertig: Alle Test-Abhängigkeiten (`spring-boot-starter-test`,
    `BookstoreIntegrationTest`)
     - Startet die ganze Anwendung mit
       `@SpringBootTest(webEnvironment = RANDOM_PORT)` und
-      `@AutoConfigureTestRestTemplate`.
+      `@AutoConfigureTestRestTemplate`
+      (`org.springframework.boot.resttestclient.TestRestTemplate` und
+      `org.springframework.boot.resttestclient.autoconfigure.AutoConfigureTestRestTemplate`
+      — beide seit Spring Boot 4 in einem eigenen Package).
     - Meldet per echtem HTTP-Request einen Teilnehmer an und prüft die Antwort —
       die beim Start angelegten Kurse (`SPRING-BASICS`, `SPRING-COMPACT`) sind
       eure Testdaten.
     - Tipp: Der Kurs `SPRING-COMPACT` hat genau einen Platz. Meldet zweimal an —
       erst wenn die zweite Anmeldung mit `409` abgelehnt wird, ist bewiesen,
       dass die erste wirklich in der Datenbank gelandet ist.
+4. **Mutationsprobe** (nach den ersten drei Aufgaben)
+    - Ändert in `ParticipantService.register` testweise die
+      Platzbedingung (z. B. `<` zu `<=`) und lasst alle drei Testarten laufen.
+    - Beobachtet, welche Tests rot werden und welche grün bleiben (der
+      `@WebMvcTest` mockt den Service und bleibt unabhängig von der
+      Bedingung grün).
+    - Macht die Änderung danach wieder rückgängig.
 
 ## Bonusaufgabe (optional)
 

@@ -28,7 +28,6 @@ public class ProductController {
     }
 
     /**
-     * Gets a product by ID.
      * Protected by Rate Limiter to prevent API abuse.
      */
     @GetMapping("/{id}")
@@ -67,9 +66,6 @@ public class ProductController {
                 ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).build());
     }
 
-    /**
-     * Exception handler for ProductNotFoundException.
-     */
     @ExceptionHandler(ProductService.ProductNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleProductNotFound(ProductService.ProductNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)

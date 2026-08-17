@@ -31,7 +31,7 @@ import static org.assertj.core.api.Assertions.tuple;
 class PersonRepositoryTest {
 
     private static final DockerImageName MONGO_IMAGE =
-            DockerImageName.parse("mongo:latest");
+            DockerImageName.parse("mongo:8.2");
 
     @Container
     static MongoDBContainer mongoDBContainer = new MongoDBContainer(MONGO_IMAGE);

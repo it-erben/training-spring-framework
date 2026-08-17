@@ -36,7 +36,13 @@
   in den Commit.
 - Deklarative Fakten schreiben. Keine Personalpronomen („ich“, „wir“, „du“).
   Keine Leseransprache: kein „beachte, dass…“, „wie man sieht…“, „wir haben uns
-  entschieden…“, „das sollte helfen…“.
+  entschieden…“, „das sollte helfen…“. Die Regel gilt für Dokumentation, die
+  ein Artefakt beschreibt. Ausgenommen sind Texte, die Teilnehmer zum Handeln
+  auffordern — Aufgabenstellungen und die Schritt-für-Schritt-Anleitungen der
+  `*-start`-Module —, unabhängig vom Verzeichnis, in dem sie liegen.
+  Maßgeblich ist die Textsorte: Eine README, die als Aufgabenstellung
+  formuliert ist, fällt auch unter die Ausnahme, wenn sie unter `demos/` oder
+  `solutions/` liegt statt unter `assignments/`.
 - Nicht erzählen. Keine Historie, was zuerst versucht wurde, was scheiterte oder
   welche Alternativen erwogen wurden.
 - Keine Füll-Verben ohne Konkretes. „Aufräumen“, „verbessern“, „refactoren“
@@ -79,16 +85,29 @@ bleiben synchron.
 - **Die `TODO`-Marken in `*-start`-Modulen und Assignments sind Lehrmaterial
   und bleiben stehen.** Sie markieren die Handgriffe des Live-Codings. Die
   Regel zum Entfernen von TODO-Markern gilt für sie nicht.
-- **Assignment-Tests sind im Ausgangszustand rot** und werden im
-  Gesamtbuild über die Property `skipAssignmentTests` übersprungen. Kein
-  Assignment-Test darf im Ausgangszustand grün sein. Sichtbar machen mit
-  `-DskipAssignmentTests=false`.
+- **Assignments, die Tests mitbringen, starten im Ausgangszustand rot** und
+  werden im Gesamtbuild über die Property `skipAssignmentTests`
+  übersprungen. Kein Assignment-Test darf im Ausgangszustand grün sein.
+  Sichtbar machen mit `-DskipAssignmentTests=false`. Nicht jedes Assignment
+  bringt Tests mit: `sb-advanced-actuator-micrometer-assignment` hat kein
+  Testverzeichnis, die Prüfung läuft laut seiner README über `curl`;
+  `sb-advanced-testing-assignment` hat kein `pom.xml` und keinen Eintrag in
+  `assignments/pom.xml`, der `skipAssignmentTests`-Mechanismus greift dort
+  strukturell nicht. In `sb-advanced-data-mongodb-assignment` und
+  `sb-advanced-data-jpa-assignment` hängt an derselben Property auch das
+  Kompilieren der Tests (`default-testCompile`), nicht nur ihre Ausführung —
+  die Tests referenzieren Klassen, die erst die Übung anlegt. Dort schlägt
+  `-DskipAssignmentTests=false` am Compile fehl, nicht erst am Test.
 - **Jeder Zwischenschritt** einer `-start`-README muss lauffähig sein. Ein
   `package`-Lauf beweist das nicht — die Schritte einzeln anwenden und
   starten.
-- **Demos nutzen eine Buchhandlung, Übungen eine Kursverwaltung.** Die
-  Trennung verhindert, dass die Demo-Lösung in die Übung kopierbar ist.
+- **Im Basis-Block nutzen Demos eine Buchhandlung, Übungen eine
+  Kursverwaltung.** Die Trennung verhindert, dass die Demo-Lösung in die
+  Übung kopierbar ist. Der Advanced-Block folgt keiner einheitlichen Domäne.
 - Kein Lombok in den Basis-Modulen. Kein `spring-boot-starter-parent`: Das
-  Root-POM definiert nur die Property `spring-boot.version`, jedes Leaf-POM
-  importiert `spring-boot-dependencies` selbst. Ein lauffähiges Fat-JAR
-  braucht deshalb eine explizite `repackage`-Execution.
+  Root-POM liefert nur gemeinsame Properties (`spring-boot.version`,
+  `spring-cloud.version`, `maven-compiler-plugin.version`,
+  `project.build.sourceEncoding`, Compiler-Version und -Ziel,
+  `datafaker.version`), jedes Leaf-POM importiert `spring-boot-dependencies`
+  selbst. Ein
+  lauffähiges Fat-JAR braucht deshalb eine explizite `repackage`-Execution.

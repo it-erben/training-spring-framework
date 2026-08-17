@@ -11,6 +11,13 @@
 
     <artifactId>sb-advanced-data-jpa-assignment</artifactId>
 
+    <properties>
+        <!-- Die Tests sind Aufgabenstellung, nicht Regression. Im
+             Gesamtbuild werden sie übersprungen. Zum Prüfen des roten
+             Ausgangszustands: -DskipAssignmentTests=false -->
+        <skipAssignmentTests>true</skipAssignmentTests>
+    </properties>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -41,6 +48,11 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa-test</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -60,6 +72,26 @@
                     <compilerArgs>
                         <arg>-parameters</arg>
                     </compilerArgs>
+                </configuration>
+                <executions>
+                    <!-- Aufgabe 2 und 3 lassen den Testcode gegen Review,
+                         BookIdentity und BookAuthorDTO kompilieren, die erst
+                         die Übung selbst schafft. Deshalb hängt auch das
+                         Kompilieren der Tests an skipAssignmentTests, nicht
+                         nur ihre Ausführung. -->
+                    <execution>
+                        <id>default-testCompile</id>
+                        <configuration>
+                            <skip>${skipAssignmentTests}</skip>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <skipTests>${skipAssignmentTests}</skipTests>
                 </configuration>
             </plugin>
             <plugin>

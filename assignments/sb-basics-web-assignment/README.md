@@ -33,7 +33,7 @@ Alle Klassen liegen in `src/main/java` unter
 | `Course`                          | Das interne Domänenmodell als Record                  |
 | `CourseService`                   | In-Memory-Verwaltung, wirft `CourseNotFoundException` |
 | `CourseNotFoundException`         | Die fachliche Ausnahme für unbekannte Kurscodes       |
-| `CourseController`                | **Fehlt komplett**: baut ihr in Aufgabe 1–3           |
+| `CourseController`                | **Fehlt komplett**: baut ihr in Aufgabe 1–4           |
 | `CourseResponse`, `CourseRequest` | **Fehlen komplett**: baut ihr in Aufgabe 1 und 3      |
 | `RestExceptionHandler`            | **Fehlt komplett**: baut ihr in Aufgabe 2 und 4       |
 | `CourseControllerTest`            | Fünf Tests als Fortschrittskontrolle                  |
@@ -74,7 +74,8 @@ unbehandelten `CourseNotFoundException` ab (im laufenden Server wäre das ein
     - Legt den Record `CourseRequest` an (`code`, `title`, `seats`, `netFee`)
       mit einer Methode `toCourse()`.
     - Ergänzt `POST /api/courses`: Antwort `201` mit `Location`-Header auf die
-      neue Ressource (`ResponseEntity.created(…)`).
+      neue Ressource (`ResponseEntity.created(…)`). Baut die URI relativ, z. B.
+      mit `URI.create("/api/courses/" + code)`.
     - Ergänzt `DELETE /api/courses/{code}` mit Antwort `204`. Bei unbekanntem
       Code greift automatisch euer Handler aus Aufgabe 2. Der zweite
       Aufgabe-3-Test prüft genau diese Kette: erst `204`, beim zweiten Löschen

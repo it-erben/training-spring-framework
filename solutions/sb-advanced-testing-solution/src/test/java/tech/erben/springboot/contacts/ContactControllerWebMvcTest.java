@@ -27,7 +27,6 @@ class ContactControllerWebMvcTest {
 
     @Test
     void postContacts_returns201_whenValid() throws Exception {
-        // Given
         Contact savedContact = new Contact("Max", "Mustermann", "max.mustermann@example.com");
         savedContact.setId(1L);
 
@@ -41,7 +40,6 @@ class ContactControllerWebMvcTest {
                 }
                 """;
 
-        // When & Then
         mockMvc.perform(post("/contacts")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestJson))
@@ -54,7 +52,6 @@ class ContactControllerWebMvcTest {
 
     @Test
     void getContacts_delegatesToService_andReturns200() throws Exception {
-        // Given
         Contact contact1 = new Contact("Max", "Schmidt", "max.schmidt@example.com");
         contact1.setId(1L);
         Contact contact2 = new Contact("Anna", "Schneider", "anna.schneider@example.com");
@@ -62,7 +59,6 @@ class ContactControllerWebMvcTest {
 
         when(contactService.searchByLastNamePrefix("Sch")).thenReturn(List.of(contact1, contact2));
 
-        // When & Then
         mockMvc.perform(get("/contacts")
                         .param("lastNamePrefix", "Sch")
                         .accept(MediaType.APPLICATION_JSON))
@@ -74,10 +70,8 @@ class ContactControllerWebMvcTest {
 
     @Test
     void getContacts_returnsEmptyList_whenNoMatches() throws Exception {
-        // Given
         when(contactService.searchByLastNamePrefix("XYZ")).thenReturn(List.of());
 
-        // When & Then
         mockMvc.perform(get("/contacts")
                         .param("lastNamePrefix", "XYZ")
                         .accept(MediaType.APPLICATION_JSON))

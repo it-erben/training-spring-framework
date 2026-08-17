@@ -11,13 +11,17 @@ Starte im Projekt "sb-advanced-autoconfiguration-demo-start"
 ## 1 Tomcat embedded
 
 Wir steigen damit ein, dass wir uns einen Tomcat "as code" zusammenschrauben.
-Erzeuge eine leere tech.erben.various.Main-Klasse mit tech.erben.various.Main-Methode. Füge die folgende Dependency zur POM hinzu:
+Zeige die vorhandene Klasse `tech.erben.springboot.SampleApplication` mit
+ihrer main-Methode — das Modul ist nicht leer, es enthält bereits den
+vollständigen Code bis einschließlich Abschnitt "Conditional Datasource
+nach Properties" weiter unten. Die folgende Dependency ist bereits in der
+POM enthalten:
 
 ```xml
             <dependency>
                 <groupId>org.apache.tomcat.embed</groupId>
                 <artifactId>tomcat-embed-core</artifactId>
-                <version>10.1.11</version>
+                <version>11.0.18</version>
             </dependency>
 ```
 
@@ -72,7 +76,7 @@ Als nächstes "springifizieren" wir das Projekt. Erwähne, dass in Legacy-Projek
 <dependency>
     <groupId>org.springframework</groupId>
     <artifactId>spring-context</artifactId>
-    <version>6.1.2</version>
+    <version>7.0.3</version>
 </dependency>
 ```
 
@@ -231,23 +235,26 @@ Füge Dependencies für H2 und Spring-JDBC ein
 <dependency>
     <groupId>org.springframework</groupId>
     <artifactId>spring-jdbc</artifactId>
-    <version>6.1.2</version>
+    <version>7.0.3</version>
 </dependency>
 <dependency>
     <groupId>com.h2database</groupId>
     <artifactId>h2</artifactId>
-    <version>2.2.224</version>
+    <version>2.4.240</version>
 </dependency>
 ```
 
-Erstelle eine `application.properties` mit folgendem Inhalt:
+Die `application.properties` des Moduls braucht beide Properties:
 
 ```properties
 spring.jdbc.url=jdbc:h2:mem:
 spring.jdbc.driver=org.h2.Driver
 ```
 
-Füge eine Bean für die `DataSource` hinzu und erläutere, dass sie url und driver braucht, die ja aber in den Properties definiert wurden.
+Im Ist-Zustand des `-start`-Moduls fehlt `spring.jdbc.driver` — nur die
+URL ist gesetzt. Füge eine Bean für die `DataSource` hinzu und erläutere,
+dass sie url und driver braucht, die ja aber in den Properties definiert
+werden sollen.
 
 ```java
 
@@ -296,8 +303,13 @@ public class DataSourcePropertySetCondition implements Condition {
 }
 ```
 
-Eigentlich würde man hier die URL noch auf wohlgeformtheit und den Driver auf Existenz prüfen.
-Starte die Anwendung und sie sollte noch funktionieren. Entferne eine Zeile aus der `application.properties` und sie sollte nicht mehr funktionieren. Die Bean fehlt (`NoSuchBeanDefinitionException`).
+Eigentlich würde man hier die URL noch auf Wohlgeformtheit und den Driver auf Existenz prüfen.
+In der `application.properties` des `-start`-Moduls fehlt `spring.jdbc.driver`
+bereits — die Anwendung startet im Ist-Zustand nicht und bricht mit
+`NoSuchBeanDefinitionException: No qualifying bean of type
+'javax.sql.DataSource'` ab, weil die Condition beide Properties verlangt.
+Ergänze die Zeile, um zu zeigen, dass die Bean dann wieder entsteht;
+entferne sie danach erneut, um den Effekt in die andere Richtung zu zeigen.
 
 ## Spring Boot Source Code Walk
 
