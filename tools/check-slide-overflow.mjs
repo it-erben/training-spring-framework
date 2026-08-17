@@ -62,7 +62,11 @@ function findChrome() {
  * darum CDP statt --virtual-time-budget.
  */
 const PROBE = `new Promise(function (done, fail) {
-  var STABLE_ROUNDS = 5, POLL_MS = 100, DEADLINE = Date.now() + 45000;
+  var STABLE_ROUNDS = 6, POLL_MS = 100, DEADLINE = Date.now() + 45000;
+  // Mindestlaufzeit zusaetzlich zur Stabilitaet: unter Last kann das
+  // Layout eine halbe Sekunde lang auf einem Zwischenzustand ruhen,
+  // bevor die Schrift wirklich angewandt ist.
+  var MIN_SETTLE_MS = 1200, started = Date.now();
   var last = null, stable = 0;
 
   function sections() { return document.querySelectorAll('section'); }
@@ -76,7 +80,7 @@ const PROBE = `new Promise(function (done, fail) {
     var cur = snapshot();
     stable = cur === last ? stable + 1 : 0;
     last = cur;
-    if (stable >= STABLE_ROUNDS) {
+    if (stable >= STABLE_ROUNDS && Date.now() - started >= MIN_SETTLE_MS) {
       return done([].map.call(sections(), function (s) {
         var cs = getComputedStyle(s);
         return {
