@@ -29,9 +29,8 @@ Flux-Manifeste, keine Subdomain und kein cert-manager betroffen.
 
 ### Repository und Maven-Koordinaten
 
-- GitLab-Repo `gfu/spring-boot-advanced` → `gfu/spring-boot`. GitLab legt
-  beim Rename eine Weiterleitung an, bestehende Clones brechen nicht sofort.
-  Lokales Verzeichnis analog, danach `git remote set-url`.
+- GitLab-Repo `gfu/spring-boot-advanced` → `gfu/spring-framework`. Ablauf und
+  Nachführung in `2026-08-17-repo-rename-spring-framework-design.md`.
 - Root-POM `tech.erben:sb-advanced` → `tech.erben:sb-training`.
 - Aggregatoren: `sb-advanced-assignments` → `sb-training-assignments`, analog
   für `solutions` und `demos`. Verzeichnisnamen bleiben.
