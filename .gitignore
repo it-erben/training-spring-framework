@@ -1,4 +1,6 @@
 .idea
+.bloop/
+.metals/
 **/target
 .npm-cache
 node_modules
