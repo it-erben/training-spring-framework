@@ -96,9 +96,9 @@ public class UserCreateDto {
 
     @Email(message = "Ungültiges E-Mail Format")
     private String email;
-    
+
     // Getter & Setter
-} 
+}
 
 @PostMapping
 public ResponseEntity<User> createUser(@Valid @RequestBody UserCreateDto userDto) {
@@ -121,7 +121,7 @@ public interface OnUpdate {}
 public class UserDto {
     @NotNull(groups = OnUpdate.class) // Nur bei Update nötig
     private Long id;
-    
+
     @NotBlank(groups = OnCreate.class) // Nur bei Create nötig
     private String name;
 }
@@ -219,12 +219,12 @@ Oft reicht der Standard nicht. Wir wollen z.B. eine `traceId` oder spezifische B
 public ProblemDetail handleBusinessException(MyBusinessException ex) {
     ProblemDetail pd = ProblemDetail.forStatusAndDetail(
         HttpStatus.BAD_REQUEST, ex.getMessage());
-    
+
     // Eigene Properties hinzufügen
     pd.setProperty("errorCode", "BUS-001");
     // Angenommen wir haben einen Tracer injectet
     pd.setProperty("traceId", tracer.currentSpan().context().traceId());
-    
+
     return pd;
 }
 ```
@@ -301,14 +301,14 @@ public class ClientConfig {
     @Bean
     UserApi userApi(RestClient.Builder builder) {
         RestClient client = builder.baseUrl("https://user-service").build();
-        
+
         // Nutzt den synchronen RestClient als Engine
         RestClientAdapter adapter = RestClientAdapter.create(client);
-        
+
         HttpServiceProxyFactory factory = HttpServiceProxyFactory
             .builderFor(adapter)
             .build();
-            
+
         return factory.createClient(UserApi.class);
     }
 }
@@ -350,7 +350,7 @@ public class SseController {
     @GetMapping(value = "/events", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter streamEvents() {
         SseEmitter emitter = new SseEmitter();
-        
+
         new Thread(() -> {
             // Hier: Events asynchron an den Emitter senden
             // z.B. aus einem Message Queue Listener oder einem Scheduled Task

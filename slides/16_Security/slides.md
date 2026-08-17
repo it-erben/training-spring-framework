@@ -83,7 +83,7 @@ public class WebSecurityConfig {
             )
             .httpBasic(withDefaults()) // HTTP Basic Auth (optional)
             .formLogin(withDefaults()); // Form-basierte Authentifizierung (optional)
-            
+
             // ... weitere Konfigurationen (z.B. OAuth2, Exception Handling)
 
         return http.build();
@@ -217,7 +217,7 @@ Mit der `@CrossOrigin`-Annotation direkt am Controller oder an Methoden.
 @RequestMapping("/products")
 @CrossOrigin(origins = "http://localhost:3000", methods = {RequestMethod.GET, RequestMethod.POST})
 public class ProductController {
-    
+
     @GetMapping // Erbt @CrossOrigin von der Klasse
     public List<Product> getAllProducts() { /* ... */ }
 

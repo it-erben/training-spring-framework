@@ -357,7 +357,7 @@ Spring Boot instrumentiert automatisch:
 @Bean
 public RestTemplate restTemplate(RestTemplateBuilder builder) {
     // Der Builder fügt Interceptors hinzu, die den 'traceparent' Header setzen
-    return builder.build(); 
+    return builder.build();
 }
 ```
 
@@ -376,7 +376,7 @@ Der Trace-Kontext kann ähnlich wie bei HTTP auch mit den Headern einer Nachrich
 
 public void send() {
     // Schreibt 'traceparent' in die JMS Properties
-    jmsTemplate.convertAndSend("queue.orders", new OrderCmd()); 
+    jmsTemplate.convertAndSend("queue.orders", new OrderCmd());
 }
 ```
 

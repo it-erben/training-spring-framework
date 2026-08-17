@@ -283,7 +283,7 @@ section {
 Ein Extension für Zeitmessung:
 
 ```java
-public class TimingExtension implements 
+public class TimingExtension implements
     BeforeTestExecutionCallback, AfterTestExecutionCallback {
 
     @Override
@@ -295,7 +295,7 @@ public class TimingExtension implements
     public void afterTestExecution(ExtensionContext context) {
         long startTime = getStore(context).remove("START_TIME", long.class);
         long duration = System.currentTimeMillis() - startTime;
-        System.out.printf("Test %s took %d ms.%n", 
+        System.out.printf("Test %s took %d ms.%n",
                           context.getDisplayName(), duration);
     }
 
@@ -428,7 +428,7 @@ class UserJsonTest {
     void testSerialize() throws IOException {
         User user = new User("Alice", 25);
         JsonContent<User> result = json.write(user);
-        
+
         assertThat(result).extractingJsonPathStringValue("$.name")
                           .isEqualTo("Alice");
     }
@@ -550,7 +550,7 @@ Definition eines Containers und manuelles Überschreiben der Properties (`Dynami
 class ClassicIntegrationTest {
 
     @Container
-    static PostgreSQLContainer<?> postgres = 
+    static PostgreSQLContainer<?> postgres =
         new PostgreSQLContainer<>("postgres:15-alpine");
 
     @DynamicPropertySource
@@ -579,12 +579,12 @@ class ModernIntegrationTest {
 
     @Container
     @ServiceConnection // Magie passiert hier
-    static PostgreSQLContainer<?> postgres = 
+    static PostgreSQLContainer<?> postgres =
         new PostgreSQLContainer<>("postgres:15-alpine");
 
     @Container
     @ServiceConnection
-    static RedisContainer redis = 
+    static RedisContainer redis =
         new RedisContainer(DockerImageName.parse("redis:7"));
 
     @Autowired

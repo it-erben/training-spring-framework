@@ -322,7 +322,7 @@ Wenn man in den Startprozess eingreifen muss, **bevor** der ApplicationContext e
 ```java
 public class MyEnvPostProcessor implements EnvironmentPostProcessor {
     @Override
-    public void postProcessEnvironment(ConfigurableEnvironment environment, 
+    public void postProcessEnvironment(ConfigurableEnvironment environment,
                                        SpringApplication application) {
         // Logik hier, z.B. PropertySources hinzufügen
         Map<String, Object> map = new HashMap<>();
@@ -342,11 +342,11 @@ Registrierung in `META-INF/spring/org.springframework.boot.env.EnvironmentPostPr
 Eigene Fehlermeldungen beim Absturz direkt nach dem Start.
 
 ```java
-public class PortInUseFailureAnalyzer 
+public class PortInUseFailureAnalyzer
        extends AbstractFailureAnalyzer<PortInUseException> {
 
     @Override
-    protected FailureAnalysis analyze(Throwable rootFailure, 
+    protected FailureAnalysis analyze(Throwable rootFailure,
                                       PortInUseException cause) {
         return new FailureAnalysis(
             "Port " + cause.getPort() + " is already in use.",

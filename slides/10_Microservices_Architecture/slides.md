@@ -160,7 +160,7 @@ section {
 
 ## Circuit Breaker
 
-* Der Circuit Breaker schützt das Gesamtsystem vor kaskadierenden Fehlern.  
+* Der Circuit Breaker schützt das Gesamtsystem vor kaskadierenden Fehlern.
 * Wenn ein Zielservice nicht erreichbar ist oder zu viele Fehler produziert, werden Aufrufe nicht mehr ausgeführt, sondern *sofort* abgewiesen (Fail Fast).
 * Das verhindert Timeout-Kaskaden und bewahrt freie Ressourcen.
 
@@ -168,8 +168,8 @@ section {
 
 ## Zustände
 
-* **Closed:** Normalbetrieb, Fehler werden beobachtet.  
-* **Open:** Fehlerschwelle überschritten → neue Requests sofort ablehnen.  
+* **Closed:** Normalbetrieb, Fehler werden beobachtet.
+* **Open:** Fehlerschwelle überschritten → neue Requests sofort ablehnen.
 * **Half-Open:** Testphase: Einige Requests werden durchgelassen, um zu prüfen, ob der Service wieder gesund ist.
 
 ![bg right fit](./images/00_circuit_breaker.drawio.svg)
@@ -226,8 +226,8 @@ try {
 
 ## Bulkhead Pattern
 
-* Das Bulkhead-Pattern sorgt dafür, dass Fehler oder Überlast *lokal* bleiben.  
-* Statt alle Anfragen über einen gemeinsamen Thread-Pool laufen zu lassen, isolieren wir kritische Pfade in eigene Ressourcenpools.  
+* Das Bulkhead-Pattern sorgt dafür, dass Fehler oder Überlast *lokal* bleiben.
+* Statt alle Anfragen über einen gemeinsamen Thread-Pool laufen zu lassen, isolieren wir kritische Pfade in eigene Ressourcenpools.
 * So verhindert man, dass etwa ein überlasteter Report-Service das gesamte System blockiert.
 
 ![bg right fit](./images/00_bulkheads.drawio.svg)
@@ -236,10 +236,10 @@ try {
 
 ## Beispiel: ReportService
 
-1. `ReportService` erzeugt viele rechenintensive Reports  
-2. Der globale Thread-Pool ist komplett belegt  
-3. Der Login hängt, obwohl er eigentlich sehr schnell wäre  
-4. Das gesamte System wirkt "kaputt" – obwohl nur ein Teilbereich überlastet ist  
+1. `ReportService` erzeugt viele rechenintensive Reports
+2. Der globale Thread-Pool ist komplett belegt
+3. Der Login hängt, obwohl er eigentlich sehr schnell wäre
+4. Das gesamte System wirkt "kaputt" – obwohl nur ein Teilbereich überlastet ist
 
 ---
 
@@ -314,7 +314,7 @@ public class LoginClient {
 
 ## API Gateway
 
-* Ein API Gateway bündelt Zugriffe auf viele Microservices und stellt für Clients eine einheitliche, stabile Schnittstelle bereit.  
+* Ein API Gateway bündelt Zugriffe auf viele Microservices und stellt für Clients eine einheitliche, stabile Schnittstelle bereit.
 * Statt 20–50 Services einzeln anzusprechen, kommunizieren Browser oder Mobile Apps nur noch mit *einem* Entry Point.
 
 ---
@@ -330,11 +330,11 @@ section {
 `/api/users` → `user-service:8080`
 * **Aggregation**: Mehrere Serviceantworten können in einem einzigen Response kombiniert werden.  
 → Reduziert Netzwerkroundtrips für Clients.
-* **Offloading**: Zentrale Cross-Cutting-Aufgaben:  
-    * Authentifizierung & Autorisierung (OAuth2, JWT)  
-    * Rate Limiting & API-Keys  
-    * SSL/TLS Termination  
-    * Caching  
+* **Offloading**: Zentrale Cross-Cutting-Aufgaben:
+    * Authentifizierung & Autorisierung (OAuth2, JWT)
+    * Rate Limiting & API-Keys
+    * SSL/TLS Termination
+    * Caching
 * **Tools:** Spring Cloud Gateway, NGINX, Kong, Ambassador, Istio (Ingress Gateway)
 
 ---
@@ -384,7 +384,7 @@ public class GatewayConfig {
 
 ## Service Discovery – Wie Services sich finden
 
-* In einer dynamischen Umgebung wie Kubernetes, Cloud oder VMs ändern sich IP-Adressen und Ports ständig.  
+* In einer dynamischen Umgebung wie Kubernetes, Cloud oder VMs ändern sich IP-Adressen und Ports ständig.
 * Service Discovery stellt sicher, dass Services **einander zuverlässig finden**, ohne dass Konfigurationen manuell geändert werden müssen.
 
 ---
@@ -459,8 +459,8 @@ Eine Microservice-Architektur folgt dem Prinzip:
 
 Das ermöglicht:
 
-* verschiedene Umgebungen (dev / test / prod) ohne Neu-Build  
-* schnelle Konfigurationsänderungen  
+* verschiedene Umgebungen (dev / test / prod) ohne Neu-Build
+* schnelle Konfigurationsänderungen
 * bessere Sicherheit (z. B. Secrets nicht im Git-Repo)
 
 ---
@@ -470,9 +470,9 @@ Das ermöglicht:
 * **Spring Cloud Config**: Zentraler Config-Server, der Konfiguration aus Git oder Vault ausliefert.
 
 * **Kubernetes Plattform-Mechanismen**
-    * _ConfigMaps_ → nicht-sensible Konfiguration  
-    * _Secrets_ → sensible Daten (Passwörter, Tokens)  
-    * Environment Variables  
+    * _ConfigMaps_ → nicht-sensible Konfiguration
+    * _Secrets_ → sensible Daten (Passwörter, Tokens)
+    * Environment Variables
     * Volume Mounts
 
 ---

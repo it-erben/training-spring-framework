@@ -105,7 +105,7 @@ public class OrderProducer {
         // Konvertiert das Objekt automatisch in eine JMS Message (z.B. TextMessage, ObjectMessage)
         jmsTemplate.convertAndSend("orderQueue", order);
     }
-    
+
     public void sendOrderStatus(String status) {
         System.out.println("Sending status update: " + status);
         jmsTemplate.convertAndSend("orderTopic", status);
@@ -248,10 +248,10 @@ public class MessageProducer {
         System.out.println("Sending to exchange " + exchange + " with routingKey " + routingKey);
         rabbitTemplate.convertAndSend(exchange, routingKey, message);
     }
-    
+
     public void publishEvent(Object event) {
         // Beispiel: Fanout Exchange für Events
-        rabbitTemplate.convertAndSend("events.fanout", "", event); 
+        rabbitTemplate.convertAndSend("events.fanout", "", event);
     }
 }
 ```
@@ -302,7 +302,7 @@ public class RabbitConfig {
     public Binding binding(Queue myQueue, TopicExchange topicExchange) {
         return BindingBuilder.bind(myQueue).to(topicExchange).with("*.critical.#"); // Routing Key Muster
     }
-    
+
     @Bean // Fanout Exchange für Events
     public FanoutExchange eventsFanoutExchange() {
         return new FanoutExchange("events.fanout");
@@ -459,7 +459,7 @@ public class UserEventListener {
 
     @KafkaListener(topics = "user-events-topic", groupId = "user-processor-group")
     public void listen(UserCreatedEvent event, @Header(KafkaHeaders.RECEIVED_PARTITION) int partition) {
-        System.out.println("Received UserCreatedEvent for user " + event.getUserId() + 
+        System.out.println("Received UserCreatedEvent for user " + event.getUserId() +
                            " from partition " + partition);
         // ... Logik zur Verarbeitung des Events
     }

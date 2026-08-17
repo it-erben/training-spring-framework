@@ -63,10 +63,10 @@ Statt DAOs manuell zu schreiben, definieren wir Interfaces.
 ```java
 // Erbt CRUD-Methoden (save, findById, delete...)
 public interface UserRepository extends JpaRepository<User, Long> {
-    
+
     // Derived Query Methods (werden aus dem Methodennamen generiert)
     List<User> findByLastnameAndActiveTrue(String lastname);
-    
+
     // JPQL Query
     @Query("SELECT u FROM User u WHERE u.email LIKE %:domain")
     List<User> findByEmailDomain(@Param("domain") String domain);
@@ -77,8 +77,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
 ## JPQL – Die Abfragesprache von JPA
 
-* JPQL (*Java Persistence Query Language*) ist eine objektorientierte Abfragesprache, ähnlich zu SQL, aber operiert auf **Entities** und **ihren Attributen** statt auf Tabellen und Spalten.  
-* Der JPA Provider (z. B. Hibernate) übersetzt JPQL zur Laufzeit in vendor-spezifisches SQL.  
+* JPQL (*Java Persistence Query Language*) ist eine objektorientierte Abfragesprache, ähnlich zu SQL, aber operiert auf **Entities** und **ihren Attributen** statt auf Tabellen und Spalten.
+* Der JPA Provider (z. B. Hibernate) übersetzt JPQL zur Laufzeit in vendor-spezifisches SQL.
 * Vorteil: Queries bleiben portabel und eng an das Domain-Modell gekoppelt.
 
 ---
@@ -220,7 +220,7 @@ Automatisches Tracking von Änderungen.
 public class User {
     @CreatedDate
     private LocalDateTime createdAt;
-    
+
     @LastModifiedBy
     private String lastModifiedBy;
 }
@@ -683,7 +683,7 @@ public class PricingService {
         // Teure Berechnung oder DB-Call
         return calculatePrice(productId);
     }
-    
+
     @CacheEvict(value = "prices", key = "#productId")
     public void updatePrice(String productId, BigDecimal newPrice) {
         // Update Logik
