@@ -9,23 +9,23 @@ Umgebung um.
 
 Anders als bei der Core-Demo gibt es keine Start-Variante — in diesem
 Modul wird konfiguriert, nicht programmiert. Das Projekt ist fertig und
-dient als Spielwiese fuer Properties, Profile und Kommandozeilenargumente.
+dient als Spielwiese für Properties, Profile und Kommandozeilenargumente.
 
 ## Bausteine
 
-| Klasse | Zweck |
-| --- | --- |
-| `BootDemoApplication` | `@SpringBootApplication` plus `@ConfigurationPropertiesScan` |
-| `ShopProperties` | Record, bindet alle `shop.*`-Properties per Constructor-Binding |
-| `ShopInfoController` | `GET /info` zeigt die wirksame Konfiguration und die aktiven Profile |
-| `DevDataInitializer` | Existiert nur im Profil `dev` und loggt beim Start |
+| Klasse                | Zweck                                                                |
+|-----------------------|----------------------------------------------------------------------|
+| `BootDemoApplication` | `@SpringBootApplication` plus `@ConfigurationPropertiesScan`         |
+| `ShopProperties`      | Record, bindet alle `shop.*`-Properties per Constructor-Binding      |
+| `ShopInfoController`  | `GET /info` zeigt die wirksame Konfiguration und die aktiven Profile |
+| `DevDataInitializer`  | Existiert nur im Profil `dev` und loggt beim Start                   |
 
 Die Property-Dateien bauen aufeinander auf:
 
-| Datei | Inhalt |
-| --- | --- |
-| `application.properties` | Basis: `shop.page-size=20` |
-| `application-dev.properties` | Profil `dev`: `shop.page-size=5` |
+| Datei                         | Inhalt                             |
+|-------------------------------|------------------------------------|
+| `application.properties`      | Basis: `shop.page-size=20`         |
+| `application-dev.properties`  | Profil `dev`: `shop.page-size=5`   |
 | `application-prod.properties` | Profil `prod`: `shop.page-size=50` |
 
 ## Ablauf der Live-Demo
@@ -43,9 +43,9 @@ mvn package
    java -jar target/sb-basics-boot-demo-1.0.0-SNAPSHOT.jar
    ```
 
-   In der `pom.xml` steht genau eine Web-Abhaengigkeit —
-   `spring-boot-starter-web`. Trotzdem laeuft jetzt ein Tomcat auf Port
-   8080, ohne dass ihn jemand konfiguriert haette. Wer sehen will, was
+   In der `pom.xml` steht genau eine Web-Abhängigkeit —
+   `spring-boot-starter-web`. Trotzdem läuft jetzt ein Tomcat auf Port
+   8080, ohne dass ihn jemand konfiguriert hätte. Wer sehen will, was
    Spring Boot alles entschieden hat, startet einmal mit `--debug` und
    wirft einen Blick in den Condition-Evaluation-Report.
 
@@ -77,28 +77,27 @@ mvn package
    Startmeldung bleibt aus — den `DevDataInitializer` legt der Container
    in diesem Profil gar nicht erst an.
 
-5. **Rangfolge der Property-Quellen — die Pointe:** Profil-Datei und
-   Kommandozeile gleichzeitig:
+5. **Rangfolge der Property-Quellen:** Profil-Datei und Kommandozeile
+   gleichzeitig:
 
    ```bash
    java -jar target/sb-basics-boot-demo-1.0.0-SNAPSHOT.jar \
         --spring.profiles.active=dev --shop.page-size=99
    ```
 
-   `/info` meldet `"pageSize":99` — das Kommandozeilenargument schlaegt
-   die Profil-Datei (5) und die Basis-Datei (20). Dieselbe Anwendung,
-   dasselbe Jar, drei Konfigurationswege mit klarer Rangfolge:
+   `/info` meldet `"pageSize":99` — das Kommandozeilenargument schlägt
+   die Profil-Datei (5) und die Basis-Datei (20). Rangfolge also:
    Kommandozeile vor Profil-Datei vor Basis-Datei.
 
 ## Starten ohne Fat-JAR
 
-Alternativ laeuft die Demo auch direkt aus Maven:
+Alternativ läuft die Demo auch direkt aus Maven:
 
 ```bash
 mvn spring-boot:run
 ```
 
-Laeuft parallel schon etwas auf Port 8080, hilft `--server.port=8081` —
+Läuft parallel schon etwas auf Port 8080, hilft `--server.port=8081` —
 auch der Port ist nur eine Property.
 
 ## Tests
@@ -112,7 +111,7 @@ Jede Behauptung der Live-Demo ist durch einen Test abgesichert:
 | Test | Behauptung |
 | --- | --- |
 | `ShopInfoControllerTest` | Der Web-Stack startet per AutoConfiguration; `GET /info` liefert die gebundenen Basis-Properties und die aktiven Profile |
-| `ShopPropertiesTest` | Profil `dev` ueberschreibt `shop.page-size` auf 5 |
-| `ShopPropertiesProdTest` | Profil `prod` ueberschreibt `shop.page-size` auf 50 |
+| `ShopPropertiesTest` | Profil `dev` überschreibt `shop.page-size` auf 5 |
+| `ShopPropertiesProdTest` | Profil `prod` überschreibt `shop.page-size` auf 50 |
 | `DevDataInitializerProfileTest` | Die `dev`-Bean existiert nur bei aktivem Profil `dev` |
 | `CommandLinePrecedenceTest` | Kommandozeilenargumente schlagen Profil- und Basis-Datei |

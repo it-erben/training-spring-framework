@@ -1,23 +1,23 @@
 # Demo: Data und JPA — Entities, Repositories und Transaktionen
 
-Diese Demo baut die Persistenzschicht der Buchhandlung: JPA-Entities fuer
-Buecher und Autoren, ein Spring-Data-Repository mit Derived Queries und
+Diese Demo baut die Persistenzschicht der Buchhandlung: JPA-Entities für
+Bücher und Autoren, ein Spring-Data-Repository mit Derived Queries und
 JPQL, dazu ein Service mit `@Transactional` — inklusive der Rollback-Demo,
 die zeigt, dass bei einer RuntimeException die komplette Transaktion
-zurueckgerollt wird. Als Datenbank dient eine In-Memory-H2; das Schema
+zurückgerollt wird. Als Datenbank dient eine In-Memory-H2; das Schema
 erzeugt Hibernate beim Start aus den Entities (`ddl-auto=create-drop`).
-Das taugt nur fuer Demos und Tests: In Produktion kaeme das Schema aus
+Das taugt nur für Demos und Tests: In Produktion käme das Schema aus
 versionierten Migrationen (Flyway oder Liquibase, siehe Aufbaumodul
-*13_Data*), und `ddl-auto` stuende auf `validate`.
+*13_Data*), und `ddl-auto` stünde auf `validate`.
 
 Anders als in Modul 02 gibt es keinen Web-Server: Die Anwendung startet,
-der `SeedDataRunner` laeuft einmal durch, danach faehrt der Kontext wieder
+der `SeedDataRunner` läuft einmal durch, danach fährt der Kontext wieder
 herunter. Alles Sichtbare passiert im Log — `spring.jpa.show-sql=true`
 zeigt jedes SQL-Statement, das Hibernate erzeugt.
 
 ## Datenmodell und Repository
 
-Ein `Book` (`isbn`, `title`, `netPrice`) gehoert per `@ManyToOne` zu einem
+Ein `Book` (`isbn`, `title`, `netPrice`) gehört per `@ManyToOne` zu einem
 `Author` (`name`); die Gegenseite ist ein
 `@OneToMany(mappedBy = "author")`. Das `BookRepository` kommt ohne eine
 Zeile Implementierung aus:
@@ -25,32 +25,32 @@ Zeile Implementierung aus:
 | Methode | Mechanik |
 | --- | --- |
 | `findByIsbn(String)` | Derived Query: `where isbn = ?` |
-| `findByTitleContainingIgnoreCase(String)` | Derived Query: `where upper(title) like upper('%…%')` |
+| `findByTitleContainingIgnoreCase(String)` | Derived Query: `where upper(title) like upper('%...%')` |
 | `findByNetPriceLessThan(BigDecimal)` | Derived Query: `where net_price < ?` |
-| `findByAuthorName(String)` | JPQL per `@Query` — Join ueber die Beziehung |
+| `findByAuthorName(String)` | JPQL per `@Query` — Join über die Beziehung |
 
 ## Varianten
 
 | Modul | Inhalt |
 | --- | --- |
 | `sb-basics-data-jpa-demo-start` | Nur `DataDemoApplication` und `application.properties` — Entities, Repository, Service und Seed-Runner entstehen live. `TODO: Modul 03`-Marken in `package-info.java` verweisen mit Schrittnummern auf den Ablauf unten. |
-| `sb-basics-data-jpa-demo-finished` | Vollstaendige Persistenzschicht inklusive Tests. |
+| `sb-basics-data-jpa-demo-finished` | Vollständige Persistenzschicht inklusive Tests. |
 
 ## Ablauf der Live-Demo
 
 Ausgangspunkt ist die `-start`-Variante. Jeder Zwischenzustand startet —
 nach jedem Schritt lohnt ein Neustart, um die neue Log-Ausgabe zu zeigen.
-Vorab einmal ohne Aenderung starten: Die Anwendung faehrt hoch und gleich
+Vorab einmal ohne Änderung starten: Die Anwendung fährt hoch und gleich
 wieder herunter, und im Log taucht kein einziges `create table` auf — es
 gibt noch keine Entity.
 
 1. **Erste Entity:** `Book` anlegen — `@Entity`, `@Id @GeneratedValue`
    auf `Long id`, dazu die Felder `isbn`, `title` und
    `BigDecimal netPrice`. Anders als die Records aus Modul 02 braucht eine
-   Entity einen (geschuetzten) parameterlosen Konstruktor und
-   veraenderbare Felder — Hibernate erzeugt Instanzen per Reflection und
-   schreibt die Spaltenwerte direkt hinein. Dazu ein oeffentlicher
-   Konstruktor fuer die drei Fachfelder, Getter und `setNetPrice`. Nach
+   Entity einen (geschützten) parameterlosen Konstruktor und
+   veränderbare Felder — Hibernate erzeugt Instanzen per Reflection und
+   schreibt die Spaltenwerte direkt hinein. Dazu ein öffentlicher
+   Konstruktor für die drei Fachfelder, Getter und `setNetPrice`. Nach
    dem Neustart zeigt das Log, dass die Tabelle aus der Klasse entsteht:
 
    ```text
@@ -60,13 +60,13 @@ gibt noch keine Entity.
 
 2. **Beziehung:** `Author` anlegen (`@Entity`, `Long id`, `String name`,
    `@OneToMany(mappedBy = "author") List<Book> books`) und in `Book` die
-   Gegenrichtung ergaenzen — Feld
+   Gegenrichtung ergänzen — Feld
    `@ManyToOne(cascade = CascadeType.PERSIST) Author author`, dazu
    Konstruktor-Parameter und Getter. `mappedBy` sagt Hibernate, dass die
-   Fremdschluessel-Spalte bereits durch `Book.author` definiert ist; das
+   Fremdschlüssel-Spalte bereits durch `Book.author` definiert ist; das
    Cascade speichert einen noch nicht gespeicherten Autor beim Speichern
    des Buchs mit (das zahlt sich in Schritt 3 aus). Der Neustart zeigt
-   `create table author` und den Fremdschluessel:
+   `create table author` und den Fremdschlüssel:
 
    ```text
    Hibernate: alter table if exists book add constraint ... foreign key (author_id) references author
@@ -77,16 +77,16 @@ gibt noch keine Entity.
    Implementierungsdetail, Spring Data erzeugt zur Laufzeit ein
    Proxy-Objekt mit fertigem CRUD (`save`, `findAll`, `count`, ...).
    Dazu `SeedDataRunner` als `CommandLineRunner`: zwei Autoren
-   (Joshua Bloch, Martin Fowler), fuenf Buecher per `saveAll`, danach
+   (Joshua Bloch, Martin Fowler), fünf Bücher per `saveAll`, danach
    `System.out.println(">>> Seed: " + bookRepository.count() + " ...")`.
-   Im Log stehen jetzt zwei `insert into author` und fuenf
+   Im Log stehen jetzt zwei `insert into author` und fünf
    `insert into book` — die Autoren speichert das Cascade mit — und:
 
    ```text
-   >>> Seed: 5 Buecher angelegt
+   >>> Seed: 5 Bücher angelegt
    ```
 
-4. **Derived Queries:** Drei Methoden im Repository ergaenzen — Spring
+4. **Derived Queries:** Drei Methoden im Repository ergänzen — Spring
    Data leitet die Abfragen aus den Methodennamen ab:
 
    ```java
@@ -105,15 +105,15 @@ gibt noch keine Entity.
    >>> findByNetPriceLessThan(40.00): [Java Puzzlers, UML Distilled]
    ```
 
-5. **JPQL:** Wo der Methodenname unlesbar wuerde, hilft `@Query`:
+5. **JPQL:** Wo der Methodenname unlesbar würde, hilft `@Query`:
 
    ```java
    @Query("select b from Book b where b.author.name = :name")
    List<Book> findByAuthorName(@Param("name") String name);
    ```
 
-   `b.author.name` navigiert ueber die Beziehung — im SQL-Log wird daraus
-   ein `join author` auf die Fremdschluessel-Spalte. Der Aufruf im Runner
+   `b.author.name` navigiert über die Beziehung — im SQL-Log wird daraus
+   ein `join author` auf die Fremdschlüssel-Spalte. Der Aufruf im Runner
    liefert:
 
    ```text
@@ -122,11 +122,11 @@ gibt noch keine Entity.
 
 6. **Service mit Transaktion:** `BookService` anlegen —
    Konstruktor-Injection des Repositories und eine Methode
-   `@Transactional void raisePrices(BigDecimal factor)`, die alle Buecher
-   laedt und jeden Preis mit dem Faktor multipliziert (kaufmaennisch
-   gerundet). Auffaellig: nirgendwo ein `save()` — innerhalb der
+   `@Transactional void raisePrices(BigDecimal factor)`, die alle Bücher
+   lädt und jeden Preis mit dem Faktor multipliziert (kaufmännisch
+   gerundet). Auffällig: nirgendwo ein `save()` — innerhalb der
    Transaktion sind die geladenen Entities "managed", Hibernate erkennt
-   die Aenderung per Dirty Checking und schreibt beim Commit die
+   die Änderung per Dirty Checking und schreibt beim Commit die
    UPDATE-Statements selbst. Im Runner den Service injizieren und die
    Preise vorher/nachher ausgeben:
 
@@ -136,7 +136,7 @@ gibt noch keine Entity.
    >>> Preise nach raisePrices(1.10): [49.49, 38.50, 51.26, 60.45, 43.95]
    ```
 
-7. **Rollback-Demo:** Zweite Service-Methode — dieselbe Preisaenderung,
+7. **Rollback-Demo:** Zweite Service-Methode — dieselbe Preisänderung,
    aber danach fliegt absichtlich eine Exception:
 
    ```java
@@ -145,18 +145,18 @@ gibt noch keine Entity.
        applyFactor(factor);
        bookRepository.flush();
        throw new IllegalStateException(
-               "Absichtlicher Fehler nach der Preisaenderung — die Transaktion rollt zurueck");
+               "Absichtlicher Fehler nach der Preisänderung — die Transaktion rollt zurück");
    }
    ```
 
    Das `flush()` zwingt Hibernate, die UPDATE-Statements sofort
-   auszufuehren — sie erscheinen im Log, und trotzdem steht nach dem
+   auszuführen — sie erscheinen im Log, und trotzdem steht nach dem
    Rollback wieder der alte Preis in der Datenbank. Im Runner den Aufruf
    in `try/catch` packen und danach die Preise erneut ausgeben:
 
    ```text
-   >>> IllegalStateException gefangen: Absichtlicher Fehler nach der Preisaenderung — die Transaktion rollt zurueck
-   >>> Preise nach raisePricesAndFail(2.00) — unveraendert dank Rollback: [49.49, 38.50, 51.26, 60.45, 43.95]
+   >>> IllegalStateException gefangen: Absichtlicher Fehler nach der Preisänderung — die Transaktion rollt zurück
+   >>> Preise nach raisePricesAndFail(2.00) — unverändert dank Rollback: [49.49, 38.50, 51.26, 60.45, 43.95]
    ```
 
 Damit ist der Stand der `-finished`-Variante erreicht (dort ist `run()`
@@ -181,27 +181,27 @@ Alternativ als Fat-JAR: `mvn package` und dann
 ## Tests
 
 Nur die `-finished`-Variante hat Tests (in der `-start`-Variante fehlt
-die Persistenzschicht, die sie pruefen wuerden):
+die Persistenzschicht, die sie prüfen würden):
 
 ```bash
 cd sb-basics-data-jpa-demo-finished
 mvn test
 ```
 
-`BookRepositoryTest` laeuft als `@DataJpaTest` gegen definierte Testdaten
-aus `test-books.sql` (zwei Autoren, drei Buecher), unabhaengig vom
-Seed-Runner; `BookServiceTransactionTest` laeuft als `@SpringBootTest`
+`BookRepositoryTest` läuft als `@DataJpaTest` gegen definierte Testdaten
+aus `test-books.sql` (zwei Autoren, drei Bücher), unabhängig vom
+Seed-Runner; `BookServiceTransactionTest` läuft als `@SpringBootTest`
 bewusst ohne `@Transactional` am Test, um Commit und Rollback der
-Service-Transaktion von aussen zu beobachten. Jede Verhaltensbehauptung
+Service-Transaktion von außen zu beobachten. Jede Verhaltensbehauptung
 ist durch einen Test abgesichert:
 
 | Behauptung | Test |
 | --- | --- |
 | `findByIsbn` liefert das Buch zur ISBN | `findsByIsbn` |
 | `findByIsbn` liefert ein leeres `Optional` bei unbekannter ISBN | `findsNothingForUnknownIsbn` |
-| Titelsuche findet Fragmente unabhaengig von Gross-/Kleinschreibung | `findsByTitleFragment` |
-| Preisgrenze filtert auf genau die Buecher unterhalb des Limits | `findsBelowPriceLimit` |
-| JPQL-Query findet Buecher ueber den Autorennamen (Join) | `findsByAuthorName` |
+| Titelsuche findet Fragmente unabhängig von Groß-/Kleinschreibung | `findsByTitleFragment` |
+| Preisgrenze filtert auf genau die Bücher unterhalb des Limits | `findsBelowPriceLimit` |
+| JPQL-Query findet Bücher über den Autorennamen (Join) | `findsByAuthorName` |
 | Cascade PERSIST speichert einen neuen Autor beim Speichern des Buchs mit | `cascadesAuthorPersist` |
 | `raisePrices` hebt alle Preise per Dirty Checking an (kein `save()`) und committet | `raisesAllPrices` |
-| `raisePricesAndFail` fuehrt die UPDATEs tatsaechlich aus (`flush()`), wirft `IllegalStateException`, und die Aenderung wird zurueckgerollt | `rollsBackOnFailure` (zaehlt die Entity-Updates per Hibernate-Statistik — ohne echte UPDATEs vor dem Rollback wird er rot) |
+| `raisePricesAndFail` führt die UPDATEs tatsächlich aus (`flush()`), wirft `IllegalStateException`, und die Änderung wird zurückgerollt | `rollsBackOnFailure` (zählt die Entity-Updates per Hibernate-Statistik — ohne echte UPDATEs vor dem Rollback wird er rot) |

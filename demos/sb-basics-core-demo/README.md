@@ -1,20 +1,21 @@
 # Demo: Spring Core — IoC, Dependency Injection, Beans und Scopes
 
 Diese Demo zeigt den Spring-Container am Beispiel einer Buchhandlung:
-Klassen werden als Beans deklariert, per Konstruktor-Injection verdrahtet,
-Mehrdeutigkeiten mit `@Primary` und `@Qualifier` aufgeloest und der
-Unterschied zwischen Singleton- und Prototype-Scope sichtbar gemacht.
+Klassen werden als Beans deklariert, ihre Abhängigkeiten per
+Konstruktor-Injection gesetzt, Mehrdeutigkeiten mit `@Primary` und
+`@Qualifier` aufgelöst und der Unterschied zwischen Singleton- und
+Prototype-Scope sichtbar gemacht.
 
 ## Varianten
 
 | Modul | Inhalt |
 | --- | --- |
-| `sb-basics-core-demo-start` | Alle Klassen vorhanden, aber ohne Stereotyp-Annotationen — der Container findet nichts. Ausgangspunkt fuer die Live-Demo. |
-| `sb-basics-core-demo-finished` | Vollstaendig verdrahtete Variante inklusive Tests. |
+| `sb-basics-core-demo-start` | Alle Klassen vorhanden, aber ohne Stereotyp-Annotationen — der Container findet nichts. Ausgangspunkt für die Live-Demo. |
+| `sb-basics-core-demo-finished` | Vollständig annotierte Variante inklusive Tests. |
 
 ## Ablauf der Live-Demo
 
-Die `-start`-Variante wird in dieser Reihenfolge verdrahtet. Jeder
+Die `-start`-Variante wird in dieser Reihenfolge annotiert. Jeder
 Zwischenzustand startet — nach jedem Schritt lohnt ein Neustart, um die
 Wirkung zu zeigen:
 
@@ -26,7 +27,7 @@ Wirkung zu zeigen:
    `@Component("netPriceCalculator")` und `GrossPriceCalculator` mit
    `@Component("grossPriceCalculator")` **und sofort `@Primary`**
    deklarieren: Ohne `@Primary` kann der Container die unqualifizierten
-   Parameter bei zwei Beans desselben Typs nicht aufloesen, und der Start
+   Parameter bei zwei Beans desselben Typs nicht auflösen, und der Start
    bricht ab (`expected single matching bean but found 2`). Sichtbar
    passiert noch nichts — es gibt noch keinen Runner.
 3. **Runner:** `CatalogRunner` mit `@Component` deklarieren, dazu
@@ -38,7 +39,7 @@ Wirkung zu zeigen:
    `Prototype-Demo noch nicht aktiv` (kommt in Schritt 5).
 4. **Mehrdeutigkeit:** `@Qualifier("netPriceCalculator")` an den dritten
    Konstruktor-Parameter von `BookService` setzen. Jetzt stehen beide
-   Aufloesungswege in einer Signatur nebeneinander: Der unqualifizierte
+   Auflösungswege in einer Signatur nebeneinander: Der unqualifizierte
    Parameter bekommt die `@Primary`-Bean, der qualifizierte explizit die
    andere — die Netto-Spalte zeigt ab jetzt echte Nettopreise. Wer das
    Fehlerbild aus Schritt 2 zeigen will: `@Primary` kurz entfernen und
@@ -70,8 +71,9 @@ Nettopreisen sowie den Scope-Vergleich aus.
 
 ## Tests
 
-Nur die `-finished`-Variante hat Tests (die `-start`-Variante ist bewusst
-unverdrahtet und wuerde jeden `@SpringBootTest` scheitern lassen):
+Nur die `-finished`-Variante hat Tests (die `-start`-Variante hat bewusst
+keine Bean-Deklarationen und würde jeden `@SpringBootTest` scheitern
+lassen):
 
 ```bash
 cd sb-basics-core-demo-finished

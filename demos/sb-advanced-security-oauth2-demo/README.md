@@ -4,14 +4,14 @@ Schwestermodul zu `sb-advanced-security-basic`: Zeigt einen OAuth2 Login via Git
 
 ## Setup GitHub OAuth App
 
-1) GitHub → Settings → Developer settings → OAuth Apps → New OAuth App.  
-   - Homepage URL: `http://localhost:8080/`  
+1) GitHub → Settings → Developer settings → OAuth Apps → New OAuth App.
+   - Homepage URL: `http://localhost:8080/`
    - Authorization callback URL: `http://localhost:8080/login/oauth2/code/github`
 2) Client-ID und Client-Secret kopieren.
 3) Lokale Variablen setzen (z.B. im Terminal):
 
    ```bash
-   export GITHUB_CLIENT_ID=... 
+   export GITHUB_CLIENT_ID=...
    export GITHUB_CLIENT_SECRET=...
    ```
 

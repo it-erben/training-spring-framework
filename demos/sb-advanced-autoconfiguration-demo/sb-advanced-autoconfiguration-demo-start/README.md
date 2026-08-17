@@ -29,7 +29,7 @@ public class SampleApplication {
         Tomcat tomcat = new Tomcat();
         tomcat.setPort(8080);
         tomcat.getConnector().setProperty("address", "0.0.0.0");
-        
+
         tomcat.start();
         tomcat.getServer().await();
     }
@@ -144,7 +144,7 @@ public class DefaultConfig {
     public TomcatLauncher tomcatLauncher() {
         return new TomcatLauncher();
     }
-    
+
     public static class TomcatLauncher {
         @PostConstruct
         public void launch() throws LifecycleException {

@@ -1,15 +1,14 @@
 # Demo: Betrieb — Actuator, Log-Level zur Laufzeit und Docker
 
-Die Buchhandlung geht in Betrieb: Diese Demo zeigt, was Spring Boot
-mitbringt, sobald eine Anwendung nicht mehr nur laufen, sondern
-**betrieben** werden soll — Health-Checks, Metadaten, Metriken und
-steuerbares Logging, alles ohne eine Zeile eigenen Betriebscode. Die
-Anwendung selbst ist bewusst klein: ein `OrderController` mit einer
-Bestelluebersicht und ein `OrderService`, der auf `debug` loggt. Genau
-diese `debug`-Zeilen sind die Pointe der Demo.
+Diese Demo zeigt, was Spring Boot für den Betrieb mitbringt:
+Health-Checks, Metadaten, Metriken und steuerbares Logging, alles ohne
+eine Zeile eigenen Betriebscode. Die Anwendung selbst ist bewusst klein:
+ein `OrderController` mit einer Bestellübersicht und ein `OrderService`,
+der auf `debug` loggt. Diese `debug`-Zeilen sind der Gegenstand von
+Schritt 3.
 
 Anders als bei den bisherigen Modulen gibt es kein start/finished-Paar —
-das Modul ist klein genug, um es am Stueck zu zeigen.
+das Modul ist klein genug, um es am Stück zu zeigen.
 
 ## Die Endpoints
 
@@ -18,14 +17,14 @@ das Modul ist klein genug, um es am Stueck zu zeigen.
 | `GET /api/orders` | 200 mit drei Beispielbestellungen als JSON; loggt auf `info` und `debug` |
 | `GET /actuator/health` | 200 mit `{"status":"UP"}` und Details der einzelnen Indikatoren (z.B. `diskSpace`) |
 | `GET /actuator/info` | Statische Metadaten, u.a. der App-Name `Buchhandlung Erben` |
-| `GET /actuator/metrics` | Liste der verfuegbaren Metriken, u.a. `jvm.memory.used` |
+| `GET /actuator/metrics` | Liste der verfügbaren Metriken, u.a. `jvm.memory.used` |
 | `GET /actuator/loggers/tech.erben` | Aktuelles und wirksames Log-Level des Packages |
 | `POST /actuator/loggers/tech.erben` | Stellt das Log-Level zur Laufzeit um — 204, kein Neustart |
 
-Standardmaessig ist nur `/actuator/health` ueber HTTP erreichbar. Die
-uebrigen Endpoints schaltet `application.properties` gezielt frei
+Standardmäßig ist nur `/actuator/health` über HTTP erreichbar. Die
+übrigen Endpoints schaltet `application.properties` gezielt frei
 (`management.endpoints.web.exposure.include`) — in Produktion gilt: so
-wenig wie moeglich exponieren oder den Management-Port absichern.
+wenig wie möglich exponieren oder den Management-Port absichern.
 Kleiner Stolperstein bei `/actuator/info`: Der Contributor, der
 `info.*`-Properties durchreicht, ist seit Spring Boot 2.6 abgeschaltet
 und braucht `management.info.env.enabled=true`.
@@ -40,7 +39,7 @@ und braucht `management.info.env.enabled=true`.
    Konsole erscheint die `info`-Zeile des Controllers, aber keine der
    `debug`-Zeilen aus dem `OrderService`. `logging.level.tech.erben=INFO`
    filtert sie weg.
-3. **Die Pointe — Log-Level zur Laufzeit umstellen:**
+3. **Log-Level zur Laufzeit umstellen:**
 
    ```bash
    curl -X POST localhost:8080/actuator/loggers/tech.erben \
@@ -49,11 +48,11 @@ und braucht `management.info.env.enabled=true`.
    curl localhost:8080/api/orders
    ```
 
-   Jetzt stehen die `debug`-Zeilen in der Konsole — **ohne Neustart,
-   ohne Deployment**. Genau das braucht man, wenn in Produktion ein
-   Fehler auftritt, der sich lokal nicht reproduzieren laesst.
+   Jetzt stehen die `debug`-Zeilen in der Konsole, ohne Neustart und
+   ohne Deployment — der Weg an einen Fehler heran, der sich nur in
+   Produktion zeigt.
 4. **Ins Image packen:** `mvn package` baut dank explizit gebundenem
-   `repackage`-Goal ein ausfuehrbares Fat-JAR (siehe `pom.xml` — ohne
+   `repackage`-Goal ein ausführbares Fat-JAR (siehe `pom.xml` — ohne
    `spring-boot-starter-parent` passiert das nicht automatisch). Das
    Dockerfile kopiert es in ein schlankes JRE-Image:
 
@@ -63,8 +62,8 @@ und braucht `management.info.env.enabled=true`.
    docker run --rm -p 8080:8080 sb-basics-operations-demo
    ```
 
-   Derselbe Health-Endpoint, den wir eben im Browser gesehen haben, ist
-   in Kubernetes die Liveness- bzw. Readiness-Probe.
+   Derselbe Health-Endpoint dient in Kubernetes als Liveness- und
+   Readiness-Probe.
 
 ## Starten und Testen
 
@@ -79,14 +78,14 @@ Jede Verhaltensbehauptung ist durch einen Test abgesichert:
 | --- | --- |
 | `GET /api/orders` liefert 200 und drei Beispielbestellungen als JSON | `OrderApiTest.ordersReturnsThreeSampleOrders` |
 | `/actuator/health` antwortet mit 200, `{"status":"UP"}` und Details (`diskSpace`) | `ActuatorEndpointsTest.healthReturnsUpWithDetails` |
-| `/actuator/info` enthaelt den App-Namen `Buchhandlung Erben` | `ActuatorEndpointsTest.infoContainsAppName` |
+| `/actuator/info` enthält den App-Namen `Buchhandlung Erben` | `ActuatorEndpointsTest.infoContainsAppName` |
 | `/actuator/metrics` ist freigeschaltet und kennt `jvm.memory.used` | `ActuatorEndpointsTest.metricsListsJvmMetrics` |
 | `POST /actuator/loggers/tech.erben` antwortet mit 204 und stellt das Level ohne Neustart um | `LogLevelSwitchTest.debugLinesAppearOnlyAfterRuntimeSwitch` |
 | Die `debug`-Zeilen erscheinen erst **nach** dem Umschalten, vorher nicht | `LogLevelSwitchTest.debugLinesAppearOnlyAfterRuntimeSwitch` |
 
-## Damit ist der Basis-Teil komplett
+## Anschluss
 
-Von hier aus geht der Advanced-Teil in die Tiefe: eigene Metriken und
-Tracing mit Micrometer, Security mit Spring Security und OAuth2,
-Messaging mit Kafka und AMQP sowie Resilience-Muster wie Circuit
+Letztes Modul des Basis-Teils. Der Advanced-Teil setzt hier an: eigene
+Metriken und Tracing mit Micrometer, Security mit Spring Security und
+OAuth2, Messaging mit Kafka und AMQP, Resilience-Muster wie Circuit
 Breaker und Retry.

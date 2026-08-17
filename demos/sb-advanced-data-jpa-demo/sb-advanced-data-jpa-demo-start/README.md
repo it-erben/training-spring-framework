@@ -52,7 +52,7 @@ public class Order {
     @GeneratedValue
     private Long id;
     private final String product;
-    
+
     public Order(String product) {
         this.product = product;
     }
@@ -187,12 +187,4 @@ public CommandLineRunner demo(CustomerRepository repository) {
 }
 ```
 
-Um `@Modifying` im Runner auszuführen, müsste man eigentlich eine Transaktion öffnen. Für die Demo reicht der Hinweis oder das Hinzufügen von `@Transactional` an der Runner-Methode (funktioniert in Tests, im Runner teils tricky, besser in Service auslagern).
-
-**Zusammenfassung:**
-
-- **EntityGraph**: Performance-Optimierung.
-- **Projections/DTOs**: Daten-Reduktion.
-- **Embedded**: Strukturierung.
-- **Auditing**: Automatisierung von Metadaten.
-- **Modifying**: Bulk Updates.
+Um `@Modifying` im Runner auszuführen, müsste eine Transaktion offen sein. Für die Demo reicht der Hinweis oder `@Transactional` an der Runner-Methode (funktioniert in Tests, im Runner teils tricky, besser in einen Service auslagern).

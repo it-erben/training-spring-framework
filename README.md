@@ -2,9 +2,9 @@
 
 Fünftägige Schulung in zwei Blöcken, die auch einzeln buchbar sind.
 
-| Block | Dauer | Voraussetzung |
-| --- | --- | --- |
-| **Basis** (Module 00–05) | 2 Tage | Java 21, keine Spring-Erfahrung |
+| Block                       | Dauer  | Voraussetzung                         |
+|-----------------------------|--------|---------------------------------------|
+| **Basis** (Module 00–05)    | 2 Tage | Java 21, keine Spring-Erfahrung       |
 | **Advanced** (Module 10–17) | 3 Tage | Basis-Block oder gleichwertige Praxis |
 
 Der Basis-Block holt Java-Entwickler ab, die noch nie mit Spring gearbeitet
@@ -13,14 +13,14 @@ Datenbank und Tests. Der Advanced-Block setzt genau dort an.
 
 ## Basis-Block
 
-| Modul | Dauer | Slides | Demo | Übung |
-| --- | --- | --- | --- | --- |
-| Spring Core | 2,5 h | `slides/00_Spring_Core` | `demos/sb-basics-core-demo` | `assignments/sb-basics-core-assignment` |
-| Spring Boot Basics | 2 h | `slides/01_Spring_Boot_Basics` | `demos/sb-basics-boot-demo` | — |
-| Web und REST | 2,5 h | `slides/02_Web_REST` | `demos/sb-basics-web-demo` | `assignments/sb-basics-web-assignment` |
-| Data und JPA | 2,5 h | `slides/03_Data_JPA` | `demos/sb-basics-data-jpa-demo` | `assignments/sb-basics-data-jpa-assignment` |
-| Testing | 1,5 h | `slides/04_Testing` | `demos/sb-basics-testing-demo` | `assignments/sb-basics-testing-assignment` |
-| Betrieb | 1 h | `slides/05_Betrieb` | `demos/sb-basics-operations-demo` | — |
+| Modul              | Dauer | Slides                         | Demo                              | Übung                                       |
+|--------------------|-------|--------------------------------|-----------------------------------|---------------------------------------------|
+| Spring Core        | 2,5 h | `slides/00_Spring_Core`        | `demos/sb-basics-core-demo`       | `assignments/sb-basics-core-assignment`     |
+| Spring Boot Basics | 2 h   | `slides/01_Spring_Boot_Basics` | `demos/sb-basics-boot-demo`       | —                                           |
+| Web und REST       | 2,5 h | `slides/02_Web_REST`           | `demos/sb-basics-web-demo`        | `assignments/sb-basics-web-assignment`      |
+| Data und JPA       | 2,5 h | `slides/03_Data_JPA`           | `demos/sb-basics-data-jpa-demo`   | `assignments/sb-basics-data-jpa-assignment` |
+| Testing            | 1,5 h | `slides/04_Testing`            | `demos/sb-basics-testing-demo`    | `assignments/sb-basics-testing-assignment`  |
+| Betrieb            | 1 h   | `slides/05_Betrieb`            | `demos/sb-basics-operations-demo` | —                                           |
 
 Die Lösungen liegen unter `solutions/sb-basics-*-solution`.
 

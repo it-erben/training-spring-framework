@@ -115,10 +115,10 @@ Bei der Gelegenheit geben wir noch mal einen Überblick über Matcher und Expect
     void matchersAndExpectations() {
         when(mockMeBean.mockMe()).thenReturn("test");
         System.out.println(mockMeBean.mockMe());
-        
+
         when(mockMeBean.mockMeWithArguments(anyString())).thenReturn("withArg");
         System.out.println(mockMeBean.mockMeWithArguments(""));
-        
+
         when(mockMeBean.mockMeWithArguments(eq("1"))).thenReturn("one");
         when(mockMeBean.mockMeWithArguments(eq("2"))).thenReturn("two");
         System.out.println(mockMeBean.mockMeWithArguments("1"));
@@ -221,7 +221,7 @@ public class TestRestTemplateFileControllerTest {
 
     @MockBean
     MockMeBean mmb;
-    
+
     @Autowired
     private TestRestTemplate restTemplate;
 
@@ -265,7 +265,7 @@ public class UserServiceTest {
 
     @Autowired
     private UserRepository userRepository;
-    
+
     @Test
     public void testCreateUser() {
         UserEntity newUser = new UserEntity();
