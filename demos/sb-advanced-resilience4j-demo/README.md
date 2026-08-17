@@ -1,14 +1,16 @@
 # Resilience4J Demo
 
-Diese Demo zeigt die Integration von Resilience4J in eine Spring Boot Anwendung mit allen wichtigen Fault-Tolerance Patterns.
+Resilience4J in einer Spring Boot Anwendung: Circuit Breaker, Retry, Rate Limiter, Bulkhead und Time Limiter.
 
 ## Patterns
 
-1. **Circuit Breaker** - Unterbricht Aufrufe zu fehlerhaften Services
-2. **Retry** - Automatische Wiederholungsversuche bei transienten Fehlern
-3. **Rate Limiter** - Begrenzt die Anzahl der Aufrufe pro Zeiteinheit
-4. **Bulkhead** - Begrenzt parallele Aufrufe (Ressourcen-Isolation)
-5. **Time Limiter** - Timeout für asynchrone Aufrufe
+| Pattern | Wirkung |
+| --- | --- |
+| Circuit Breaker | Unterbricht Aufrufe zu fehlerhaften Services |
+| Retry | Wiederholt Aufrufe bei transienten Fehlern |
+| Rate Limiter | Begrenzt die Anzahl der Aufrufe pro Zeiteinheit |
+| Bulkhead | Begrenzt parallele Aufrufe (Ressourcen-Isolation) |
+| Time Limiter | Timeout für asynchrone Aufrufe |
 
 ## Projektstruktur
 
