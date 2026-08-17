@@ -211,7 +211,7 @@ klären — entweder committen oder stashen, damit der Rename-Commit sauber
 bleibt:
 
 ```bash
-cd /Users/aerben/repositories/it-erben/gfu/spring-boot-advanced
+cd /Users/aerben/repositories/it-erben/gfu/spring-framework
 git status --short
 ```
 
@@ -2362,18 +2362,10 @@ git add README.md AGENTS.md
 git commit -m "docs: Kursuebersicht fuer Basis- und Advanced-Teil"
 ```
 
-- [ ] **Schritt 9: GitLab-Repository umbenennen — nur nach Rückfrage**
+- [ ] **Schritt 9: GitLab-Repository umbenennen**
 
-Nicht automatisch ausführen. Dem Nutzer vorlegen:
-
-```bash
-glab repo update it-erben/gfu/spring-boot-advanced \
-     --name "spring-boot" --path "spring-boot"
-git remote set-url origin git@gitlab.com:it-erben/gfu/spring-boot.git
-```
-
-Das lokale Verzeichnis heißt danach weiterhin `spring-boot-advanced`; ob es
-mitumbenannt wird, entscheidet der Nutzer.
+Zielname `gfu/spring-framework`, lokales Verzeichnis zieht mit. Eigener Plan:
+`2026-08-17-repo-rename-spring-framework.md`.
 
 ---
 
