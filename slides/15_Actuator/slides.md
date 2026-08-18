@@ -5,6 +5,11 @@ header: Spring Boot Advanced
 footer: Alexander Erben
 paginate: true
 ---
+<!-- Dichte-Stufen gegen Folienueberlauf, siehe tools/check-slide-overflow.mjs -->
+<style>
+section.dense { font-size: 24.5px; }
+section.denser { font-size: 21px; }
+</style>
 
 # Spring Boot Actuator
 
@@ -107,7 +112,7 @@ Man kann den Log-Level einzelner Pakete **zur Laufzeit** ändern, ohne Neustart.
 
 Micrometer ist die Metrik-Fassade von Spring Boot, die verschiedene Monitoring-Systeme unterstützt (Prometheus, Datadog, etc.).
 
-### Meter-Typen
+#### Meter-Typen
 
 * **`Counter`**: Zählt Inkremente (z.B. Fehler, abgeschlossene Vorgänge).
 * **`Gauge`**: Zeigt den aktuellen Wert an (z.B. Anzahl der Elemente in einer Queue, CPU-Auslastung).
@@ -116,6 +121,7 @@ Micrometer ist die Metrik-Fassade von Spring Boot, die verschiedene Monitoring-S
 
 ---
 
+<!-- _class: dense -->
 ## Beispiel: Counter
 
 ```java
@@ -218,12 +224,8 @@ public class CustomServiceHealthIndicator implements HealthIndicator {
 Dieser Health Check erscheint dann unter `/actuator/health` als `customService: { "status": "UP", ... }`.
 
 ---
-<style scoped>
-section {
-    font-size: 22px;
-}
-</style>
 
+<!-- _class: denser -->
 ## Custom Actuator Endpoints
 
 Für spezielle Management-Operationen, die nicht von den Standard-Endpoints abgedeckt werden.
@@ -265,7 +267,7 @@ public class FeatureToggleEndpoint {
 
 ## Prometheus & Grafana Integration
 
-### Prometheus
+#### Prometheus
 
 Ein Open-Source-Monitoring-System, das Metriken "abfragt" (scraped).
 
@@ -275,7 +277,7 @@ Ein Open-Source-Monitoring-System, das Metriken "abfragt" (scraped).
 
 ---
 
-### Grafana
+#### Grafana
 
 Eine Open-Source-Plattform für Analysen und interaktive Dashboards.
 
@@ -369,7 +371,7 @@ Der Trace-Kontext kann ähnlich wie bei HTTP auch mit den Headern einer Nachrich
 
 ---
 
-### Producer (JMS)
+#### Producer (JMS)
 
 ```java
 @Autowired JmsTemplate jmsTemplate; // Automatisch instrumentiert
@@ -380,7 +382,7 @@ public void send() {
 }
 ```
 
-### Consumer
+#### Consumer
 
 ```java
 @JmsListener(destination = "queue.orders")
@@ -413,6 +415,7 @@ public void doWork() {
 
 ---
 
+<!-- _class: dense -->
 ## @Observed Annotation
 
 Die deklarative Alternative zur programmatischen Observation API.

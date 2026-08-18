@@ -5,6 +5,13 @@ header: Spring Boot Advanced
 footer: Alexander Erben
 paginate: true
 ---
+<!-- Dichte-Stufen gegen Folienueberlauf, siehe tools/check-slide-overflow.mjs -->
+<style>
+section.dense { font-size: 24.5px; }
+section.denser { font-size: 21px; }
+section.densest { font-size: 17.5px; }
+</style>
+
 <style>
 img[alt~="center"] {
   display: block;
@@ -60,6 +67,8 @@ Im Gegensatz zu JUnit 4 ist JUnit 5 modular aufgebaut. Es besteht aus drei Haupt
 * Das eigentliche "neue" JUnit.
 * Enthält das neue **Programming Model** (Annotationen, Assertions).
 * Enthält das **Extension Model** (Erweiterungen).
+
+---
 
 ## JUnit Vintage
 
@@ -199,12 +208,8 @@ Stream<DynamicTest> generateTests() {
 ```
 
 ---
-<style scoped>
-section {
-    font-size: 20px;
-}
-</style>
 
+<!-- _class: densest -->
 ## Nested Tests
 
 Verschachtelte Tests sind beispielsweise für Behaviour Driven Design-Testing sinnvoll.
@@ -253,6 +258,7 @@ Mit _Conditions_ lassen sich Tests nur unter bestimmten Umständen ausführen.
 
 ---
 
+<!-- _class: dense -->
 ## Das Extension Model
 
 Ersetzt `Runner` (JUnit 4) und `Rule`. In JUnit sind viele Kernkonzepte als Extension realisiert.
@@ -272,12 +278,8 @@ class MyTest { ... }
 *(Spring Boot nutzt dies intern: `@ExtendWith(SpringExtension.class)`)*
 
 ---
-<style scoped>
-section {
-    font-size: 20px;
-}
-</style>
 
+<!-- _class: denser -->
 ## Beispiel: Eigene Extension
 
 Ein Extension für Zeitmessung:
@@ -329,12 +331,8 @@ public class TimingExtension implements
 * **Context Caching:** Spring versucht, den Context zwischen Tests wiederzuverwenden. Wenn ein Test den Context verändert (z.B. `@MockitoBean`, `@TestPropertySource`), muss er neu gestartet werden -> Performance-Killer.
 
 ---
-<style scoped>
-section {
-    font-size: 25px;
-}
-</style>
 
+<!-- _class: dense -->
 ## Configuration Overrides
 
 Wenn man Beans für Tests austauschen muss:
@@ -369,13 +367,9 @@ Scheiben, die sich einzeln testen lassen:
 * Client Layer
 
 ---
-<style scoped>
-section {
-    font-size: 25px;
-}
-</style>
 
-### @WebMvcTest (Controller Layer)
+<!-- _class: dense -->
+#### @WebMvcTest (Controller Layer)
 
 * Lädt nur Controller, ControllerAdvice, Json-Mapper, Filter.
 * Lädt **KEINE** Services, Repositories oder Entities.
@@ -408,12 +402,8 @@ class UserControllerTest {
 * Tests sind standardmäßig `@Transactional` (Rollback am Ende).
 
 ---
-<style scoped>
-section {
-    font-size: 25px;
-}
-</style>
 
+<!-- _class: dense -->
 ## @JsonTest (Serialization Layer)
 
 * Testet nur JSON Serialisierung/Deserialisierung.
@@ -436,12 +426,8 @@ class UserJsonTest {
 ```
 
 ---
-<style scoped>
-section {
-    font-size: 25px;
-}
-</style>
 
+<!-- _class: dense -->
 ## @RestClientTest (Client Layer)
 
 Testet Klassen, die `RestTemplate` oder `WebClient` nutzen, indem der externe Server gemockt wird.
@@ -474,6 +460,8 @@ class GithubClientTest {
 * Entfernt die echte Bean aus dem Context und ersetzt sie durch einen Mockito-Mock.
 * Resetet den Mock automatisch nach jedem Test.
 * **Achtung:** Verändert den ApplicationContext -> kann Context-Reload auslösen.
+
+---
 
 ## @MockitoSpyBean
 
@@ -512,6 +500,8 @@ class AuditTest {
 * Tests werden "grün", Produktion crasht ("It works on my machine").
 * Lösung: Tests gegen **echte** Infrastruktur laufen lassen.
 
+---
+
 ## Testcontainers
 
 Eine Java-Library, die Docker-Container für JUnit-Tests startet und stoppt.
@@ -534,12 +524,8 @@ Eine Java-Library, die Docker-Container für JUnit-Tests startet und stoppt.
 ```
 
 ---
-<style scoped>
-section {
-    font-size: 25px;
-}
-</style>
 
+<!-- _class: dense -->
 ## Der "Manuelle" Weg (Classic)
 
 Definition eines Containers und manuelles Überschreiben der Properties (`DynamicPropertySource`).
@@ -566,7 +552,7 @@ class ClassicIntegrationTest {
 
 ## Der "Moderne" Weg (Spring Boot 3.1+)
 
-### `@ServiceConnection`
+#### `@ServiceConnection`
 
 Spring Boot erkennt automatisch Container-Typen und injiziert die Verbindungsinformationen. Kein `DynamicPropertySource` mehr nötig!
 
@@ -600,6 +586,7 @@ class ModernIntegrationTest {
 
 ---
 
+<!-- _class: dense -->
 ## Local Development mit Testcontainers
 
 Man kann Testcontainers auch nutzen, um die Umgebung für `main` (lokales Starten) bereitzustellen, ohne Docker Compose manuell pflegen zu müssen.
@@ -619,12 +606,8 @@ public class TestApplication {
 Damit startet `mvn spring-boot:test-run` die App inklusive Datenbank im Docker-Container.
 
 ---
-<style scoped>
-section {
-    font-size: 25px;
-}
-</style>
 
+<!-- _class: dense -->
 ## Testing Tipps & Strategien
 
 1. **Pyramide beachten:** Viele Unit-Tests, weniger Integrationstests, wenige E2E-Tests.
@@ -659,6 +642,7 @@ Ab Spring Boot 3.4 ersetzen diese Annotationen `@MockBean` und `@SpyBean`:
 
 ---
 
+<!-- _class: dense -->
 ## @MockitoBean Beispiel
 
 ```java
@@ -732,6 +716,7 @@ Der **Consumer** (Client) definiert, was er vom **Producer** (Server) erwartet.
 
 ---
 
+<!-- _class: denser -->
 ## Spring Cloud Contract: Producer-Seite
 
 **Contract Definition** (`/src/test/resources/contracts/user.groovy`):
@@ -759,6 +744,7 @@ Contract.make {
 
 ---
 
+<!-- _class: dense -->
 ## Spring Cloud Contract: Generierte Tests
 
 Das Maven/Gradle Plugin generiert automatisch Tests:
@@ -784,6 +770,7 @@ public class ContractVerifierTest extends UserServiceBase {
 
 ---
 
+<!-- _class: denser -->
 ## Spring Cloud Contract: Consumer-Seite (Stub)
 
 Der Producer veröffentlicht einen **Stub** (JAR mit WireMock-Mappings).

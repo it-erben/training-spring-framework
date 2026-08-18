@@ -5,6 +5,12 @@ header: Spring Boot Advanced
 footer: Alexander Erben
 paginate: true
 ---
+<!-- Dichte-Stufen gegen Folienueberlauf, siehe tools/check-slide-overflow.mjs -->
+<style>
+section.dense { font-size: 24.5px; }
+section.denser { font-size: 21px; }
+section.densest { font-size: 17.5px; }
+</style>
 
 <style>
 img[alt~="center"] {
@@ -135,6 +141,7 @@ public ResponseEntity<User> update(@Validated(OnUpdate.class) @RequestBody UserD
 
 ---
 
+<!-- _class: dense -->
 ## Custom Validators
 
 Eigene Validierungslogik implementieren.
@@ -188,6 +195,7 @@ public class GlobalExceptionHandler {
 
 ---
 
+<!-- _class: dense -->
 ## ProblemDetails (RFC 7807)
 
 Standardisiertes Format für HTTP API Fehlerantworten (seit Spring Boot 3).
@@ -249,6 +257,7 @@ public ProblemDetail handleBusinessException(MyBusinessException ex) {
 
 ---
 
+<!-- _class: dense -->
 ## Der RestClient (Synchron)
 
 Bietet eine moderne Fluent API ohne Reactive Stack (Mono/Flux).
@@ -291,6 +300,7 @@ Dies benötigt einen **Unterbau**, der die Requests ausführt (WebClient oder Re
 
 ---
 
+<!-- _class: dense -->
 ## Declarative Client Factory (mit RestClient)
 
 Verbindung von Interface und Engine.
@@ -339,6 +349,7 @@ public class AsyncController {
 
 ---
 
+<!-- _class: dense -->
 ## Streaming Responses (Server-Sent Events)
 
 Für Realtime-Updates, z.B. wenn der Client ständig neue Daten erhalten soll.
@@ -380,7 +391,8 @@ Man unterscheidet zwei Ansätze: Code First und Contract First.
 
 ---
 
-### Ansatz 1: Code-First (SpringDoc OpenAPI)
+<!-- _class: denser -->
+#### Ansatz 1: Code-First (SpringDoc OpenAPI)
 
 Man schreibt den Code, die Doku wird daraus generiert.
 
@@ -409,7 +421,7 @@ public class ProductController {
 
 ---
 
-### Ansatz 2: Contract-First
+#### Ansatz 2: Contract-First
 
 Man schreibt zuerst die OpenAPI-Spezifikation (YAML/JSON) und generiert daraus den Code (Interfaces, DTOs).
 
@@ -531,6 +543,7 @@ spring:
 
 ---
 
+<!-- _class: denser -->
 ## Mehrere Dateien hochladen
 
 ```java
@@ -570,6 +583,7 @@ public ResponseEntity<FileInfo> uploadWithMetadata(
 
 ---
 
+<!-- _class: dense -->
 ## Strategie 1: URL Path Versioning
 
 Die Version ist Teil der URL.
@@ -748,6 +762,7 @@ Request 10000 → Virtual Thread 10000  ← Kein Problem!
 
 ---
 
+<!-- _class: dense -->
 ## Das Pinning-Problem
 
 Virtual Threads können **gepinnt** werden, wenn sie einen `synchronized`-Block betreten.
@@ -771,6 +786,7 @@ try {
 
 ---
 
+<!-- _class: densest -->
 ## Virtual Threads mit @Async
 
 Auch `@Async`-Methoden können Virtual Threads nutzen:
