@@ -3,7 +3,7 @@
 Ihr implementiert eine kleine Kursverwaltung fertig: Alle Klassen sind
 geschrieben, aber der Spring-Container hat noch keine Kenntnis von ihnen. Eure
 Aufgabe ist es, die Klassen als Beans zu deklarieren und die Abhängigkeiten per
-Konstruktor-Injection einzufügen, bis alle vier mitgelieferten Tests grün sind.
+Konstruktor-Injection einzufügen, bis der mitgelieferte Test grün ist.
 
 ## Lernziele
 
@@ -38,35 +38,37 @@ Alle Klassen liegen in `src/main/java` unter
 | `CourseService`          | Methodenrümpfe fertig, **Bean-Deklaration und Konstruktor fehlen** |
 | `TrainerDirectory`       | "Fremdklasse" - nicht verändern!                                   |
 | `TrainerConfig`          | Methode fertig, **`@Configuration` und `@Bean` fehlen**            |
-| `CourseServiceTest`      | Die vier Tests, die den Fortschritt messen                         |
+| `CourseServiceTest`      | Der Test, der den Fortschritt misst                                |
 
 Der Startzustand ist **absichtlich defekt**:
 `mvn test -DskipAssignmentTests=false`
-schlägt fehl, weil der Container keine der benötigten Beans findet. Wundert euch
-dabei nicht: **Alle vier Tests bleiben rot, bis alle vier Aufgaben gelöst
-sind** - auch die bereits erledigten. Euer Fortschritt zeigt sich stattdessen in
-der Fehlermeldung: Die `NoSuchBeanDefinitionException` nennt immer die
-**nächste** fehlende Bean. Die
-`TODO`-Kommentare im Code markieren alle Stellen.
+schlägt fehl, weil der Container keine der benötigten Beans findet.
+
+Es gibt genau einen Test, und der wird erst grün, wenn alle vier Aufgaben gelöst
+sind: Fehlt eine Bean, startet der Anwendungskontext gar nicht erst. Euer
+Fortschritt zeigt sich bis dahin in der Fehlermeldung - die
+`NoSuchBeanDefinitionException` nennt immer die **nächste** fehlende Bean.
+Sobald der Kontext startet, listet der Fehlerbericht alle noch offenen Aufgaben
+auf einmal. Die `TODO`-Kommentare im Code markieren alle Stellen.
 
 ## Aufgaben
 
-1. **Katalog und Service als Beans aufsetzen** (Test: *Aufgabe 1*)
+1. **Katalog und Service als Beans aufsetzen** (Zusicherung *Aufgabe 1*)
     - Bitte deklariert `InMemoryCourseCatalog` mit `@Repository` als Bean.
     - Bitte deklariert außerdem `CourseService` als Bean und schreibt den
       Konstruktor, der alle drei Abhängigkeiten entgegennimmt und den Feldern
       zuweist.
     - Hinweis: Bei genau einem Konstruktor injiziert Spring automatisch. Ein
       `@Autowired` ist nicht nötig.
-2. **Brutto-Rechner zum Standard machen** (Test: *Aufgabe 2*)
+2. **Brutto-Rechner zum Standard machen** (Zusicherung *Aufgabe 2*)
     - Deklariert `GrossFeeCalculator` als Bean.
     - Sorgt dafür, dass diese Bean gewinnt, wenn ein `FeeCalculator` ohne
       weitere Angabe injected wird.
-3. **Netto-Rechner gezielt auswählen** (Test: *Aufgabe 3*)
+3. **Netto-Rechner gezielt auswählen** (Zusicherung *Aufgabe 3*)
     - Deklariert `NetFeeCalculator` als Bean mit dem Namen `netFeeCalculator`.
     - Wählt diese Bean im Konstruktor des `CourseService` per
       `@Qualifier("netFeeCalculator")` für das Feld `netCalculator` aus.
-4. **Fremdklasse per `@Bean`-Methode bereitstellen** (Test: *Aufgabe 4*)
+4. **Fremdklasse per `@Bean`-Methode bereitstellen** (Zusicherung *Aufgabe 4*)
     - `TrainerDirectory` steht stellvertretend für eine Klasse aus einer fremden
       Bibliothek - ihr dürft sie nicht verändern und könnt sie daher nicht
       annotieren.
