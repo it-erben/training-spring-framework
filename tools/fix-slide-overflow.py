@@ -103,6 +103,13 @@ def write(path, assigns, base_font):
     if assigns:
         starts = slide_starts(lines, end)
         for n in sorted(assigns, reverse=True):
+            # Ein negativer Index traefe still die letzte Folie. Zaehlen
+            # Messung und Quelltext verschieden, lieber abbrechen als die
+            # falsche Folie markieren.
+            if not 1 <= n <= len(starts):
+                raise SystemExit(
+                    f"{path}: Messung meldet Folie {n}, der Quelltext hat {len(starts)}."
+                )
             lines.insert(starts[n - 1], f"<!-- _class: {assigns[n]} -->")
         used = [t for t in TIER_NAMES if t in set(assigns.values())]
         px = {n: round(f * base_font * 2) / 2 for n, f in TIER_FACTORS}
