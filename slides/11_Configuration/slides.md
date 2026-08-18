@@ -5,6 +5,12 @@ header: Spring Boot Advanced
 footer: Alexander Erben
 paginate: true
 ---
+<!-- Dichte-Stufen gegen Folienueberlauf, siehe tools/check-slide-overflow.mjs -->
+<style>
+section.dense { font-size: 24.5px; }
+section.denser { font-size: 21px; }
+section.densest { font-size: 17.5px; }
+</style>
 
 # Spring Boot Configuration & Internals
 
@@ -69,13 +75,8 @@ Entweder `@EnableConfigurationProperties(MailProperties.class)` auf einer Konfig
 
 ---
 
+<!-- _class: dense -->
 ## Profiles
-
-<style scoped>
-section {
-    font-size: 25px;
-}
-</style>
 
 Spring lädt automatisch Dateien basierend auf dem aktiven Profil:
 
@@ -97,12 +98,8 @@ spring:
 Aktiviert man nun `-Dspring.profiles.active=production`, werden automatisch `proddb`, `cloudmetrics` und `k8s` mitaktiviert.
 
 ---
-<style scoped>
-section {
-    font-size: 20px;
-}
-</style>
 
+<!-- _class: densest -->
 ## Config Server (Git-Backed)
 
 * Trennung von Config und Code: zentrale Git-Repo, Versionierung, Audits.
@@ -128,12 +125,8 @@ server:
 Starter: `spring-cloud-config-server` + `@EnableConfigServer`.
 
 ---
-<style scoped>
-section {
-    font-size: 20px;
-}
-</style>
 
+<!-- _class: denser -->
 ## Client-Anbindung
 
 * Seit Boot 2.4: `spring.config.import=optional:configserver:http://localhost:8888`
@@ -178,12 +171,8 @@ Im Git-Repo: `password: "{cipher}..."`
 Client erhält bereits entschlüsselte Werte.
 
 ---
-<style scoped>
-section {
-    font-size: 25px;
-}
-</style>
 
+<!-- _class: dense -->
 ## Speichern von Secrets in externen Systemen
 
 **Beispiel Spring Cloud Vault (`application.yml`):**
@@ -205,12 +194,8 @@ spring:
 * Empfohlen: Vault-Agent/K8s Auth statt statischem Token; Maskierung sensibler Werte in Logs/Actuator.
 
 ---
-<style scoped>
-section {
-    font-size: 25px;
-}
-</style>
 
+<!-- _class: denser -->
 ## Vault lokal ausführen und testen
 
 1. Vault im Dev-Mode starten (lokal, *nicht* für Prod):  
@@ -237,13 +222,8 @@ In Kubernetes kann man Vault auch im Cluster betreiben.
 
 ---
 
+<!-- _class: denser -->
 ## Resilienz bei Config-Fehlern
-
-<style scoped>
-section {
-    font-size: 24px;
-}
-</style>
 
 * **Fail Fast**: Bei Spring Cloud Config ist es im Produktivbetrieb sinnvoll, den Start abbrechen zu lassen, wenn der Server nicht erreichbar ist (`spring.cloud.config.fail-fast=true`).
 * **Fallback**: Für Dev/CI oder lokale Demos `spring.cloud.config.fail-fast=false` + `spring.config.import=optional:configserver:...` → App startet mit lokalen Defaults.
@@ -281,12 +261,6 @@ Bedingte Ausführung sind das Zentrum der Auto-Konfiguration.
 
 ## Beispiel: AutoConfiguration Klasse
 
-<style scoped>
-section {
-    font-size: 25px;
-}
-</style>
-
 ```java
 @AutoConfiguration // Spezialisierung von @Configuration (proxyBeanMethods = false), seit Boot 2.7
 @ConditionalOnClass(AuditService.class)
@@ -309,13 +283,8 @@ com.mycompany.audit.AuditAutoConfiguration
 
 ---
 
+<!-- _class: dense -->
 ## Boot Internals: EnvironmentPostProcessor
-
-<style scoped>
-section {
-    font-size: 25px;
-}
-</style>
 
 Wenn man in den Startprozess eingreifen muss, **bevor** der ApplicationContext erstellt wird (z.B. um custom Config-Dateien zu laden oder sensitive Properties zu entschlüsseln).
 
@@ -337,6 +306,7 @@ Registrierung in `META-INF/spring/org.springframework.boot.env.EnvironmentPostPr
 
 ---
 
+<!-- _class: dense -->
 ## Failure Analyzers
 
 Eigene Fehlermeldungen beim Absturz direkt nach dem Start.
@@ -452,12 +422,8 @@ spring:
 Jede Datei wird zum Property-Namen, der Inhalt zum Wert.
 
 ---
-<style scoped>
-section {
-    font-size: 1.3rem;
-}
-</style>
 
+<!-- _class: denser -->
 ## Kubernetes Volume Mount
 
 ```yaml
@@ -503,12 +469,8 @@ private String dbUrl;  // "jdbc:postgresql://db:5432/mydb"
 ```
 
 ---
-<style scoped>
-section {
-    font-size: 1.4rem;
-}
-</style>
 
+<!-- _class: dense -->
 ## Secrets als Config importieren
 
 Für sensible Daten funktioniert es identisch mit Kubernetes Secrets:

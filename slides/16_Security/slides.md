@@ -5,6 +5,11 @@ header: Spring Boot Advanced
 footer: Alexander Erben
 paginate: true
 ---
+<!-- Dichte-Stufen gegen Folienueberlauf, siehe tools/check-slide-overflow.mjs -->
+<style>
+section.dense { font-size: 24.5px; }
+section.denser { font-size: 21px; }
+</style>
 
 # Architektur von Spring Security
 
@@ -30,12 +35,8 @@ paginate: true
 * Die `SecurityFilterChain` ist der zentrale Einstiegspunkt zur Konfiguration.
 
 ---
-<style scoped>
-section {
-    font-size: 25px;
-}
-</style>
 
+<!-- _class: denser -->
 ## Kernkomponenten
 
 1. **`SecurityContextHolder`**: Hält das `SecurityContext`, welches wiederum das `Authentication`-Objekt enthält.
@@ -58,11 +59,6 @@ Die Hauptkonfiguration erfolgt über die `HttpSecurity`-Objekt im `SecurityFilte
 Auf der folgenden Seite schauen wir uns die Konfiguration im Code an.
 
 ---
-<style scoped>
-section {
-    font-size: 20px;
-}
-</style>
 
 ```java
 @Configuration
@@ -117,7 +113,7 @@ public class WebSecurityConfig {
 
 Zusätzlich zur URL-basierten Autorisierung kann man Zugriffsregeln direkt an Methoden oder Klassen definieren.
 
-### Aktivierung
+#### Aktivierung
 
 Seit Spring Boot 3: `@EnableMethodSecurity` (ersetzt `@EnableGlobalMethodSecurity`).
 
@@ -424,7 +420,7 @@ spring:
 
 ---
 
-### OAuth2 Client: Nutzung
+#### OAuth2 Client: Nutzung
 
 ```java
 @RestController
@@ -534,6 +530,7 @@ public class SpaCsrfTokenRequestHandler extends CsrfTokenRequestAttributeHandler
 
 ---
 
+<!-- _class: denser -->
 ## @WithMockUser
 
 Simuliert einen authentifizierten User in Tests – ohne echte Authentifizierung.
@@ -602,6 +599,7 @@ class UserControllerIntegrationTest {
 
 ---
 
+<!-- _class: dense -->
 ## Custom Security Context für JWT
 
 Für OAuth2/JWT Tests kann man einen eigenen `SecurityContext` erstellen.
@@ -660,6 +658,7 @@ server:
 
 ---
 
+<!-- _class: dense -->
 ## Client-Zertifikat im Controller auslesen
 
 ```java
@@ -685,6 +684,7 @@ public class SecureController {
 
 ---
 
+<!-- _class: dense -->
 ## mTLS mit RestClient (Client-Seite)
 
 ```java

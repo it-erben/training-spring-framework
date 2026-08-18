@@ -5,6 +5,12 @@ header: Spring Boot Advanced
 footer: Alexander Erben
 paginate: true
 ---
+<!-- Dichte-Stufen gegen Folienueberlauf, siehe tools/check-slide-overflow.mjs -->
+<style>
+section.dense { font-size: 24.5px; }
+section.denser { font-size: 21px; }
+section.densest { font-size: 17.5px; }
+</style>
 
 <style>
 img[alt~="center"] {
@@ -17,6 +23,7 @@ img[alt~="center"] {
 
 ---
 
+<!-- _class: dense -->
 ## In diesem Modul
 
 * Warum Messaging? Modelle (Queue vs. Topic) und typische Use Cases
@@ -78,17 +85,13 @@ img[alt~="center"] {
 * Unabhängig vom konkreten Messaging-Anbieter (ActiveMQ, IBM MQ, TIBCO EMS).
 
 ---
-<style scoped>
-section {
-    font-size: 20px;
-}
-</style>
 
+<!-- _class: densest -->
 ## Spring JMS mit ActiveMQ (Beispiel-Broker)
 
 **Dependency:** `spring-boot-starter-activemq`
 
-### Nachrichten Senden (`JmsTemplate`)
+#### Nachrichten Senden (`JmsTemplate`)
 
 ```java
 @Service
@@ -114,11 +117,6 @@ public class OrderProducer {
 ```
 
 ---
-<style scoped>
-section {
-    font-size: 25px;
-}
-</style>
 
 ## Nachrichten Empfangen (`@JmsListener`)
 
@@ -141,7 +139,7 @@ public class OrderConsumer {
 
 ---
 
-### Message Converters
+#### Message Converters
 
 * Wandeln Java-Objekte in `javax.jms.Message` und umgekehrt.
 * Spring Boot konfiguriert standardmäßig den `MappingJackson2MessageConverter` für JSON.
@@ -162,7 +160,7 @@ public class JmsConfig {
 
 ---
 
-### Idempotenz
+#### Idempotenz
 
 * Wichtig, da Nachrichten in verteilten Systemen **mehrfach zugestellt** werden können ("at-least-once" Delivery).
 * Eine Operation ist idempotent, wenn sie mehrmals ausgeführt werden kann, ohne zusätzliche Seiteneffekte zu erzeugen.
@@ -190,6 +188,7 @@ public class JmsConfig {
 
 ---
 
+<!-- _class: dense -->
 ## Exchange Types
 
 1. **Direct Exchange:**
@@ -215,11 +214,11 @@ public class JmsConfig {
 
 ## Spring AMQP mit RabbitMQ
 
-### Dependency
+#### Dependency
 
 `spring-boot-starter-amqp`
 
-### Konfiguration (Minimal)
+#### Konfiguration (Minimal)
 
 ```yaml
 spring:
@@ -280,7 +279,8 @@ public class MessageConsumer {
 
 ---
 
-### Automatische Erstellung von Exchanges, Queues und Bindings
+<!-- _class: densest -->
+#### Automatische Erstellung von Exchanges, Queues und Bindings
 
 Spring AMQP kann diese bei Anwendungsstart automatisch erstellen.
 
@@ -316,7 +316,7 @@ public class RabbitConfig {
 
 ---
 
-### Publisher Confirms & Returns
+#### Publisher Confirms & Returns
 
 * **Confirms:** Der Broker bestätigt dem Publisher, dass er die Nachricht erhalten hat.
 * **Returns:** Der Broker benachrichtigt den Publisher, wenn eine Nachricht an keinen Consumer zugestellt werden konnte.
@@ -347,12 +347,8 @@ Wie ein Consumer dem Broker mitteilt, dass die Nachricht erfolgreich verarbeitet
 * Wichtig für Fehlerbehandlung und Auditing.
 
 ---
-<style scoped>
-section {
-    font-size: 20px;
-}
-</style>
 
+<!-- _class: denser -->
 ## Konfiguration einer Queue mit DLX
 
 ```java
@@ -407,11 +403,11 @@ public Binding dlqBinding(Queue dlq, DirectExchange dlxExchange) {
 
 ## Apache Kafka in Spring
 
-### Dependency
+#### Dependency
 
 `spring-kafka`
 
-### Konfiguration (Minimal)
+#### Konfiguration (Minimal)
 
 ```yaml
 spring:
@@ -468,13 +464,13 @@ public class UserEventListener {
 
 ---
 
-### Serde (Serializer/Deserializer)
+#### Serde (Serializer/Deserializer)
 
 * Kafka Nachrichten sind Byte-Arrays.
 * Producer muss Objekte serialisieren, Consumer deserialisieren.
 * Spring Kafka bietet `JsonSerializer` / `JsonDeserializer` für JSON.
 
-### Fehlerbehandlung
+#### Fehlerbehandlung
 
 * **Consumer Group Offsets:** Kafka merkt sich pro Consumer Group den letzten verarbeiteten Offset.
 * **Retry-Mechanismen:** Bei Fehlern die Nachricht erneut versuchen.
@@ -550,6 +546,7 @@ spring.cloud.stream.bindings.orderProcessor-in-0.destination: order-events
 
 ---
 
+<!-- _class: dense -->
 ## Functional Model: Supplier (Producer)
 
 ```java
@@ -576,6 +573,7 @@ public void sendEvent(OrderCreatedEvent event) {
 
 ---
 
+<!-- _class: dense -->
 ## Functional Model: Function (Processor)
 
 Empfängt Input, transformiert, sendet Output.
@@ -684,6 +682,7 @@ spring:
 
 ---
 
+<!-- _class: dense -->
 ## Compatibility Modes
 
 Schema Registry prüft Kompatibilität beim Registrieren:
@@ -743,13 +742,8 @@ Ein zentraler "Conductor" (Klasse oder Service) kennt den gesamten Ablauf und sa
 
 ---
 
+<!-- _class: densest -->
 ## Saga Orchestration: Naive Implementierung
-
-<style scoped>
-section {
-    font-size: 20px;
-}
-</style>
 
 ```java
 @Service
@@ -803,7 +797,7 @@ Die naive Saga-Implementierung hat ein fundamentales Problem: **Dual Write**.
 
 **Lösung:** Wir schreiben das Event in eine **Outbox-Tabelle** in derselben Transaktion wie die Geschäftsdaten.
 
-### Ablauf
+#### Ablauf
 
 1. Business-Logik speichert Daten + Event in `outbox`-Tabelle (gleiche TX)
 2. Ein separater Prozess (Polling oder CDC) liest die Outbox und publiziert Events
@@ -833,6 +827,7 @@ public class OutboxEvent {
 
 ---
 
+<!-- _class: dense -->
 ## Outbox: Speichern in einer Transaktion
 
 ```java
@@ -900,6 +895,7 @@ Eine Operation ist **idempotent**, wenn sie mehrmals ausgeführt werden kann, oh
 
 ---
 
+<!-- _class: denser -->
 ## Idempotenz: Implementierung
 
 ```java

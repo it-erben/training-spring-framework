@@ -5,6 +5,12 @@ header: Spring Boot Advanced
 footer: Alexander Erben
 paginate: true
 ---
+<!-- Dichte-Stufen gegen Folienueberlauf, siehe tools/check-slide-overflow.mjs -->
+<style>
+section.dense { font-size: 24.5px; }
+section.denser { font-size: 21px; }
+section.densest { font-size: 17.5px; }
+</style>
 
 <style>
 img[alt~="center"] {
@@ -82,34 +88,30 @@ public interface UserRepository extends JpaRepository<User, Long> {
 * Vorteil: Queries bleiben portabel und eng an das Domain-Modell gekoppelt.
 
 ---
-<style scoped>
-section {
-    font-size: 20px;
-}
-</style>
 
-### Grundsyntax einer JPQL-Query
+<!-- _class: denser -->
+#### Grundsyntax einer JPQL-Query
 
 ```java
 @Query("SELECT u FROM User u WHERE u.active = true")
 List<User> findActiveUsers();
 ```
 
-### Parametrisierung
+#### Parametrisierung
 
 ```java
 @Query("SELECT u FROM User u WHERE u.email = :email")
 User findByEmail(@Param("email") String email);
 ```
 
-### Inner Join
+#### Inner Join
 
 ```java
 @Query("SELECT o FROM Order o JOIN o.customer c WHERE c.status = 'PREMIUM'")
 List<Order> findOrdersOfPremiumCustomers();
 ```
 
-### Fetch Join
+#### Fetch Join
 
 ```java
 @Query("SELECT u FROM User u JOIN FETCH u.roles")
@@ -133,7 +135,7 @@ Man lädt zum Beispiel 100 User in einer Query. Dann greift man auf `user.getAdd
 
 ---
 
-### Lösung 1: @EntityGraph
+#### Lösung 1: @EntityGraph
 
 Deklaratives Eager-Loading im Repository.
 
@@ -142,7 +144,7 @@ Deklaratives Eager-Loading im Repository.
 List<User> findAll();
 ```
 
-### Lösung 2: JPQL Fetch Join
+#### Lösung 2: JPQL Fetch Join
 
 Lädt ebenfalls den ganzen Graph.
 
@@ -168,7 +170,7 @@ List<User> findAllWithAddresses();
 
 ---
 
-### Interface Projection
+#### Interface Projection
 
 Spring generiert zur Laufzeit einen Proxy.
 
@@ -183,7 +185,7 @@ public interface UserView {
 
 ---
 
-### Class Projection (Records)
+#### Class Projection (Records)
 
 Type-safe und performant (selektiert nur benötigte Spalten im SQL).
 
@@ -195,7 +197,7 @@ List<UserDto> findByActiveTrue();
 
 ---
 
-### JPQL-Projektion
+#### JPQL-Projektion
 
 ```java
 @Query("""
@@ -251,6 +253,11 @@ Wie verhalten sich Transaktionen bei verschachtelten Service-Aufrufen?
 * **SUPPORTS:** Laufe in TX wenn da, sonst ohne.
 * **MANDATORY:** Wirf Exception, wenn keine TX da ist.
 
+---
+
+<!-- _class: dense -->
+## Propagation im Aufrufer
+
 ```java
 @Service
 public class OrderService {
@@ -275,7 +282,13 @@ public class OrderService {
         }
     }
 }
+```
 
+---
+
+## Propagation im Aufgerufenen
+
+```java
 @Service
 public class AuditService {
 
@@ -462,12 +475,8 @@ databaseChangeLog:
 ```
 
 ---
-<style scoped>
-section {
-    font-size: 1.2rem;
-}
-</style>
 
+<!-- _class: densest -->
 ## Liquibase Change Set
 
 **001-create-users.yaml:**
@@ -504,6 +513,7 @@ databaseChangeLog:
 
 ---
 
+<!-- _class: dense -->
 ## @Query mit nativeQuery = true
 
 Manchmal reicht JPQL nicht aus – dann braucht man echtes SQL.
@@ -601,6 +611,7 @@ public interface ProductRepository extends
 
 ---
 
+<!-- _class: denser -->
 ## Specifications definieren
 
 ```java

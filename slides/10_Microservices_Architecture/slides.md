@@ -7,8 +7,8 @@ paginate: true
 ---
 <!-- Dichte-Stufen gegen Folienueberlauf, siehe tools/check-slide-overflow.mjs -->
 <style>
-section.dense { font-size: 25.5px; }
-section.denser { font-size: 21.5px; }
+section.dense { font-size: 24.5px; }
+section.denser { font-size: 21px; }
 </style>
 
 <style>
@@ -61,11 +61,6 @@ Eine gemeinsame, unmissverständliche Sprache zwischen Entwicklern und Fachexper
 
 ## Beispiel: Polysemie (Mehrdeutigkeit)
 
-<style scoped>
-section {
-    font-size: 30px;
-}
-</style>
 Der Begriff **"Produkt"** bedeutet je nach Abteilung etwas völlig anderes:
 
 ![center h:400](./images/00_ddd_bounded_contexts.drawio.svg)
@@ -131,6 +126,7 @@ Microservices wählen meist **AP** (Availability) und akzeptieren **Eventual Con
 
 ---
 
+<!-- _class: dense -->
 ## JTA/XA ist nicht gut für Microservices geeignet
 
 1. **REST ist zustandslos:** Der Transaktionskontext müsste in Requests mit Headern propagiert werden. Dies widerspricht aber der Zustandslosigkeit von REST. Jeder Service agiert mit seinen eigenen Ressourcen in lokalen Transaktionen.
@@ -138,18 +134,14 @@ Microservices wählen meist **AP** (Availability) und akzeptieren **Eventual Con
 3. **Fehlende Protokoll-Unterstützung:** Es gibt kein standardisiertes, weit verbreitetes Protokoll, um XA-Transaktionen über HTTP/REST-Servicegrenzen hinweg zu propagieren.
 
 ---
-<style scoped>
-section {
-    font-size: 1.4rem;
-}
-</style>
 
+<!-- _class: denser -->
 ## Alternative zu XA: Das Saga Pattern
 
 * JTA/XA ist für **eng gekoppelte Systeme** gedacht, nicht für Microservices.
 * Die Alternative: **Sagas** – eine Folge von lokalen Transaktionen mit Kompensationslogik.
 
-### Zwei Ansätze
+#### Zwei Ansätze
 
 | Ansatz            | Beschreibung                   | Pro/Con                                     |
 |-------------------|--------------------------------|---------------------------------------------|
@@ -259,8 +251,8 @@ Mit Bulkheads definieren wir pro Funktionseinheit eigene Limits:
 
 ---
 
-<!-- _class: denser -->
-### Thread-Bulkheads
+<!-- _class: dense -->
+#### Thread-Bulkheads
 
 ```yaml
 resilience4j:
@@ -288,7 +280,7 @@ public class ReportClient {
 
 ---
 
-### Semaphore-Bulkhead
+#### Semaphore-Bulkhead
 
 ```yaml
 resilience4j:
@@ -321,12 +313,8 @@ public class LoginClient {
 * Statt 20–50 Services einzeln anzusprechen, kommunizieren Browser oder Mobile Apps nur noch mit *einem* Entry Point.
 
 ---
-<style scoped>
-section {
-    font-size: 25px;
-}
-</style>
 
+<!-- _class: dense -->
 ## Aufgaben eines Gateways
 
 * **Routing**: Requests werden an interne Services weitergeleitet:  
@@ -421,11 +409,7 @@ spring:
 ```
 
 ---
-<style scoped>
-section {
-    font-size: 20px;
-}
-</style>
+<!-- _class: denser -->
 `OrderClient.java`
 
 ```java
