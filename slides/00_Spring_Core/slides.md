@@ -613,6 +613,6 @@ Code: `demos/sb-basics-core-demo`. Der Ordner `-start` ist der Ausgangspunkt zum
 3. Konstruktor-Injection im `CourseService` implementieren.
 4. Die Mehrdeutigkeit zwischen zwei `FeeCalculator`-Beans mit `@Primary` und `@Qualifier` auflösen.
 
-Die mitgelieferten Tests zeigen, wann ihr fertig seid: `mvn test -DskipAssignmentTests=false` muss grün sein.
+Ein einziger Test zeigt, wann ihr fertig seid: `mvn test -DskipAssignmentTests=false` muss grün sein.
 
 **Ausblick:** Modul *11_Configuration* vertieft, wie Spring Boot per **AutoConfiguration** viele dieser Beans automatisch konfiguriert und wie man eigene AutoConfigurations und Starter baut.
