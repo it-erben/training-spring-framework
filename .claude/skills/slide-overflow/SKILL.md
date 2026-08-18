@@ -82,7 +82,17 @@ etwas aendert, faellt sonst in dieselben Fallen zurueck.
   Marpit uebersetzt sie in einen Attributselektor mit hoeherer Spezifitaet.
   Findet sich so ein Block auf einer Folie, die trotz Klasse ueberlaeuft:
   Block entfernen und den Lauf wiederholen, damit pro Datei nur ein
-  Mechanismus wirkt. Die Advanced-Module nutzen dieses Muster noch.
+  Mechanismus wirkt.
+- **`![bg]`-Grafiken erzeugen zusaetzliche `<section>`.** Marpit legt je
+  Folie mit Hintergrundbild einen `background`- und einen `pseudo`-Container
+  an. Beide haben keine `id` und werden nie eine Seite. Ueber `section`
+  gezaehlt melden sie eine zu hohe Folienzahl, und `Number('')` macht aus
+  ihrer leeren `id` die Foliennummer 0 — ein Index, der beim Markieren still
+  die letzte Folie traefe. Gemessen wird darum `section[id]`.
+- **`process.exit()` verwirft ungeschriebenes stdout.** Sobald `--json` ueber
+  mehrere Decks den Pipe-Puffer von 64 KB fuellt, kommt beim Leser
+  abgeschnittenes JSON an. Der Checker setzt darum `process.exitCode` und
+  laesst Node regulaer beenden.
 
 ## Belegen
 

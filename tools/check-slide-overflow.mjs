@@ -69,7 +69,12 @@ const PROBE = `new Promise(function (done, fail) {
   var MIN_SETTLE_MS = 1200, started = Date.now();
   var last = null, stable = 0;
 
-  function sections() { return document.querySelectorAll('section'); }
+  // Nur Sections mit id sind echte Folien. Marpit legt fuer jede
+  // ![bg]-Grafik zwei weitere Container an ("background" und "pseudo"),
+  // die keine Seite erzeugen. Mitgezaehlt melden sie eine zu hohe
+  // Folienzahl und verschieben die Zuordnung von Messwert zu Nummer:
+  // ihre id ist leer, Number('') ergibt 0.
+  function sections() { return document.querySelectorAll('section[id]'); }
   function snapshot() {
     return [].map.call(sections(), function (s) {
       return s.scrollHeight + 'x' + s.clientHeight;
@@ -227,6 +232,7 @@ async function main() {
       }
     }
   } finally {
+    cdp.ws.close();
     proc.kill();
   }
 
@@ -244,10 +250,14 @@ async function main() {
       }
     }
   }
-  process.exit(failing.length ? 1 : 0);
+  // process.exit() verwirft stdout, das noch nicht geschrieben ist. Sobald
+  // --json ueber mehrere Decks den Pipe-Puffer von 64 KB fuellt, kommt die
+  // Ausgabe abgeschnitten an. Exit-Code setzen und Node regulaer beenden
+  // lassen, damit der Puffer vorher leerlaeuft.
+  process.exitCode = failing.length ? 1 : 0;
 }
 
 main().catch((e) => {
   console.error(e.message);
-  process.exit(2);
+  process.exitCode = 2;
 });
