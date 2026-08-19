@@ -11,9 +11,10 @@ import java.math.BigDecimal;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Misst den Fortschritt der Übung. Achtung: Solange der Spring-Kontext
- * nicht hochkommt, fallen alle fünf Tests gemeinsam durch — Details dazu
- * stehen in der README.
+ * Misst den Fortschritt der Übung: Die drei "Ohne Zutun"-Tests werden mit
+ * Aufgabe 1 grün, die beiden anderen jeweils mit ihrer Aufgabe. Im
+ * Ausgangszustand startet der Spring-Kontext noch gar nicht, dann fallen
+ * alle fünf gemeinsam durch — Details dazu stehen in der README.
  */
 @DataJpaTest
 @Sql("/test-courses.sql")

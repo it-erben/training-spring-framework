@@ -28,15 +28,15 @@ JPQL-Queries.
 Alle Klassen liegen in `src/main/java` unter
 `tech.erben.springboot.basics.data.task`:
 
-| Klasse                                | Zustand                                                         |
-|---------------------------------------|-----------------------------------------------------------------|
-| `CourseAdminApplication`              | Fertig. Einstiegspunkt ist `@SpringBootApplication`             |
-| `Trainer`                             | Fertig: bereits gemappte Entity, Vorlage für Aufgabe 1          |
-| `Course`                              | Felder, Konstruktoren und Getter fertig. **Es fehlt JPA**       |
-| `CourseSummary`                       | Fertig. Das Record für die Projektion aus Aufgabe 3             |
-| `CourseRepository`                    | Alle Methoden deklariert. **Den letzten beiden fehlt `@Query`** |
-| `CourseRepositoryTest`                | Die fünf Tests, die den Fortschritt messen                      |
-| `src/test/resources/test-courses.sql` | Testdaten: zwei Trainer, vier Kurse                             |
+| Klasse                                | Zustand                                                           |
+|---------------------------------------|-------------------------------------------------------------------|
+| `CourseAdminApplication`              | Fertig. Einstiegspunkt ist `@SpringBootApplication`               |
+| `Trainer`                             | Fertig: bereits gemappte Entity, Vorlage für Aufgabe 1            |
+| `Course`                              | Felder, Konstruktoren und Getter fertig. **Es fehlt JPA**         |
+| `CourseSummary`                       | Fertig. Das Record für die Projektion aus Aufgabe 3               |
+| `CourseRepository`                    | Alle Methoden deklariert. **Die letzten beiden sind Platzhalter** |
+| `CourseRepositoryTest`                | Die fünf Tests, die den Fortschritt messen                        |
+| `src/test/resources/test-courses.sql` | Testdaten: zwei Trainer, vier Kurse                               |
 
 Das Besondere an dieser Übung: Drei der fünf Repository-Methoden (`findByCode`,
 `findByTitleContainingIgnoreCase`, `findBySeatsGreaterThan`) müsst ihr **gar
@@ -46,21 +46,22 @@ bewusst so benannt, dass diese Ableitung scheitert:
 `Course` hat weder ein Feld `feeRange` noch eines namens `summaries`. Hier müsst
 ihr die Query selbst mitgeben.
 
+Damit die Ableitung euch nicht schon vor Aufgabe 1 im Weg steht, tragen diese
+beiden Methoden vorerst einen `default`-Rumpf, der eine
+`UnsupportedOperationException` wirft. Methoden mit Rumpf sind für Spring Data
+keine Query-Methoden — der Name bleibt ungeprüft, der Kontext startet. Der Rumpf
+gewinnt allerdings immer: Eine `@Query` daneben bliebe wirkungslos, deshalb
+gehört er in Aufgabe 2 und 3 gelöscht.
+
 Der Startzustand ist **absichtlich defekt**:
 `mvn test -DskipAssignmentTests=false`
 meldet fünf Fehler, alle mit derselben Ursache: der Spring-Kontext startet
 nicht, weil `Course` keine Entity ist
-(`IllegalArgumentException: Not a managed type`). Anders als in Übung 02 werden
-die Tests hier nicht einzeln grün: Solange auch nur eine der drei Aufgaben offen
-ist, scheitert schon der Aufbau des Kontexts. Damit fallen alle fünf Tests
-gemeinsam durch. Euer Fortschritt zeigt sich stattdessen an der Fehlermeldung.
-Nach Aufgabe 1 lautet sie nicht mehr `Not a managed type`, sondern
-`QueryCreationException: … No property 'feeRange' found for type 'Course'`.
-Spring Data versucht beim Start, `findByFeeRange` aus dem Namen abzuleiten, und
-findet das Feld nicht. Das ist der erwartete Zwischenstand. Nach Aufgabe 2
-wandert dieselbe Meldung zu `findSummaries` weiter, und erst nach Aufgabe 3
-startet der Kontext. Dann laufen alle fünf Tests und die drei zu den
-abgeleiteten Methoden sind sofort grün.
+(`IllegalArgumentException: Not a managed type`). Danach werden die Tests
+einzeln grün. Nach Aufgabe 1 startet der Kontext, die drei *Ohne Zutun*-Tests
+sind grün, und die beiden anderen scheitern mit der
+`UnsupportedOperationException` aus dem Platzhalter-Rumpf. Aufgabe 2 und 3
+holen jeweils ihren eigenen Test.
 
 ## Aufgaben
 
@@ -70,9 +71,9 @@ abgeleiteten Methoden sind sofort grün.
     - Sichert `code` mit `@Column(unique = true)` gegen Duplikate ab.
     - Mappt `trainer` mit `@ManyToOne`. Daraus entsteht die
       Fremdschlüssel-Spalte `trainer_id`.
-    - Lasst die Tests laufen und lest die Fehlermeldung: Sie sollte jetzt
-      `feeRange` statt `Not a managed type` nennen. Das ist Aufgabe 2.
+    - Lasst die Tests laufen: Die drei *Ohne Zutun*-Tests sind jetzt grün.
 2. **`findByFeeRange` eine Query mitgeben** (Test: *Aufgabe 2*)
+    - Löscht den `default`-Rumpf, sodass nur die Deklaration stehen bleibt.
     - Annotiert die Methode mit `@Query`
       (`org.springframework.data.jpa.repository.Query`) und schreibt JPQL, das
       alle Kurse liefert, deren `netFee` zwischen `min` und `max` liegt
@@ -81,8 +82,11 @@ abgeleiteten Methoden sind sofort grün.
       (`org.springframework.data.repository.query.Param`) an die benannten
       Parameter der Query.
     - Sobald eine `@Query` an der Methode steht, ist der Name nur noch ein Name.
-      Spring Data versucht keine Ableitung mehr.
+      Spring Data versucht keine Ableitung mehr. Vergesst ihr die `@Query`,
+      seht ihr genau das Gegenteil: Der Kontext startet nicht mehr, sondern
+      meldet `No property 'feeRange' found for type 'Course'`.
 3. **`findSummaries` als Konstruktor-Projektion schreiben** (Test: *Aufgabe 3*)
+    - Löscht auch hier den `default`-Rumpf.
     - Annotiert die Methode mit `@Query` und nutzt
       `select new tech.erben.springboot.basics.data.task.CourseSummary(…)`, um
       pro Kurs direkt ein Record aus Kurscode und Trainername zu bauen.
