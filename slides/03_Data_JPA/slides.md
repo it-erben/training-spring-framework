@@ -506,6 +506,7 @@ spring.jpa.hibernate.ddl-auto=validate
 
 * Gegeben: alle Typen sind fertig: `CourseAdminApplication`, `Trainer` (fertige Entity), `Course` (noch **ohne** JPA-Annotationen), `CourseRepository`, Testdaten.
 * Ausgangszustand: Die Tests sind rot, weil der Kontext nicht startet: `Not a managed type: Course`.
+* Nach Aufgabe 1 startet er, und die drei Tests zu den abgeleiteten Methoden sind grün. Aufgabe 2 und 3 haben je einen eigenen Test.
 
 Drei Aufgaben jeweils mit Tests
 
