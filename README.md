@@ -38,6 +38,7 @@ Die Lösungen liegen unter `solutions/sb-basics-*-solution`.
 | Security | `slides/16_Security` |
 | Messaging | `slides/17_Messaging` |
 | Batch | `slides/18_Batch` |
+| Batch im Betrieb | `slides/19_Batch_Betrieb` |
 
 Demos, Übungen und Lösungen des Advanced-Blocks tragen das Präfix
 `sb-advanced-`.
@@ -48,6 +49,16 @@ Raumverwaltung von Grund auf — Projekt über start.spring.io, Entity,
 Repository, Service, Controller, Slice-Tests. Das Deck enthält
 Aufgabenstellung und Auflösung, die Referenzlösung liegt unter
 `solutions/sb-basics-recap-solution`.
+
+`slides/19_Batch_Betrieb` schließt daran an und behandelt in 90 Minuten, was
+zwischen einem Job, der läuft, und einem Job, den man betreiben kann, noch
+fehlt: Idempotenz, verwaiste Executions nach einem Absturz, Doppelstarts und
+Sperren, parallele Steps über einen Split, Metriken und das Wachstum der
+Metadatentabellen. Die Vorführdemo
+`demos/sb-advanced-batch-operations-demo` ist anders als die übrigen
+Batch-Module kein Batch-Artefakt, sondern ein Dienst mit Job-Endpunkten; ihre
+README führt die fünf Szenarien der Reihe nach vor. Übung und Lösung
+gibt es zu diesem Modul nicht.
 
 Das Batch-Modul dauert 3 Stunden: 2 Stunden Vortrag und Live-Coding gegen
 `demos/sb-advanced-batch-demo`, 1 Stunde Übung
