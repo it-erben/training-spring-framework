@@ -33,6 +33,7 @@
         <module>sb-advanced-messaging-kafka-demos</module>
         <module>sb-advanced-security-oauth2-demo</module>
         <module>sb-advanced-resilience4j-demo</module>
+        <module>sb-advanced-batch-demo</module>
     </modules>
 
 </project>

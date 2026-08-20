@@ -70,7 +70,7 @@ Zwei Blöcke, getrennt über die Nummerierung der Slide-Verzeichnisse:
 
 - `slides/00_` bis `05_` — Basis-Block, 2 Tage, Marp-Header
   `Spring Boot Basics`, Maven-Module mit Präfix `sb-basics-`.
-- `slides/10_` bis `17_` — Advanced-Block, 3 Tage, Marp-Header
+- `slides/10_` bis `18_` — Advanced-Block, 3 Tage, Marp-Header
   `Spring Boot Advanced`, Maven-Module mit Präfix `sb-advanced-`.
 
 Der Basis-Block setzt keine Spring-Kenntnisse voraus. Mehrere
@@ -101,9 +101,10 @@ bleiben synchron.
 - **Jeder Zwischenschritt** einer `-start`-README muss lauffähig sein. Ein
   `package`-Lauf beweist das nicht — die Schritte einzeln anwenden und
   starten.
-- **Im Basis-Block nutzen Demos eine Buchhandlung, Übungen eine
-  Kursverwaltung.** Die Trennung verhindert, dass die Demo-Lösung in die
-  Übung kopierbar ist. Der Advanced-Block folgt keiner einheitlichen Domäne.
+- **Im Basis-Block und im Batch-Modul nutzen Demos eine Buchhandlung, Übungen
+  eine Kursverwaltung.** Die Trennung verhindert, dass die Demo-Lösung in die
+  Übung kopierbar ist. Der übrige Advanced-Block folgt keiner einheitlichen
+  Domäne.
 - Kein Lombok in den Basis-Modulen. Kein `spring-boot-starter-parent`: Das
   Root-POM liefert nur gemeinsame Properties (`spring-boot.version`,
   `spring-cloud.version`, `maven-compiler-plugin.version`,
@@ -111,3 +112,11 @@ bleiben synchron.
   `datafaker.version`), jedes Leaf-POM importiert `spring-boot-dependencies`
   selbst. Ein
   lauffähiges Fat-JAR braucht deshalb eine explizite `repackage`-Execution.
+- **Spring Batch 6 hat die Pakete umgebaut.** `Job`, `JobExecution`, `Step`
+  und `StepExecution` liegen in `org.springframework.batch.core.job` und
+  `…core.step`, `JobParameters` in `…core.job.parameters`, sämtliche Reader
+  und Writer in `org.springframework.batch.infrastructure.item.*`.
+  `JobBuilderFactory` und `StepBuilderFactory` gibt es nicht mehr. Jedes
+  Beispiel aus Büchern und dem Netz zeigt die alten Pakete. Code für die
+  `sb-advanced-batch-`-Module und `slides/18_Batch` gegen die Jars prüfen,
+  nicht aus dem Gedächtnis schreiben.
