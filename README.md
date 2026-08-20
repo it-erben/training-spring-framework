@@ -28,6 +28,7 @@ Die Lösungen liegen unter `solutions/sb-basics-*-solution`.
 
 | Modul | Slides |
 | --- | --- |
+| Wiederholung des Basis-Blocks | `slides/09_Wiederholung` |
 | Microservice-Architektur | `slides/10_Microservices_Architecture` |
 | Configuration und Internals | `slides/11_Configuration` |
 | Testing | `slides/12_Testing` |
@@ -40,6 +41,13 @@ Die Lösungen liegen unter `solutions/sb-basics-*-solution`.
 
 Demos, Übungen und Lösungen des Advanced-Blocks tragen das Präfix
 `sb-advanced-`.
+
+`slides/09_Wiederholung` eröffnet den Advanced-Block mit einer Übung über
+den gesamten Basis-Block: Die Teilnehmer bauen in 70 Minuten eine
+Raumverwaltung von Grund auf — Projekt über start.spring.io, Entity,
+Repository, Service, Controller, Slice-Tests. Das Deck enthält
+Aufgabenstellung und Auflösung, die Referenzlösung liegt unter
+`solutions/sb-basics-recap-solution`.
 
 Das Batch-Modul dauert 3 Stunden: 2 Stunden Vortrag und Live-Coding gegen
 `demos/sb-advanced-batch-demo`, 1 Stunde Übung
@@ -56,7 +64,9 @@ zwei Domänen durch den Basis-Block und das Batch-Modul:
   `Trainer`).
 
 Die Trennung ist Absicht: Sie verhindert, dass sich die Demo-Lösung in die
-Übung kopieren lässt.
+Übung kopieren lässt. Die Wiederholungsübung zu Beginn des Advanced-Blocks
+verwendet aus demselben Grund eine dritte Domäne, eine Raumverwaltung
+(`Room`).
 
 ## Voraussetzungen
 
