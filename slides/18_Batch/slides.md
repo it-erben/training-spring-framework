@@ -456,7 +456,7 @@ Für das Artefakt heißt das:
 java -jar target/sb-advanced-batch-demo-finished-1.0.0-SNAPSHOT.jar
 ```
 
-Wenn man andere Dateien verarbeiten will, überschreibt Properties auf der Kommandozeile:
+Wenn man andere Dateien verarbeiten will, überschreibt man Properties auf der Kommandozeile:
 
 ```bash
 java -jar target/sb-advanced-batch-demo-finished-1.0.0-SNAPSHOT.jar \
@@ -468,7 +468,7 @@ java -jar target/sb-advanced-batch-demo-finished-1.0.0-SNAPSHOT.jar \
 ## Ein gescheiterter Job meldet Erfolg
 
 Nach dem Lauf steht das Ergebnis im `JobRepository`. Wichtig: Spring Batch wirft keine Exception, wenn der Job scheitert.
-Wollen wir den Exit Code von Batch weiterreichen, geht das so:
+Wollen wir den Exit-Code von Batch weiterreichen, geht das so:
 
 ```java
 public static void main(String[] args) {

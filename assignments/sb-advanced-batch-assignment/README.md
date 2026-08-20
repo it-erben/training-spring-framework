@@ -59,7 +59,7 @@ demos/sb-advanced-batch-demo/sb-advanced-batch-demo-finished/
   src/main/java/tech/erben/springboot/batch/OrderImportJobConfig.java
 ```
 
-Wenn ihr euch dieses Datei zum Vorbild nehmt, müsst ihr folgendes umbenennen:
+Wenn ihr euch diese Datei zum Vorbild nehmt, müsst ihr Folgendes umbenennen:
 
 | Demo (Buchhandlung)   | Übung (Kursverwaltung)  |
 |-----------------------|-------------------------|
@@ -131,7 +131,7 @@ Ein `ItemProcessor<ParticipantLine, ParticipantLine>` ist ein Lambda, das ein
    **neues** `ParticipantLine` mit der normalisierten E-Mail zurückgeben.
 
 **Stolperstein:** `ParticipantLine` ist ein Record und damit unveränderlich.
-Ihr könnt die E-Mail nicht nachträglich setzen sondern baut ein neues Objekt:
+Ihr könnt die E-Mail nicht nachträglich setzen, sondern baut ein neues Objekt:
 `new ParticipantLine(line.participantId(), line.fullName(), email, line.courseCode())`.
 
 **Test:** `aufgabe2_processorNormalisiertEmailUndVerwirftUngueltige`
