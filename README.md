@@ -1,11 +1,11 @@
 # Spring Boot Schulung
 
-Fünftägige Schulung in zwei Blöcken, die auch einzeln buchbar sind.
+Schulung in zwei Blöcken, die auch einzeln buchbar sind.
 
 | Block                       | Dauer  | Voraussetzung                         |
 |-----------------------------|--------|---------------------------------------|
 | **Basis** (Module 00–05)    | 2 Tage | Java 21, keine Spring-Erfahrung       |
-| **Advanced** (Module 10–17) | 3 Tage | Basis-Block oder gleichwertige Praxis |
+| **Advanced** (Module 10–18) | 3 Tage | Basis-Block oder gleichwertige Praxis |
 
 Der Basis-Block holt Java-Entwickler ab, die noch nie mit Spring gearbeitet
 haben, und führt sie bis zu einer containerisierten REST-Anwendung mit
@@ -36,14 +36,20 @@ Die Lösungen liegen unter `solutions/sb-basics-*-solution`.
 | Actuator und Observability | `slides/15_Actuator` |
 | Security | `slides/16_Security` |
 | Messaging | `slides/17_Messaging` |
+| Batch | `slides/18_Batch` |
 
 Demos, Übungen und Lösungen des Advanced-Blocks tragen das Präfix
 `sb-advanced-`.
 
+Das Batch-Modul dauert 3 Stunden: 2 Stunden Vortrag und Live-Coding gegen
+`demos/sb-advanced-batch-demo`, 1 Stunde Übung
+(`assignments/sb-advanced-batch-assignment`, Lösung unter
+`solutions/sb-advanced-batch-solution`).
+
 ## Fachlichkeiten
 
 Damit Teilnehmer sich nicht in jedem Modul neu eindenken müssen, ziehen sich
-zwei Domänen durch den Basis-Block:
+zwei Domänen durch den Basis-Block und das Batch-Modul:
 
 - **Demos** verwenden eine Buchhandlung (`Book`, `Author`, `Order`).
 - **Übungen** verwenden eine Kursverwaltung (`Course`, `Participant`,

@@ -1,0 +1,29 @@
+spring:
+  datasource:
+    # Dateibasiert statt in-memory: das JobRepository überlebt einen Neustart
+    # der Anwendung, damit ein zweiter Start dieselbe JobInstance wiederfindet.
+    url: jdbc:h2:file:./target/orders
+  sql:
+    init:
+      mode: always
+  batch:
+    jdbc:
+      # Legt die BATCH_*-Tabellen beim Start an. In Produktion steht hier
+      # never, das Schema wandert dann ins Migrationswerkzeug.
+      initialize-schema: always
+    job:
+      # Der Default. Steht hier nur, weil der Name daneben gehört: Dies ist
+      # ein Batch-Artefakt, es startet, verarbeitet und endet.
+      enabled: true
+      name: orderImportJob
+
+demo:
+  batch:
+    input: orders.csv
+    report: target/revenue-report.csv
+    archive-dir: target/archive
+    skip-limit: 3
+    pricing:
+      # Schaltet den simulierten Ausfall des Preisdienstes zu. Der erste Lauf
+      # im Kurs läuft ohne ihn, der Retry wird danach gezielt vorgeführt.
+      flaky: false

@@ -53,7 +53,7 @@ Diese Lücke heißt **Object-Relational Impedance Mismatch**.
 
 Was ORM **nicht** löst:
 
-* SQL verschwindet nicht ganz, es wird nur erzeugt. Wer es nicht lesen kann, kann nicht beurteilen, was seine Anwendung tut.
+* SQL verschwindet nicht ganz, es wird nur vom ORM erzeugt.
 * Falsch eingesetztes Mapping erzeugt ineffiziente Abfragemuster
 
 ---
@@ -86,7 +86,7 @@ public class Book {
 ```
 
 * `@Entity` macht die Klasse zur Tabelle, `@Id` markiert den Primärschlüssel, `@GeneratedValue` lässt die Datenbank die Werte vergeben.
-* Der technische Schlüssel `id` kommt **zusätzlich** zur fachlichen ISBN. Primärschlüssel sollen sich nie ändern, Fachdaten tun es manchmal doch.
+* Der technische Schlüssel `id` kommt **zusätzlich** zur fachlichen ISBN. Primärschlüssel sollen sich nie ändern.
 * Anders als die Records aus Modul 02 braucht eine Entity einen **parameterlosen Konstruktor** und **veränderbare Felder**: Hibernate erzeugt Instanzen per Reflection, schreibt die Spaltenwerte direkt hinein und schreibt Änderungen zurück.
 
 ---
@@ -112,14 +112,14 @@ Hibernate: create table book (net_price numeric(38,2), author_id bigint,
 private String isbn;
 ```
 
-* `unique` und `nullable` landen als Constraints im Schema — die Datenbank prüft mit.
+* `unique` und `nullable` landen als Constraints im Schema
 
 ---
 
 <!-- _class: denser -->
 ## @ManyToOne
 
-Beziehungen sind der Kern des Mappings. Viele Bücher gehören zu einem Autor:
+Viele Bücher gehören zu einem Autor:
 
 ```java
 @Entity
@@ -144,7 +144,7 @@ Hibernate: alter table if exists book add constraint ...
 <!-- _class: densest -->
 ## @OneToMany und mappedBy
 
-Die Gegenrichtung: ein Autor kennt seine Bücher:
+Die Gegenrichtung ist `@OneToMane`. Ein Autor kennt seine Bücher:
 
 ```java
 @Entity
@@ -188,8 +188,8 @@ bookRepository.findAll()                      // 1 Abfrage: alle Bücher
     .forEach(b -> b.getAuthor().getName());   // + N Abfragen: ein Select pro Autor?
 ```
 
-* **N+1-Problem:** Eine Abfrage für die Liste, dann eine weitere pro Element für die Beziehung: bei 1.000 Büchern 1.001 Statements statt einem Join.
-* Es entsteht schleichend: Bei fünf Demo-Büchern fällt es nicht auf, unter Last wird es zum Performanceproblem.
+* **N+1-Problem:** Eine Abfrage für die Liste, dann eine weitere pro Element für die Beziehung. Bei 1.000 Büchern 1.001 Statements statt einem Join.
+* Bei fünf Demo-Büchern fällt es nicht auf, unter Last wird es zum Performanceproblem.
 * `show-sql=true` macht es sichtbar
 
 ---
@@ -200,7 +200,7 @@ bookRepository.findAll()                      // 1 Abfrage: alle Bücher
 
 ## Das Repository-Pattern
 
-Die Entity beschreibt die **Daten**. Wer übernimmt den **Zugriff**? Klassischerweise eine DAO-Klasse pro Entity.
+Die Entity beschreibt die **Daten**. Wer übernimmt den **Zugriff**? Klassischerweise ist das eine DAO-Klasse pro Entity.
 
 Das Repository-Pattern abstrahiert den Datenzugriff hinter einem Interface und Spring Data implementiert es für uns:
 
@@ -210,7 +210,6 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 ```
 
 * Spring Data erzeugt zur Laufzeit ein **Proxy-Objekt** mit fertigem CRUD.
-* Die Typparameter: die Entity (`Book`) und der Typ ihres `@Id`-Feldes (`Long`).
 * Das Interface ist eine ganz normale Bean.
 
 ---
@@ -255,7 +254,7 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 <!-- _class: densest -->
 ## Die Namensregeln
 
-Das Schema: `findBy` + Feldname + optionaler Operator. Spring Data zerlegt den Namen beim Start und baut die Abfrage daraus:
+Das Schema ist `findBy` + Feldname + optionaler Operator. Spring Data zerlegt den Namen beim Start und baut die Abfrage daraus auf.
 
 | Baustein                   | Beispiel                 | Bedeutung                  |
 |----------------------------|--------------------------|----------------------------|
@@ -268,7 +267,7 @@ Das Schema: `findBy` + Feldname + optionaler Operator. Spring Data zerlegt den N
 | `OrderBy…Desc`             | `…OrderByTitleDesc`      | Sortierung                 |
 
 * Der Rückgabetyp ist frei wählbar: `Optional<Book>` für höchstens einen Treffer, `List<Book>` für viele.
-* Wichtig: Die Feldnamen müssen **exakt** den Entity-Feldern entsprechen — sonst gibt es beim Start eine Exception.
+* Wichtig: Die Feldnamen müssen **exakt** den Entity-Feldern entsprechen, sonst gibt es beim Start eine Exception.
 
 ---
 
@@ -278,7 +277,6 @@ Die Ableitung ist Konvention mit Grenzen:
 
 * **Der Name muss auf Felder abbildbar sein.** `findByFeeRange(min, max)` scheitert beim Start: Es gibt kein Feld `feeRange`.
 * **Komplexe Bedingungen machen den Namen unlesbar.** `findByTitleContainingIgnoreCaseAndNetPriceLessThanOrderByTitleAsc` ist technisch gültig, aber nicht lesbar
-* **Alles jenseits von "Zeilen filtern"**: Aggregate, berechnete Werte, Projektionen auf einzelne Spalten — passt nicht ins Namensschema.
 
 ---
 
@@ -337,7 +335,7 @@ Der Ablauf im Kern:
 <!-- _class: densest -->
 ## @Transactional
 
-Spring erledigt das deklarativ über eine Annotation an der Service-Methode:
+Spring modelliert Transaktionen deklarativ über eine Annotation an der Service-Methode:
 
 ```java
 @Service
@@ -358,7 +356,7 @@ public class BookService {
 ```
 
 * Beim Aufruf beginnt eine Transaktion. Am regulären Methodenende folgt der **Commit**, bei einer RuntimeException der **Rollback**.
-* Auffällig: **nirgendwo ein `save()`**. Innerhalb der Transaktion sind geladene Entities *managed*: beim Commit erkennt Hibernate jede Änderung selbst (**Dirty Checking**) und schreibt die UPDATE-Statements:
+* Auffällig: **nirgendwo steht ein `save()`**. Innerhalb der Transaktion sind geladene Entities *managed*: beim Commit erkennt Hibernate jede Änderung selbst (**Dirty Checking**) und schreibt die UPDATE-Statements:
 
 ```text
 Hibernate: update book set author_id=?,isbn=?,net_price=?,title=? where id=?
@@ -379,7 +377,7 @@ public List<Book> findAll() {
 ```
 
 * `readOnly = true` markiert: Hier wird nichts geändert.
-* Hibernate spart sich dann das Dirty Checking. Die Snapshots der geladenen Entities entfallen, was bei großen Ergebnismengen spürbar Speicher und Zeit spart.
+* Hibernate spart sich dann das Dirty Checking. Die Snapshots der geladenen Entities entfallen, was bei großen Ergebnismengen Speicher und Zeit spart.
 * Zugleich ist es Dokumentation: Die Signatur sagt dem nächsten Leser, dass diese Methode keine Schreibabsicht hat.
 
 ---
@@ -395,7 +393,7 @@ An die **Service-Schicht**, also dort, wo der fachliche Anwendungsfall definiert
 Spring setzt die Annotation über einen **Proxy** um (dasselbe Muster wie bei den Repositories):
 
 * Nur **public** Methoden, die **von außen** aufgerufen werden, sind transaktional.
-* Ein Aufruf `this.raisePrices(...)` innerhalb derselben Klasse läuft am Proxy vorbei: die Annotation wirkt dann nicht.
+* Ein Aufruf `this.raisePrices(...)` innerhalb derselben Klasse läuft am Proxy vorbei. Die Annotation wirkt dann nicht.
 
 ---
 
@@ -415,9 +413,9 @@ spring.jpa.show-sql=true
 spring.h2.console.enabled=true
 ```
 
-* `jdbc:h2:mem:bookstore`: die Datenbank lebt im Speicher der JVM. Start mit leerer Datenbank, Stopp löscht alles. Für Demos ideal, als Persistenz natürlich nicht geeignet.
-* Mehr braucht es nicht: Liegt nur H2 auf dem Klassenpfad, konfiguriert die AutoConfiguration aus Modul 01 die `DataSource` sogar ganz ohne URL.
-* `show-sql=true` schreibt jedes erzeugte Statement ins Log — in der Demo unser wichtigstes Fenster in Hibernates Arbeit.
+* `jdbc:h2:mem:bookstore` bedeutet: die Datenbank lebt im Speicher der JVM. Start mit leerer Datenbank, Stopp löscht die Daten. Für Demos ideal, als Persistenz natürlich nicht geeignet.
+* Liegt nur H2 auf dem Classpath, konfiguriert die AutoConfiguration aus Modul 01 die `DataSource` sogar ganz ohne URL.
+* `show-sql=true` schreibt jedes erzeugte Statement ins Log.
 
 ---
 
@@ -432,27 +430,27 @@ Wie wird in unserem Beispiel das Schema erzeugt? `spring.jpa.hibernate.ddl-auto`
 | `create`      | Schema löschen und neu erzeugen                 | Frühe Entwicklung |
 | `create-drop` | Wie `create`, zusätzlich löschen beim Stopp     | Demos, Tests      |
 
-* Der Boot-Default hängt von der Datenbank ab: **embedded** (H2) → `create-drop`, alles andere → keine Schema-Verwaltung (`none`).
+* Der Boot-Default hängt von der Datenbank ab: **embedded** (H2) → `create-drop`, alle anderen Datenbanken defaulten auf keine Schema-Verwaltung (`none`).
 
 ---
 
 ## Warum ddl-auto nicht in Produktion gehört
 
-`update` klingt nach dem perfekten Kompromiss: Schema wächst automatisch mit. Genau davor sei gewarnt:
+`update` klingt nach dem Kompromiss: Schema wächst automatisch mit. Aber das verursacht Probleme.
 
-* **Umbenennungen versteht es nicht:** Aus `netPrice` → `price` macht `update` eine **neue Spalte** `price`. Die alte bleibt samt Daten verwaist zurück.
+* **Umbenennungen versteht Hibernate nicht:** Aus `netPrice` → `price` macht `update` eine **neue Spalte** `price`. Die alte bleibt samt Daten verwaist zurück.
 * **Keine automatische Migration:** Typänderungen, `not null` auf gefüllten Tabellen, Umzug von Werten - alles nicht möglich
 * **Keine Historie:** Welches Schema Version 1.3 hatte, weiß niemand.
 * `create`/`create-drop` in Produktion: **Datenverlust beim Start.**
 
-Der professionelle Weg: **versionierte Migrations-Skripte**, die wie Code im Repository liegenmiz **Flyway** oder **Liquibase**
+Der professionelle Weg: **versionierte Migrations-Skripte**, die wie Code im Repository liegen mit **Flyway** oder **Liquibase**
 
 ---
 
 <!-- _class: densest -->
 ## Umstieg auf PostgreSQL
 
-Von H2 zu PostgreSQL ist ein **Konfigurationswechsel** und zum Glück kein Umbau. Im POM den Treiber tauschen:
+Im POM den Treiber tauschen:
 
 ```xml
 <dependency>
@@ -472,26 +470,11 @@ spring.jpa.hibernate.ddl-auto=validate
 ```
 
 * Entities, Repositories, JPQL, Services: **unverändert**. Hibernate erzeugt jetzt PostgreSQL-SQL.
-* `ddl-auto` steht auf `validate`: das Schema kommt ab hier aus Migrationen, nicht aus Hibernate.
+* `ddl-auto` steht auf `validate`: das Schema kommt ab hier aus Migrationen
 
 ---
 
 # Demo
-
----
-
-<!-- _class: denser -->
-## Was wir gleich bauen
-
-| Schritt | Baustein                             | Ziel                                                 |
-|---------|--------------------------------------|------------------------------------------------------|
-| 1       | Entity `Book`                        | `create table book`: Tabelle aus der Klasse erzeugen |
-| 2       | `Author` + `@ManyToOne`/`@OneToMany` | Fremdschlüssel aus der Objektreferenz                |
-| 3       | `BookRepository` + `SeedDataRunner`  | CRUD ohne eine Zeile Implementierung                 |
-| 4       | Drei Derived Queries                 | Der Methodenname wird zum SQL                        |
-| 5       | `findByAuthorName` per `@Query`      | JPQL navigiert die Beziehung — Hibernate joint       |
-| 6       | `BookService.raisePrices`            | Dirty Checking: UPDATEs ohne `save()`                |
-| 7       | `raisePricesAndFail`                 | UPDATEs im Log — und trotzdem Rollback               |
 
 ---
 

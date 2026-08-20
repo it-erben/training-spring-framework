@@ -23,6 +23,7 @@
         <module>sb-advanced-data-mongodb-solution</module>
         <module>sb-advanced-data-jpa-solution</module>
         <module>sb-advanced-actuator-micrometer-solution</module>
+        <module>sb-advanced-batch-solution</module>
     </modules>
 
 

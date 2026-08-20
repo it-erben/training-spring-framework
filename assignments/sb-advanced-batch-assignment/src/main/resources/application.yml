@@ -1,0 +1,13 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:participants;DB_CLOSE_DELAY=-1
+  sql:
+    init:
+      mode: always
+  batch:
+    jdbc:
+      # Legt die BATCH_*-Tabellen beim Start an. In Produktion steht hier
+      # never, das Schema wandert dann ins Migrationswerkzeug.
+      initialize-schema: always
+    job:
+      name: participantImportJob
