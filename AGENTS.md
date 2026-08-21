@@ -51,6 +51,34 @@
 - Keine Checklisten, keine „Summary“-/„Test plan“-Abschnitte, keine
   Marketing-Sprache, keine Emojis.
 
+## Folien
+
+Der Abschnitt „Ton“ gilt für Dokumentation, die ein Artefakt beschreibt.
+Folien sind Lehrmaterial und folgen eigenen Regeln. Referenz sind
+`slides/00_` bis `05_`, `09_Wiederholung`, `18_Batch` und `19_Batch_Betrieb`.
+Die Advanced-Module `10_` bis `17_` sind älter und weichen ab; als Vorlage
+taugen sie nicht.
+
+- Erwünscht: „wir“ für das gemeinsame Vorgehen, „ihr/euch“ für die
+  Teilnehmer, Fragen als Überschrift, nummerierte Schrittlisten.
+- Motivation vor Mechanik. Erst das Problem ohne Framework, dann die Lösung.
+  Eine Folie, die mit der Annotation beginnt, beantwortet die falsche Frage.
+- Prosa-Anlauf von ein bis zwei Sätzen, dann Code, dann Bullets, die den Code
+  deuten. Bullets, die den Code nacherzählen, streichen.
+- Bullets beginnen mit dem fetten Stichwort: `**Speicher:** …`.
+- Fehlerfälle mit dem Namen, den die Teilnehmer im Log sehen
+  (`NoUniqueBeanDefinitionException`), nicht mit „schlägt fehl“.
+- Zahlen statt Adjektiven. Gemessene Werte, Prozentsätze, Grenzen.
+- Tabellen beantworten „wann was“, nicht „was kann es“.
+- Modulaufbau: `# Titel` → `## In diesem Modul` → `#`-Trennfolien ohne Inhalt →
+  Fachfolien → `# Demo` / `# Übung` → Pfad auf `demos/` bzw. `assignments/`.
+- Querverweise auf andere Module als `Modul *11_Configuration*`.
+- Kein Ausrufezeichen, keine Emojis, keine Füll-Adjektive. Hier gilt „Ton“
+  unverändert.
+- Zu volle Folien über die Dichte-Klassen `dense`, `denser` und `densest`
+  verkleinern, nicht durch Textkürzung. Prüfen mit
+  `tools/check-slide-overflow.mjs`.
+
 ## Vor dem Abschluss
 
 - Lint, Tests und Build des Projekts für alles Berührte ausführen.
@@ -70,8 +98,10 @@ Zwei Blöcke, getrennt über die Nummerierung der Slide-Verzeichnisse:
 
 - `slides/00_` bis `05_` — Basis-Block, 2 Tage, Marp-Header
   `Spring Boot Basics`, Maven-Module mit Präfix `sb-basics-`.
-- `slides/10_` bis `18_` — Advanced-Block, 3 Tage, Marp-Header
+- `slides/09_` bis `19_` — Advanced-Block, 3 Tage, Marp-Header
   `Spring Boot Advanced`, Maven-Module mit Präfix `sb-advanced-`.
+  `09_Wiederholung` ist die Brücke zwischen beiden Blöcken: eine Übung, die
+  den Basis-Block ohne neuen Stoff wiederholt.
 
 Der Basis-Block setzt keine Spring-Kenntnisse voraus. Mehrere
 Advanced-Module beginnen mit „Wiederholung:"-Slides, die sich auf ihn
