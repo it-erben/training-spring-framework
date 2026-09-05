@@ -150,3 +150,8 @@ bleiben synchron.
   Beispiel aus Büchern und dem Netz zeigt die alten Pakete. Code für die
   `sb-advanced-batch-`-Module und `slides/18_Batch` gegen die Jars prüfen,
   nicht aus dem Gedächtnis schreiben.
+- **Die CI läuft auf zwei Plattformen.** `.gitlab-ci.yml` bindet die
+  GitLab-Komponenten ein, `.github/workflows/ci.yml` ruft `lint.yml`,
+  `slides.yml`, `maven.yml`, `release.yml` und `pages.yml` aus
+  `it-erben/ci`. Die PDFs gehen
+  dort auf GitHub Pages, ein Deployment gibt es auf GitHub nicht.
